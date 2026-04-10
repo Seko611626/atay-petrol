@@ -285,10 +285,10 @@ app.post('/api/tahsilat', auth, adminOnly, (req, res) => {
     const { tarih, borc_id, miktar, odeme_yontemi } = req.body;
     const insertStmt = db.prepare(`INSERT INTO tahsilat (tarih, borc_id, miktar, odeme_yontemi) VALUES (?, ?, ?, ?)`);
     insertStmt.run(tarih, borc_id, miktar, odeme_yontemi);
-    
+
     const updateStmt = db.prepare(`UPDATE borc SET kalan_tl = kalan_tl - ? WHERE id = ?`);
     updateStmt.run(miktar, borc_id);
-    
+
     res.json({ mesaj: 'Tahsilat eklendi' });
 });
 
