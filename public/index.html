@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Atay Petrol | Giriş</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0A2F6C 0%, #1E4D8C 50%, #2E6DA4 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 48px;
+            transition: all 0.3s ease;
+        }
+        
+        .login-card:hover {
+            border-color: rgba(0, 180, 216, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .diamond-logo {
+            text-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-md p-6 sm:p-8 login-card animate-scale">
+        <div class="text-center mb-8">
+            <div class="animate-float">
+                <div class="flex justify-center mb-3">
+                    <div class="w-20 h-20 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-xl animate-glow">
+                        <span class="text-5xl">⛽</span>
+                    </div>
+                </div>
+                <h1 class="text-4xl font-extrabold tracking-wider text-white diamond-logo">ATAY</h1>
+                <p class="text-2xl font-semibold text-cyan-300">Petrol Satış Takip</p>
+            </div>
+            <p class="text-blue-200 mt-2 text-sm animate-fadeLeft">v5.0 | Diamond Edition</p>
+            <div class="flex justify-center gap-1 mt-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 0.2s"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" style="animation-delay: 0.4s"></span>
+            </div>
+        </div>
+
+        <form id="loginForm">
+            <div class="mb-5 animate-fadeRight" style="animation-delay: 0.1s">
+                <label class="block text-sm mb-2 text-white/80 font-medium">📧 E-posta Adresi</label>
+                <input type="email" id="email" class="w-full px-5 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all" placeholder="ornek@atay.com"
+                    autocomplete="email">
+            </div>
+            <div class="mb-6 animate-fadeRight" style="animation-delay: 0.2s">
+                <label class="block text-sm mb-2 text-white/80 font-medium">🔒 Şifre</label>
+                <input type="password" id="sifre" class="w-full px-5 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all" placeholder="••••••••"
+                    autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login w-full py-3.5 rounded-2xl font-bold text-lg text-white flex items-center justify-center gap-2 animate-fadeUp" style="animation-delay: 0.3s">
+                <span>GİRİŞ YAP</span>
+                <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </button>
+        </form>
+
+        <div id="hata" class="text-red-300 text-center mt-4 text-sm animate-fadeUp"></div>
+
+        <div class="mt-6 pt-4 border-t border-white/10 text-center">
+            <div class="flex justify-center gap-4 text-xs text-blue-200/70">
+                <span>🔐 IP & Zaman loglanır</span>
+                <span>⚡ Güvenli Giriş</span>
+                <span>💎 Diamond Mavi</span>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <p class="text-[10px] text-white/30">© 2024 Atay Petrol - Tüm hakları saklıdır</p>
+        </div>
+    </div>
+
+    <script>
+        var loginForm = document.getElementById('loginForm');
+        var hataDiv = document.getElementById('hata');
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            var email = document.getElementById('email').value.trim();
+            var sifre = document.getElementById('sifre').value;
+
+            if (!email || !sifre) {
+                hataDiv.innerText = 'Lütfen e-posta ve şifre giriniz';
+                return;
+            }
+
+            var submitBtn = loginForm.querySelector('button[type="submit"]');
+            var originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="spinner w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Giriş yapılıyor...';
+            submitBtn.disabled = true;
+
+            try {
+                var res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        sifre: sifre
+                    })
+                });
+
+                var data = await res.json();
+
+                if (res.ok) {
+                    window.location.href = '/dashboard.html';
+                } else {
+                    hataDiv.innerText = data.hata || 'Giriş başarısız';
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                hataDiv.innerText = 'Bağlantı hatası. Sunucu çalışıyor mu?';
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

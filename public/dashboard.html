@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dashboard | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-gray-100">
+    <nav class="navbar text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+                <div class="animate-float">
+                    <h1 class="text-2xl font-bold">⛽ ATAY PETROL</h1>
+                </div>
+                <span class="text-xs bg-white/20 px-2 py-1 rounded-full animate-pulse">v5.0 Diamond</span>
+            </div>
+            <div class="space-x-2 flex flex-wrap gap-1">
+                <a href="dashboard.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🏠 Ana</a>
+                <a href="satis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💰 Satış</a>
+                <a href="alis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🚛 Alış</a>
+                <a href="gider.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📉 Gider</a>
+                <a href="borc.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📝 Borçlar</a>
+                <a href="tahsilat.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💵 Tahsilat</a>
+                <a href="rapor.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📊 Rapor</a>
+                <a href="kullanici.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10 admin-only">👥 Kullanıcılar</a>
+                <a href="loglar.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10 admin-only">📜 Loglar</a>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all hover:scale-105">🚪 Çıkış</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-6">
+        <!-- İstatistik Kartları -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <!-- Kart 1: Bugünkü Alış -->
+            <div class="stat-card stat-card-1 bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeLeft">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 text-xs sm:text-sm">🚛 Bugünkü Alış</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-green-600 counter-number" id="bugunAlis">0 ₺</p>
+                    </div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl sm:text-2xl">🚛</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kart 2: Bugünkü Satış -->
+            <div class="stat-card stat-card-2 bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-scale">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 text-xs sm:text-sm">💰 Bugünkü Satış</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-blue-600 counter-number" id="bugunSatis">0 ₺</p>
+                    </div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl sm:text-2xl">💰</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kart 3: Bugünkü Borç -->
+            <div class="stat-card stat-card-3 bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeRight">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 text-xs sm:text-sm">📝 Bugünkü Borç</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-red-600 counter-number" id="bugunBorc">0 ₺</p>
+                    </div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl sm:text-2xl">📝</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kart 4: Aylık Alış / Aylık Satış -->
+            <div class="stat-card stat-card-4 bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 text-xs sm:text-sm">📊 Aylık Alış / Satış</p>
+                        <p class="text-sm font-semibold text-purple-600" id="aylikAlis">Alış: 0 ₺</p>
+                        <p class="text-sm font-semibold text-purple-600" id="aylikSatis">Satış: 0 ₺</p>
+                    </div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl sm:text-2xl">📊</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafikler ve Stok -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp">
+                <h2 class="text-lg sm:text-xl font-bold mb-4 gradient-text">📊 Satış Grafiği (Son 7 Gün)</h2>
+                <canvas id="satisChart" height="200"></canvas>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp" style="animation-delay: 0.1s">
+                <h2 class="text-lg sm:text-xl font-bold mb-4 gradient-text">🛢️ Stok Durumu</h2>
+                <div id="stokListesi" class="space-y-3 max-h-80 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Ödeme Yöntemleri ve Son İşlemler -->
+        <div class="grid lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp" style="animation-delay: 0.2s">
+                <h2 class="text-lg sm:text-xl font-bold mb-4 gradient-text">💳 Ödeme Yöntemleri Dağılımı</h2>
+                <canvas id="odemeChart" height="180"></canvas>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp" style="animation-delay: 0.3s">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <h2 class="text-lg sm:text-xl font-bold gradient-text">🕐 Son İşlemler</h2>
+                    <a href="satis.html" class="text-xs text-[#0A2F6C] hover:underline">Tümünü Gör →</a>
+                </div>
+                <div id="sonIslemler" class="space-y-2 max-h-80 overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        var satisChart, odemeChart;
+
+        // İstatistikleri yükle
+        async function loadDashboard() {
+            try {
+                var res = await fetch('/api/istatistik');
+                var data = await res.json();
+
+                document.getElementById('bugunAlis').innerHTML = formatMoney(data.bugunAlis || 0);
+                document.getElementById('bugunSatis').innerHTML = formatMoney(data.bugunSatis || 0);
+                document.getElementById('bugunBorc').innerHTML = formatMoney(data.bugunBorc || 0);
+                document.getElementById('aylikAlis').innerHTML = 'Alış: ' + formatMoney(data.aylikAlis || 0);
+                document.getElementById('aylikSatis').innerHTML = 'Satış: ' + formatMoney(data.aylikSatis || 0);
+
+                // Stok listesi
+                if (data.stoklar && data.stoklar.length > 0) {
+                    var stokHtml = '';
+                    for (var i = 0; i < data.stoklar.length; i++) {
+                        var s = data.stoklar[i];
+                        var stokMiktar = s.stok || 0;
+                        var renk = '';
+                        var ikon = '';
+                        if (stokMiktar < 0) renk = 'text-red-500';
+                        else if (stokMiktar < 500) renk = 'text-yellow-500';
+                        else renk = 'text-green-600';
+
+                        if (s.ad === 'Motorin') ikon = '🛢️';
+                        else if (s.ad === 'Benzin') ikon = '⛽';
+                        else ikon = '💨';
+
+                        var yuzde = Math.min(Math.abs(stokMiktar / 10000) * 100, 100);
+
+                        stokHtml += '<div class="table-row p-3 border-b rounded-xl hover:bg-gray-50 transition-all">';
+                        stokHtml += '<div class="flex justify-between items-center mb-1">';
+                        stokHtml += '<span class="font-semibold">' + ikon + ' ' + s.ad + ':</span>';
+                        stokHtml += '<span class="' + renk + ' font-bold">' + formatLiter(stokMiktar) + '</span>';
+                        stokHtml += '</div>';
+                        stokHtml += '<div class="w-full bg-gray-200 rounded-full h-2">';
+                        stokHtml += '<div class="' + (stokMiktar < 0 ? 'bg-red-500' : (stokMiktar < 500 ? 'bg-yellow-500' : 'bg-green-500')) + ' h-2 rounded-full transition-all duration-500" style="width: ' + yuzde + '%"></div>';
+                        stokHtml += '</div></div>';
+                    }
+                    document.getElementById('stokListesi').innerHTML = stokHtml;
+                } else {
+                    document.getElementById('stokListesi').innerHTML = '<p class="text-gray-500 text-center py-8">Henüz stok girişi yapılmamış</p>';
+                }
+            } catch (e) {
+                console.error('Dashboard yüklenirken hata:', e);
+            }
+        }
+
+        // Satış grafiğini yükle (gerçek veri ile)
+        async function loadSatisChart() {
+            try {
+                var res = await fetch('/api/satis');
+                var satislar = await res.json();
+
+                // Son 7 günü al
+                var son7Gun = [];
+                var bugun = new Date();
+                for (var i = 6; i >= 0; i--) {
+                    var tarih = new Date();
+                    tarih.setDate(bugun.getDate() - i);
+                    var tarihStr = tarih.toISOString().slice(0, 10);
+                    son7Gun.push({
+                        tarih: tarihStr,
+                        toplam: 0
+                    });
+                }
+
+                // Satışları eşleştir
+                for (var i = 0; i < satislar.length; i++) {
+                    for (var j = 0; j < son7Gun.length; j++) {
+                        if (satislar[i].tarih === son7Gun[j].tarih) {
+                            son7Gun[j].toplam += satislar[i].toplam_tutar;
+                        }
+                    }
+                }
+
+                var labels = [];
+                var data = [];
+                for (var i = 0; i < son7Gun.length; i++) {
+                    labels.push(son7Gun[i].tarih.substring(5, 10));
+                    data.push(son7Gun[i].toplam);
+                }
+
+                if (satisChart) satisChart.destroy();
+                var ctx = document.getElementById('satisChart').getContext('2d');
+                satisChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Satış (TL)',
+                            data: data,
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#10B981',
+                            pointBorderColor: '#fff',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return formatMoney(ctx.raw);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatMoney(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('Grafik yüklenirken hata:', e);
+            }
+        }
+
+        // Ödeme yöntemleri grafiği
+        async function loadOdemeChart() {
+            try {
+                var res = await fetch('/api/odeme-rapor?baslangic=2024-01-01&bitis=2026-12-31');
+                var data = await res.json();
+
+                var odemeData = data[0] || {
+                    nakit: 0,
+                    havale: 0,
+                    pos: 0,
+                    borc: 0
+                };
+
+                if (odemeChart) odemeChart.destroy();
+                var ctx = document.getElementById('odemeChart').getContext('2d');
+                odemeChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Nakit', 'Havale', 'POS', 'Borç'],
+                        datasets: [{
+                            data: [odemeData.nakit || 0, odemeData.havale || 0, odemeData.pos || 0, odemeData.borc || 0],
+                            backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+                            borderWidth: 0,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return formatMoney(ctx.raw);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('Ödeme grafiği yüklenirken hata:', e);
+            }
+        }
+
+        // Son işlemleri yükle
+        async function loadSonIslemler() {
+            try {
+                var res = await fetch('/api/satis');
+                var satislar = await res.json();
+                var son5 = satislar.slice(0, 5);
+
+                if (son5.length === 0) {
+                    document.getElementById('sonIslemler').innerHTML = '<div class="text-center py-8 text-gray-500">Henüz işlem yok</div>';
+                    return;
+                }
+
+                var html = '';
+                for (var i = 0; i < son5.length; i++) {
+                    var s = son5[i];
+                    html += '<div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">';
+                    html += '<div class="flex items-center gap-3">';
+                    html += '<div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center"><span class="text-sm">💰</span></div>';
+                    html += '<div><p class="font-semibold text-sm">' + s.urun_adi + ' - ' + formatLiter(s.litre) + '</p>';
+                    html += '<p class="text-xs text-gray-400">' + formatDate(s.tarih) + '</p></div></div>';
+                    html += '<div class="text-right"><p class="font-bold text-green-600">' + formatMoney(s.toplam_tutar) + '</p></div></div>';
+                }
+                document.getElementById('sonIslemler').innerHTML = html;
+            } catch (e) {
+                console.error('Son işlemler yüklenirken hata:', e);
+            }
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+            loadSatisChart();
+            loadOdemeChart();
+            loadSonIslemler();
+
+            setInterval(function() {
+                loadDashboard();
+                loadSonIslemler();
+            }, 30000);
+        });
+
+        // Admin kontrolü
+        (async function() {
+            var me = await fetch('/api/me');
+            var user = await me.json();
+            if (user.yetki !== 'admin') {
+                var adminElements = document.querySelectorAll('.admin-only');
+                for (var i = 0; i < adminElements.length; i++) {
+                    if (adminElements[i]) adminElements[i].style.display = 'none';
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>

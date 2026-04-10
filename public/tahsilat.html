@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tahsilat | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-card {
+            transition: all 0.3s ease;
+        }
+        
+        .form-card:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(10, 47, 108, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <nav class="navbar text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+                <div class="animate-float">
+                    <h1 class="text-2xl font-bold">💵 TAHSİLAT İŞLEMLERİ</h1>
+                </div>
+            </div>
+            <div class="space-x-2 flex flex-wrap gap-1">
+                <a href="dashboard.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🏠 Ana</a>
+                <a href="satis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💰 Satış</a>
+                <a href="alis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🚛 Alış</a>
+                <a href="gider.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📉 Gider</a>
+                <a href="borc.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📝 Borçlar</a>
+                <a href="tahsilat.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💵 Tahsilat</a>
+                <a href="rapor.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📊 Rapor</a>
+                <a href="kullanici.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10 admin-only">👥 Kullanıcılar</a>
+                <a href="loglar.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10 admin-only">📜 Loglar</a>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all hover:scale-105">🚪 Çıkış</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-6">
+        <!-- Tahsilat İstatistik Kartları -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 animate-fadeLeft">
+                <p class="text-sm text-gray-500">💰 Bugünkü Tahsilat</p>
+                <p class="text-2xl font-bold text-green-600" id="bugunTahsilat">0 ₺</p>
+            </div>
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 animate-fadeUp">
+                <p class="text-sm text-gray-500">📊 Bu Ay Tahsilat</p>
+                <p class="text-2xl font-bold text-blue-600" id="aylikTahsilat">0 ₺</p>
+            </div>
+            <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl p-4 animate-fadeDown">
+                <p class="text-sm text-gray-500">📈 Toplam Tahsilat</p>
+                <p class="text-2xl font-bold text-purple-600" id="toplamTahsilat">0 ₺</p>
+            </div>
+            <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 animate-fadeRight">
+                <p class="text-sm text-gray-500">📝 Tahsilat Adedi</p>
+                <p class="text-2xl font-bold text-orange-600" id="tahsilatAdedi">0</p>
+            </div>
+        </div>
+
+        <!-- Tahsilat Ekleme Formu (Sadece Admin) -->
+        <div id="adminForm" class="bg-white rounded-2xl shadow-md p-4 sm:p-6 mb-8 hidden border-t-4 border-green-500 form-card animate-scale">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white text-xl">➕</span>
+                </div>
+                <h2 class="text-xl font-bold text-green-600">Yeni Tahsilat Ekle</h2>
+            </div>
+            <form id="tahsilatForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">📅 Tarih</label>
+                    <input type="date" id="tarih" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">👤 Borç Seçiniz</label>
+                    <select id="borc_id" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all" required>
+                        <option value="">Seçiniz</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">💰 Tahsilat Tutarı (TL)</label>
+                    <input type="number" id="miktar" placeholder="Tahsilat Tutarı" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all" step="any" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">💳 Ödeme Yöntemi</label>
+                    <select id="odeme_yontemi" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all" required>
+                        <option value="Nakit">💵 Nakit</option>
+                        <option value="Havale">🏦 Havale</option>
+                        <option value="POS">💳 POS</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 lg:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">📝 Açıklama</label>
+                    <input type="text" id="aciklama" placeholder="Açıklama (Opsiyonel)" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                </div>
+                <div class="md:col-span-2 lg:col-span-3">
+                    <button type="submit" class="bg-green-600 text-white w-full py-3 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-green-700 transition-all">
+                        <span>💾</span> Tahsilat Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tahsilat Listesi -->
+        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <h2 class="text-xl font-bold gradient-text">📋 Tahsilat Geçmişi</h2>
+                <div class="flex flex-wrap gap-2">
+                    <div class="relative">
+                        <input type="text" id="aramaInput" placeholder="🔍 Müşteri ara..." class="border p-2 rounded-xl text-sm pl-8 w-48">
+                        <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+                    </div>
+                    <select id="filtreOdeme" class="border p-2 rounded-xl text-sm">
+                        <option value="">Tüm Ödeme Türleri</option>
+                        <option value="Nakit">💵 Nakit</option>
+                        <option value="Havale">🏦 Havale</option>
+                        <option value="POS">💳 POS</option>
+                    </select>
+                    <input type="month" id="filtreAy" class="border p-2 rounded-xl text-sm">
+                    <button onclick="exportTahsilatToExcel()" class="bg-green-500 text-white px-3 py-2 rounded-xl text-sm hover:bg-green-600 transition-all flex items-center gap-1">
+                        📎 Excel
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <div id="tahsilatListesi" class="min-w-[800px]"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        var yetki = '';
+        var tumTahsilatlar = [];
+        var tumBorclar = [];
+
+        async function loadBorclarSelect() {
+            var res = await fetch('/api/borc');
+            tumBorclar = await res.json();
+            var select = document.getElementById('borc_id');
+            var html = '<option value="">Seçiniz</option>';
+            for (var i = 0; i < tumBorclar.length; i++) {
+                var b = tumBorclar[i];
+                if (b.kalan_tl > 0) {
+                    html += '<option value="' + b.id + '">' + b.musteri_adi + ' - ' + b.urun_adi + ' - Kalan: ' + formatMoney(b.kalan_tl) + '</option>';
+                }
+            }
+            select.innerHTML = html;
+        }
+
+        async function loadTahsilat() {
+            var res = await fetch('/api/tahsilat');
+            tumTahsilatlar = await res.json();
+            filtreleVeGoster();
+            istatistikleriGuncelle();
+        }
+
+        async function istatistikleriGuncelle() {
+            var bugun = new Date().toISOString().slice(0, 10);
+            var ayBaslangic = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0') + '-01';
+
+            var bugunToplam = 0;
+            var ayToplam = 0;
+            var genelToplam = 0;
+
+            for (var i = 0; i < tumTahsilatlar.length; i++) {
+                var t = tumTahsilatlar[i];
+                genelToplam += t.miktar;
+                if (t.tarih === bugun) bugunToplam += t.miktar;
+                if (t.tarih >= ayBaslangic) ayToplam += t.miktar;
+            }
+
+            document.getElementById('bugunTahsilat').innerHTML = formatMoney(bugunToplam);
+            document.getElementById('aylikTahsilat').innerHTML = formatMoney(ayToplam);
+            document.getElementById('toplamTahsilat').innerHTML = formatMoney(genelToplam);
+            document.getElementById('tahsilatAdedi').innerHTML = tumTahsilatlar.length;
+        }
+
+        function filtreleVeGoster() {
+            var aramaInput = document.getElementById('aramaInput');
+            var arama = aramaInput ? aramaInput.value.toLowerCase() : '';
+            var odemeFiltre = document.getElementById('filtreOdeme') ? document.getElementById('filtreOdeme').value : '';
+            var ayFiltre = document.getElementById('filtreAy') ? document.getElementById('filtreAy').value : '';
+
+            var filtrelenmis = [];
+            for (var i = 0; i < tumTahsilatlar.length; i++) {
+                var t = tumTahsilatlar[i];
+                var musteriVar = t.musteri_adi && t.musteri_adi.toLowerCase().indexOf(arama) !== -1;
+                var odemeUyuyor = odemeFiltre === '' || t.odeme_yontemi === odemeFiltre;
+                var ayUyuyor = ayFiltre === '' || t.tarih.substring(0, 7) === ayFiltre;
+
+                if (musteriVar && odemeUyuyor && ayUyuyor) {
+                    filtrelenmis.push(t);
+                }
+            }
+
+            var toplamTutar = 0;
+            for (var i = 0; i < filtrelenmis.length; i++) {
+                toplamTutar += filtrelenmis[i].miktar;
+            }
+
+            var html = '';
+            html += '<div class="mb-3 p-2 bg-gray-100 rounded-lg flex justify-between items-center">';
+            html += '<span class="text-sm font-semibold">📊 Toplam Tahsilat: ' + formatMoney(toplamTutar) + '</span>';
+            html += '<span class="text-sm text-gray-500">' + filtrelenmis.length + ' kayıt</span>';
+            html += '</div>';
+            html += '<table class="w-full"><thead><tr class="bg-gradient-to-r from-gray-100 to-gray-200">';
+            html += '<th class="p-3 rounded-tl-xl text-left">Tarih</th>';
+            html += '<th class="p-3 text-left">Müşteri</th>';
+            html += '<th class="p-3 text-left">Tahsilat</th>';
+            html += '<th class="p-3 text-left">Ödeme Türü</th>';
+            html += '<th class="p-3 text-left">Açıklama</th>';
+            html += '<th class="p-3 rounded-tr-xl text-left">İşlemler</th>';
+            html += '</tr></thead><tbody>';
+
+            if (filtrelenmis.length === 0) {
+                html += '<tr><td colspan="6" class="text-center py-8 text-gray-500">Tahsilat bulunamadı</td></tr>';
+            } else {
+                for (var i = 0; i < filtrelenmis.length; i++) {
+                    var t = filtrelenmis[i];
+                    var odemeIcon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
+
+                    html += '<tr class="table-row border-b hover:bg-gray-50">';
+                    html += '<td class="p-3">' + formatDate(t.tarih) + '</td>';
+                    html += '<td class="p-3 font-semibold">' + t.musteri_adi + '</td>';
+                    html += '<td class="p-3 font-bold text-green-600">' + formatMoney(t.miktar) + '</td>';
+                    html += '<td class="p-3">' + odemeIcon + ' ' + (t.odeme_yontemi || '-') + '</td>';
+                    html += '<td class="p-3">' + (t.aciklama || '-') + '</td>';
+                    html += '<td class="p-3">';
+                    if (yetki === 'admin') {
+                        html += '<button onclick="deleteTahsilat(' + t.id + ')" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-red-600 transition-all">🗑️ Sil</button>';
+                    } else {
+                        html += '-';
+                    }
+                    html += '</td></tr>';
+                }
+            }
+            html += '</tbody></table>';
+            document.getElementById('tahsilatListesi').innerHTML = html;
+        }
+
+        window.deleteTahsilat = async function(id) {
+            if (confirm('Bu tahsilat kaydını silmek istediğinize emin misiniz? Bu işlem borç bakiyesini geri alacaktır.')) {
+                showToast('❌ Tahsilat silme işlemi için lütfen yöneticinizle iletişime geçin', 'error');
+            }
+        };
+
+        window.exportTahsilatToExcel = function() {
+            if (tumTahsilatlar.length === 0) {
+                showToast('Veri yok', 'warning');
+                return;
+            }
+            var exportData = [];
+            for (var i = 0; i < tumTahsilatlar.length; i++) {
+                var t = tumTahsilatlar[i];
+                exportData.push({
+                    Tarih: t.tarih,
+                    Musteri: t.musteri_adi,
+                    TahsilatTutari: t.miktar,
+                    OdemeYontemi: t.odeme_yontemi || '-',
+                    Aciklama: t.aciklama || '-'
+                });
+            }
+            exportToExcel(exportData, 'tahsilatlar');
+        };
+
+        var tahsilatForm = document.getElementById('tahsilatForm');
+        if (tahsilatForm) {
+            tahsilatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var data = {
+                    tarih: document.getElementById('tarih').value,
+                    borc_id: parseInt(document.getElementById('borc_id').value),
+                    miktar: parseFloat(document.getElementById('miktar').value),
+                    odeme_yontemi: document.getElementById('odeme_yontemi').value,
+                    aciklama: document.getElementById('aciklama').value
+                };
+
+                var res = await fetch('/api/tahsilat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    showToast('✅ Tahsilat başarıyla eklendi', 'success');
+                    loadTahsilat();
+                    loadBorclarSelect();
+                    tahsilatForm.reset();
+                    setTodayDate('tarih');
+                } else {
+                    var err = await res.json();
+                    showToast('❌ ' + (err.hata || 'Yetkiniz yok'), 'error');
+                }
+            });
+        }
+
+        var aramaInput = document.getElementById('aramaInput');
+        if (aramaInput) {
+            aramaInput.addEventListener('input', filtreleVeGoster);
+        }
+        var filtreOdeme = document.getElementById('filtreOdeme');
+        if (filtreOdeme) {
+            filtreOdeme.addEventListener('change', filtreleVeGoster);
+        }
+        var filtreAy = document.getElementById('filtreAy');
+        if (filtreAy) {
+            filtreAy.addEventListener('change', filtreleVeGoster);
+            var today = new Date();
+            filtreAy.value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+        }
+
+        (async function() {
+            var me = await fetch('/api/me');
+            var user = await me.json();
+            yetki = user.yetki;
+
+            if (yetki === 'admin') {
+                var adminForm = document.getElementById('adminForm');
+                if (adminForm) adminForm.classList.remove('hidden');
+                setTodayDate('tarih');
+                await loadBorclarSelect();
+            } else {
+                var adminForm = document.getElementById('adminForm');
+                if (adminForm) adminForm.remove();
+                var adminElements = document.querySelectorAll('.admin-only');
+                for (var i = 0; i < adminElements.length; i++) {
+                    if (adminElements[i]) adminElements[i].style.display = 'none';
+                }
+            }
+            await loadTahsilat();
+        })();
+    </script>
+</body>
+
+</html>

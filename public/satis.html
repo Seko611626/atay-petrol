@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Satış İşlemleri | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .payment-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .payment-card:focus-within {
+            border-color: #0A2F6C;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(10, 47, 108, 0.1);
+        }
+        
+        .total-box {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <nav class="navbar text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+                <div class="animate-float">
+                    <h1 class="text-2xl font-bold">💰 SATIŞ İŞLEMLERİ</h1>
+                </div>
+            </div>
+            <div class="space-x-2 flex flex-wrap gap-1">
+                <a href="dashboard.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🏠 Ana</a>
+                <a href="satis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💰 Satış</a>
+                <a href="alis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🚛 Alış</a>
+                <a href="gider.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📉 Gider</a>
+                <a href="borc.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📝 Borçlar</a>
+                <a href="tahsilat.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💵 Tahsilat</a>
+                <a href="rapor.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📊 Rapor</a>
+                <a href="kullanici.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10 admin-only">👥 Kullanıcılar</a>
+                <a href="loglar.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10 admin-only">📜 Loglar</a>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all hover:scale-105">🚪 Çıkış</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-6">
+        <!-- Satış Ekleme Formu (Sadece Admin Görür) -->
+        <div id="adminForm" class="bg-white rounded-2xl shadow-md p-4 sm:p-6 mb-8 border-t-4 border-[#0A2F6C] animate-scale">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-10 h-10 bg-gradient-to-r from-[#0A2F6C] to-[#1E4D8C] rounded-xl flex items-center justify-center">
+                    <span class="text-white text-xl">➕</span>
+                </div>
+                <h2 class="text-xl font-bold gradient-text">Yeni Satış Ekle</h2>
+            </div>
+
+            <form id="satisForm" class="space-y-4">
+                <!-- Temel Bilgiler -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">📅 Tarih</label>
+                        <input type="date" id="tarih" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A2F6C] transition-all" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">⛽ Ürün</label>
+                        <select id="urun_id" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A2F6C] transition-all" required>
+                            <option value="">Seçiniz</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">📏 Litre</label>
+                        <input type="number" id="litre" placeholder="Litre" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A2F6C] transition-all" step="any" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">💵 Satış Fiyatı (TL/L)</label>
+                        <input type="number" id="birim_fiyat" placeholder="Satış Fiyatı" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A2F6C] transition-all" step="any" required>
+                    </div>
+                </div>
+
+                <!-- 4 Ödeme Yöntemi -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                    <div class="payment-card bg-green-50 rounded-xl p-3">
+                        <label class="block text-sm font-medium text-green-700 mb-1">💵 Nakit (TL)</label>
+                        <input type="number" id="nakit" placeholder="0.00" class="w-full border border-green-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white" step="any" value="0">
+                    </div>
+                    <div class="payment-card bg-blue-50 rounded-xl p-3">
+                        <label class="block text-sm font-medium text-blue-700 mb-1">🏦 Havale (TL)</label>
+                        <input type="number" id="havale" placeholder="0.00" class="w-full border border-blue-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white" step="any" value="0">
+                    </div>
+                    <div class="payment-card bg-purple-50 rounded-xl p-3">
+                        <label class="block text-sm font-medium text-purple-700 mb-1">💳 POS (TL)</label>
+                        <input type="number" id="pos" placeholder="0.00" class="w-full border border-purple-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all bg-white" step="any" value="0">
+                    </div>
+                    <div class="payment-card bg-red-50 rounded-xl p-3">
+                        <label class="block text-sm font-medium text-red-700 mb-1">📝 Borç (TL)</label>
+                        <input type="number" id="borc" placeholder="0.00" class="w-full border border-red-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 transition-all bg-white" step="any" value="0">
+                    </div>
+                </div>
+
+                <!-- Toplam ve Kaydet Butonu -->
+                <div class="total-box rounded-xl p-4 mt-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-white font-bold text-lg">💰 TOPLAM SATIŞ:</span>
+                        <span id="toplamTutar" class="text-white font-bold text-2xl">0.00 ₺</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold text-lg flex items-center justify-center gap-2 mt-4">
+                    <span>💾</span> Satış Kaydet
+                </button>
+            </form>
+        </div>
+
+        <!-- Satış Listesi -->
+        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <h2 class="text-xl font-bold gradient-text">📋 Satış Geçmişi</h2>
+                <div class="flex flex-wrap gap-2">
+                    <div class="relative">
+                        <input type="text" id="aramaInput" placeholder="🔍 Ürün ara..." class="border p-2 rounded-xl text-sm pl-8 w-48">
+                        <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+                    </div>
+                    <button onclick="exportSatisToExcel()" class="bg-green-500 text-white px-3 py-2 rounded-xl text-sm hover:bg-green-600 transition-all flex items-center gap-1">
+                        📎 Excel
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <div id="satisListesi" class="min-w-[800px]"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        var yetki = '';
+        var tumSatislar = [];
+        var nakitInput, havaleInput, posInput, borcInput, toplamSpan;
+
+        // Toplam tutarı hesapla
+        function hesaplaToplam() {
+            var nakit = parseFloat(nakitInput.value) || 0;
+            var havale = parseFloat(havaleInput.value) || 0;
+            var pos = parseFloat(posInput.value) || 0;
+            var borc = parseFloat(borcInput.value) || 0;
+            var toplam = nakit + havale + pos + borc;
+            toplamSpan.innerHTML = formatMoney(toplam);
+            return toplam;
+        }
+
+        // Input değişikliklerini dinle
+        function initToplamHesapla() {
+            nakitInput = document.getElementById('nakit');
+            havaleInput = document.getElementById('havale');
+            posInput = document.getElementById('pos');
+            borcInput = document.getElementById('borc');
+            toplamSpan = document.getElementById('toplamTutar');
+
+            if (nakitInput) nakitInput.addEventListener('input', hesaplaToplam);
+            if (havaleInput) havaleInput.addEventListener('input', hesaplaToplam);
+            if (posInput) posInput.addEventListener('input', hesaplaToplam);
+            if (borcInput) borcInput.addEventListener('input', hesaplaToplam);
+        }
+
+        async function loadUrunler() {
+            var res = await fetch('/api/urunler');
+            var urunler = await res.json();
+            var select = document.getElementById('urun_id');
+            var html = '<option value="">Seçiniz</option>';
+            for (var i = 0; i < urunler.length; i++) {
+                html += '<option value="' + urunler[i].id + '">' + urunler[i].ad + '</option>';
+            }
+            select.innerHTML = html;
+        }
+
+        async function loadSatis() {
+            var res = await fetch('/api/satis');
+            tumSatislar = await res.json();
+            filtreleVeGoster();
+        }
+
+        function filtreleVeGoster() {
+            var aramaInput = document.getElementById('aramaInput');
+            var arama = aramaInput ? aramaInput.value.toLowerCase() : '';
+
+            var filtrelenmis = [];
+            for (var i = 0; i < tumSatislar.length; i++) {
+                var s = tumSatislar[i];
+                if (s.urun_adi.toLowerCase().indexOf(arama) !== -1) {
+                    filtrelenmis.push(s);
+                }
+            }
+
+            var toplamTutar = 0;
+            for (var i = 0; i < filtrelenmis.length; i++) {
+                toplamTutar += filtrelenmis[i].toplam_tutar;
+            }
+
+            var html = '';
+            html += '<div class="mb-3 p-2 bg-gray-100 rounded-lg flex justify-between items-center">';
+            html += '<span class="text-sm font-semibold">📊 Toplam: ' + formatMoney(toplamTutar) + '</span>';
+            html += '<span class="text-sm text-gray-500">' + filtrelenmis.length + ' kayıt</span>';
+            html += '</div>';
+            html += '<table class="w-full"><thead><tr class="bg-gradient-to-r from-gray-100 to-gray-200">';
+            html += '<th class="p-3 rounded-tl-xl text-left">Tarih</th>';
+            html += '<th class="p-3 text-left">Ürün</th>';
+            html += '<th class="p-3 text-left">Litre</th>';
+            html += '<th class="p-3 text-left">Fiyat</th>';
+            html += '<th class="p-3 text-left">Nakit</th>';
+            html += '<th class="p-3 text-left">Havale</th>';
+            html += '<th class="p-3 text-left">POS</th>';
+            html += '<th class="p-3 text-left">Borç</th>';
+            html += '<th class="p-3 text-left">Toplam</th>';
+            html += '<th class="p-3 rounded-tr-xl text-left">İşlemler</th>';
+            html += '</tr></thead><tbody>';
+
+            if (filtrelenmis.length === 0) {
+                html += '<tr><td colspan="10" class="text-center py-8 text-gray-500">Satış bulunamadı</tr>';
+            } else {
+                for (var i = 0; i < filtrelenmis.length; i++) {
+                    var s = filtrelenmis[i];
+                    html += '<tr class="table-row border-b hover:bg-gray-50">';
+                    html += '<td class="p-3">' + formatDate(s.tarih) + '</td>';
+                    html += '<td class="p-3 font-semibold">' + s.urun_adi + '</td>';
+                    html += '<td class="p-3">' + formatLiter(s.litre) + '</td>';
+                    html += '<td class="p-3">' + formatMoney(s.birim_fiyat) + '</td>';
+                    html += '<td class="p-3 text-green-600">' + formatMoney(s.nakit || 0) + '</td>';
+                    html += '<td class="p-3 text-blue-600">' + formatMoney(s.havale || 0) + '</td>';
+                    html += '<td class="p-3 text-purple-600">' + formatMoney(s.pos || 0) + '</td>';
+                    html += '<td class="p-3 text-red-600">' + formatMoney(s.borc || 0) + '</td>';
+                    html += '<td class="p-3 font-bold text-green-600">' + formatMoney(s.toplam_tutar) + '</td>';
+                    html += '<td class="p-3">';
+                    if (yetki === 'admin') {
+                        html += '<button onclick="editSatis(' + s.id + ')" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-yellow-600 transition-all mr-1">✏️ Düzenle</button>';
+                        html += '<button onclick="deleteSatis(' + s.id + ')" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-red-600 transition-all">🗑️ Sil</button>';
+                    } else {
+                        html += '-';
+                    }
+                    html += '</td></tr>';
+                }
+            }
+            html += '</tbody></table>';
+            document.getElementById('satisListesi').innerHTML = html;
+        }
+
+        window.editSatis = async function(id) {
+            var satis = null;
+            for (var i = 0; i < tumSatislar.length; i++) {
+                if (tumSatislar[i].id === id) {
+                    satis = tumSatislar[i];
+                    break;
+                }
+            }
+            if (!satis) return;
+
+            var yeniLitre = prompt('Yeni litre:', satis.litre);
+            var yeniFiyat = prompt('Yeni satış fiyatı:', satis.birim_fiyat);
+            var yeniNakit = prompt('Nakit:', satis.nakit || 0);
+            var yeniHavale = prompt('Havale:', satis.havale || 0);
+            var yeniPos = prompt('POS:', satis.pos || 0);
+            var yeniBorc = prompt('Borç:', satis.borc || 0);
+
+            if (yeniLitre && yeniFiyat) {
+                var res = await fetch('/api/satis/' + id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tarih: satis.tarih,
+                        urun_id: satis.urun_id,
+                        litre: parseFloat(yeniLitre),
+                        birim_fiyat: parseFloat(yeniFiyat),
+                        nakit: parseFloat(yeniNakit) || 0,
+                        havale: parseFloat(yeniHavale) || 0,
+                        pos: parseFloat(yeniPos) || 0,
+                        borc: parseFloat(yeniBorc) || 0
+                    })
+                });
+                if (res.ok) {
+                    showToast('✅ Satış güncellendi', 'success');
+                    loadSatis();
+                } else {
+                    showToast('❌ Güncelleme hatası', 'error');
+                }
+            }
+        };
+
+        window.deleteSatis = async function(id) {
+            if (confirm('Bu satış kaydını silmek istediğinize emin misiniz?')) {
+                var res = await fetch('/api/satis/' + id, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast('✅ Satış silindi', 'success');
+                    loadSatis();
+                } else {
+                    showToast('❌ Silme hatası', 'error');
+                }
+            }
+        };
+
+        window.exportSatisToExcel = function() {
+            if (tumSatislar.length === 0) {
+                showToast('Veri yok', 'warning');
+                return;
+            }
+            var exportData = [];
+            for (var i = 0; i < tumSatislar.length; i++) {
+                var s = tumSatislar[i];
+                exportData.push({
+                    Tarih: s.tarih,
+                    Urun: s.urun_adi,
+                    Litre: s.litre,
+                    BirimFiyat: s.birim_fiyat,
+                    Nakit: s.nakit || 0,
+                    Havale: s.havale || 0,
+                    POS: s.pos || 0,
+                    Borc: s.borc || 0,
+                    Toplam: s.toplam_tutar
+                });
+            }
+            exportToExcel(exportData, 'satislar');
+        };
+
+        var satisForm = document.getElementById('satisForm');
+        if (satisForm) {
+            satisForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                var nakit = parseFloat(document.getElementById('nakit').value) || 0;
+                var havale = parseFloat(document.getElementById('havale').value) || 0;
+                var pos = parseFloat(document.getElementById('pos').value) || 0;
+                var borc = parseFloat(document.getElementById('borc').value) || 0;
+
+                var data = {
+                    tarih: document.getElementById('tarih').value,
+                    urun_id: parseInt(document.getElementById('urun_id').value),
+                    litre: parseFloat(document.getElementById('litre').value),
+                    birim_fiyat: parseFloat(document.getElementById('birim_fiyat').value),
+                    nakit: nakit,
+                    havale: havale,
+                    pos: pos,
+                    borc: borc
+                };
+
+                var res = await fetch('/api/satis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    showToast('✅ Satış başarıyla eklendi', 'success');
+                    loadSatis();
+                    satisForm.reset();
+                    setTodayDate('tarih');
+                    if (nakitInput) nakitInput.value = 0;
+                    if (havaleInput) havaleInput.value = 0;
+                    if (posInput) posInput.value = 0;
+                    if (borcInput) borcInput.value = 0;
+                    hesaplaToplam();
+                } else {
+                    var err = await res.json();
+                    showToast('❌ ' + (err.hata || 'Yetkiniz yok'), 'error');
+                }
+            });
+        }
+
+        var aramaInput = document.getElementById('aramaInput');
+        if (aramaInput) {
+            aramaInput.addEventListener('input', filtreleVeGoster);
+        }
+
+        (async function() {
+            var me = await fetch('/api/me');
+            var user = await me.json();
+            yetki = user.yetki;
+
+            if (yetki === 'admin') {
+                var adminForm = document.getElementById('adminForm');
+                if (adminForm) adminForm.classList.remove('hidden');
+                setTodayDate('tarih');
+                initToplamHesapla();
+                hesaplaToplam();
+            } else {
+                var adminForm = document.getElementById('adminForm');
+                if (adminForm) adminForm.remove();
+                var adminElements = document.querySelectorAll('.admin-only');
+                for (var i = 0; i < adminElements.length; i++) {
+                    if (adminElements[i]) adminElements[i].style.display = 'none';
+                }
+            }
+
+            await loadUrunler();
+            await loadSatis();
+        })();
+    </script>
+</body>
+
+</html>

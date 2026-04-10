@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Kullanıcı Yönetimi | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-card {
+            transition: all 0.3s ease;
+        }
+        
+        .form-card:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(10, 47, 108, 0.1);
+        }
+        
+        .user-card {
+            transition: all 0.3s ease;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <nav class="navbar text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+                <div class="animate-float">
+                    <h1 class="text-2xl font-bold">👥 KULLANICI YÖNETİMİ</h1>
+                </div>
+                <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">Admin Panel</span>
+            </div>
+            <div class="space-x-2 flex flex-wrap gap-1">
+                <a href="dashboard.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🏠 Ana</a>
+                <a href="satis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💰 Satış</a>
+                <a href="alis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🚛 Alış</a>
+                <a href="gider.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📉 Gider</a>
+                <a href="borc.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📝 Borçlar</a>
+                <a href="tahsilat.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💵 Tahsilat</a>
+                <a href="rapor.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📊 Rapor</a>
+                <a href="kullanici.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">👥 Kullanıcılar</a>
+                <a href="loglar.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📜 Loglar</a>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all hover:scale-105">🚪 Çıkış</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-6">
+        <!-- İstatistik Kartları -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 animate-fadeLeft user-card">
+                <p class="text-sm text-gray-500">👥 Toplam Kullanıcı</p>
+                <p class="text-2xl font-bold text-blue-600" id="toplamKullanici">0</p>
+            </div>
+            <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl p-4 animate-fadeUp user-card">
+                <p class="text-sm text-gray-500">👑 Admin Sayısı</p>
+                <p class="text-2xl font-bold text-purple-600" id="adminSayisi">0</p>
+            </div>
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 animate-fadeDown user-card">
+                <p class="text-sm text-gray-500">👁️ İzleyici Sayısı</p>
+                <p class="text-2xl font-bold text-green-600" id="izleyiciSayisi">0</p>
+            </div>
+            <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 animate-fadeRight user-card">
+                <p class="text-sm text-gray-500">✅ Aktif Kullanıcı</p>
+                <p class="text-2xl font-bold text-orange-600" id="aktifSayisi">0</p>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Ekleme Formu -->
+        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 mb-8 border-t-4 border-yellow-500 form-card animate-scale">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-10 h-10 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white text-xl">➕</span>
+                </div>
+                <h2 class="text-xl font-bold text-yellow-600">Yeni Kullanıcı Ekle</h2>
+            </div>
+            <form id="kullaniciForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">📧 E-posta</label>
+                    <input type="email" id="email" placeholder="ornek@atay.com" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Şifre</label>
+                    <input type="password" id="sifre" placeholder="••••••••" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">👤 Ad Soyad</label>
+                    <input type="text" id="adsoyad" placeholder="Ad Soyad" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">⭐ Yetki</label>
+                    <select id="yetki" class="w-full border p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all">
+                        <option value="user">👁️ İzleyici (Sadece Görüntüleme)</option>
+                        <option value="admin">👑 Admin (Tam Yetki)</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 lg:col-span-4">
+                    <button type="submit" class="bg-yellow-600 text-white w-full py-3 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-yellow-700 transition-all">
+                        <span>💾</span> Kullanıcı Ekle
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Kullanıcı Listesi -->
+        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <h2 class="text-xl font-bold gradient-text">📋 Mevcut Kullanıcılar</h2>
+                <div class="flex flex-wrap gap-2">
+                    <div class="relative">
+                        <input type="text" id="aramaInput" placeholder="🔍 Kullanıcı ara..." class="border p-2 rounded-xl text-sm pl-8 w-48">
+                        <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+                    </div>
+                    <select id="filtreYetki" class="border p-2 rounded-xl text-sm">
+                        <option value="">Tüm Yetkiler</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">İzleyici</option>
+                    </select>
+                    <button onclick="exportKullanicilarToExcel()" class="bg-green-500 text-white px-3 py-2 rounded-xl text-sm hover:bg-green-600 transition-all flex items-center gap-1">
+                        📎 Excel
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <div id="kullaniciListesi" class="min-w-[800px]"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        var tumKullanicilar = [];
+
+        async function loadKullanicilar() {
+            var res = await fetch('/api/kullanicilar');
+            tumKullanicilar = await res.json();
+            filtreleVeGoster();
+            istatistikleriGuncelle();
+        }
+
+        function istatistikleriGuncelle() {
+            var toplam = tumKullanicilar.length;
+            var admin = 0;
+            var izleyici = 0;
+            var aktif = 0;
+
+            for (var i = 0; i < tumKullanicilar.length; i++) {
+                var k = tumKullanicilar[i];
+                if (k.yetki === 'admin') admin++;
+                if (k.yetki === 'user') izleyici++;
+                if (k.aktif === 1) aktif++;
+            }
+
+            document.getElementById('toplamKullanici').innerHTML = toplam;
+            document.getElementById('adminSayisi').innerHTML = admin;
+            document.getElementById('izleyiciSayisi').innerHTML = izleyici;
+            document.getElementById('aktifSayisi').innerHTML = aktif;
+        }
+
+        function filtreleVeGoster() {
+            var aramaInput = document.getElementById('aramaInput');
+            var arama = aramaInput ? aramaInput.value.toLowerCase() : '';
+            var yetkiFiltre = document.getElementById('filtreYetki') ? document.getElementById('filtreYetki').value : '';
+
+            var filtrelenmis = [];
+            for (var i = 0; i < tumKullanicilar.length; i++) {
+                var k = tumKullanicilar[i];
+                var emailVar = k.email.toLowerCase().indexOf(arama) !== -1;
+                var adVar = k.adsoyad.toLowerCase().indexOf(arama) !== -1;
+                var uyuyorMu = emailVar || adVar;
+                var yetkiUyuyor = yetkiFiltre === '' || k.yetki === yetkiFiltre;
+                if (uyuyorMu && yetkiUyuyor) {
+                    filtrelenmis.push(k);
+                }
+            }
+
+            var html = '';
+            html += '<div class="mb-3 p-2 bg-gray-100 rounded-lg flex justify-between items-center">';
+            html += '<span class="text-sm font-semibold">📊 Toplam: ' + filtrelenmis.length + ' kullanıcı</span>';
+            html += '</div>';
+            html += '<table class="w-full"><thead><tr class="bg-gradient-to-r from-gray-100 to-gray-200">';
+            html += '<th class="p-3 rounded-tl-xl text-left">ID</th>';
+            html += '<th class="p-3 text-left">E-posta</th>';
+            html += '<th class="p-3 text-left">Ad Soyad</th>';
+            html += '<th class="p-3 text-left">Yetki</th>';
+            html += '<th class="p-3 text-left">Durum</th>';
+            html += '<th class="p-3 rounded-tr-xl text-left">İşlemler</th>';
+            html += '<tr></thead><tbody>';
+
+            if (filtrelenmis.length === 0) {
+                html += '<tr><td colspan="6" class="text-center py-8 text-gray-500">Kullanıcı bulunamadı</td></tr>';
+            } else {
+                for (var i = 0; i < filtrelenmis.length; i++) {
+                    var k = filtrelenmis[i];
+                    var yetkiText = k.yetki === 'admin' ? '👑 Admin' : '👁️ İzleyici';
+                    var yetkiClass = k.yetki === 'admin' ? 'text-purple-600' : 'text-green-600';
+                    var durumText = k.aktif == 1 ? '✅ Aktif' : '❌ Pasif';
+                    var durumClass = k.aktif == 1 ? 'text-green-600' : 'text-red-600';
+
+                    html += '<tr class="table-row border-b hover:bg-gray-50">';
+                    html += '<td class="p-3">' + k.id + '</td>';
+                    html += '<td class="p-3">' + k.email + '</td>';
+                    html += '<td class="p-3 font-semibold">' + k.adsoyad + '</td>';
+                    html += '<td class="p-3 ' + yetkiClass + '">' + yetkiText + '</td>';
+                    html += '<td class="p-3 ' + durumClass + '">' + durumText + '</td>';
+                    html += '<td class="p-3">';
+                    html += '<button onclick="editKullanici(' + k.id + ', \'' + k.adsoyad.replace(/'/g, "\\'") + '\', \'' + k.yetki + '\', ' + k.aktif + ')" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-yellow-600 transition-all mr-1">✏️ Düzenle</button>';
+                    html += '<button onclick="deleteKullanici(' + k.id + ')" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs hover:bg-red-600 transition-all">🗑️ Sil</button>';
+                    html += '</td></tr>';
+                }
+            }
+            html += '</tbody>}</div>';
+            document.getElementById('kullaniciListesi').innerHTML = html;
+        }
+
+        window.editKullanici = async function(id, adsoyad, yetkiDurum, aktifDurum) {
+            var yeniAd = prompt('Yeni ad soyad:', adsoyad);
+            if (!yeniAd) return;
+            var yeniYetki = prompt('Yeni yetki (admin/user):', yetkiDurum);
+            if (!yeniYetki || (yeniYetki !== 'admin' && yeniYetki !== 'user')) {
+                showToast('Yetki sadece admin veya user olabilir', 'error');
+                return;
+            }
+            var yeniDurum = prompt('Durum (1=aktif, 0=pasif):', aktifDurum);
+            if (yeniDurum !== '0' && yeniDurum !== '1') {
+                showToast('Durum 1 veya 0 olmalıdır', 'error');
+                return;
+            }
+
+            var res = await fetch('/api/kullanici/' + id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    adsoyad: yeniAd,
+                    yetki: yeniYetki,
+                    aktif: parseInt(yeniDurum)
+                })
+            });
+            if (res.ok) {
+                showToast('✅ Kullanıcı güncellendi', 'success');
+                loadKullanicilar();
+            } else {
+                showToast('❌ Güncelleme hatası', 'error');
+            }
+        };
+
+        window.deleteKullanici = async function(id) {
+            if (confirm('Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+                var res = await fetch('/api/kullanici/' + id, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast('✅ Kullanıcı silindi', 'success');
+                    loadKullanicilar();
+                } else {
+                    showToast('❌ Silme hatası', 'error');
+                }
+            }
+        };
+
+        window.exportKullanicilarToExcel = function() {
+            if (tumKullanicilar.length === 0) {
+                showToast('Veri yok', 'warning');
+                return;
+            }
+            var exportData = [];
+            for (var i = 0; i < tumKullanicilar.length; i++) {
+                var k = tumKullanicilar[i];
+                exportData.push({
+                    ID: k.id,
+                    Email: k.email,
+                    AdSoyad: k.adsoyad,
+                    Yetki: k.yetki === 'admin' ? 'Admin' : 'İzleyici',
+                    Durum: k.aktif == 1 ? 'Aktif' : 'Pasif'
+                });
+            }
+            exportToExcel(exportData, 'kullanicilar');
+        };
+
+        var kullaniciForm = document.getElementById('kullaniciForm');
+        if (kullaniciForm) {
+            kullaniciForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var data = {
+                    email: document.getElementById('email').value,
+                    sifre: document.getElementById('sifre').value,
+                    adsoyad: document.getElementById('adsoyad').value,
+                    yetki: document.getElementById('yetki').value
+                };
+
+                var res = await fetch('/api/kullanici', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    showToast('✅ Kullanıcı eklendi', 'success');
+                    loadKullanicilar();
+                    kullaniciForm.reset();
+                } else {
+                    var err = await res.json();
+                    showToast('❌ ' + err.hata, 'error');
+                }
+            });
+        }
+
+        var aramaInput = document.getElementById('aramaInput');
+        if (aramaInput) {
+            aramaInput.addEventListener('input', filtreleVeGoster);
+        }
+        var filtreYetki = document.getElementById('filtreYetki');
+        if (filtreYetki) {
+            filtreYetki.addEventListener('change', filtreleVeGoster);
+        }
+
+        (async function() {
+            var me = await fetch('/api/me');
+            var user = await me.json();
+
+            if (user.yetki !== 'admin') {
+                window.location.href = '/dashboard.html';
+                return;
+            }
+
+            await loadKullanicilar();
+        })();
+    </script>
+</body>
+
+</html>
