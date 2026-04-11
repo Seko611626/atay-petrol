@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Atay Petrol</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Atay Petrol | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,10 +17,6 @@
             background: #f0f4f8;
         }
         
-        .bg-primary {
-            background: #B9F2FF;
-        }
-        
         .btn-primary {
             background: #0A2F6C;
             transition: all 0.3s;
@@ -31,17 +27,44 @@
             background: #1E4D8C;
         }
         
-        .card {
+        .btn-success {
+            background: #10B981;
             transition: all 0.3s;
         }
         
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        .btn-success:hover {
+            transform: translateY(-2px);
+            background: #059669;
+        }
+        
+        .btn-danger {
+            background: #EF4444;
+            transition: all 0.3s;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            background: #DC2626;
+        }
+        
+        .btn-warning {
+            background: #F59E0B;
+            transition: all 0.3s;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            background: #D97706;
         }
         
         .stat-card {
             border-left: 4px solid;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         .stat-card-1 {
@@ -59,6 +82,29 @@
         .stat-card-4 {
             border-left-color: #EF4444;
         }
+        
+        .section-card {
+            transition: all 0.3s;
+        }
+        
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .tab-active {
+            background: #0A2F6C;
+            color: white;
+        }
+        
+        .tab-inactive {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .admin-only {
+            display: none;
+        }
     </style>
 </head>
 
@@ -68,16 +114,15 @@
         <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
             <div class="flex items-center gap-3">
                 <h1 class="text-2xl font-bold">⛽ ATAY PETROL</h1>
-                <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full">Admin Panel</span>
+                <span id="userBadge" class="text-xs px-2 py-1 rounded-full">Yükleniyor...</span>
             </div>
             <div class="flex gap-2 flex-wrap">
-                <a href="dashboard.html" class="px-3 py-2 rounded-lg hover:bg-white/10">🏠 Dashboard</a>
-                <a href="borc.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📝 Borçlar</a>
-                <a href="tahsilat.html" class="px-3 py-2 rounded-lg hover:bg-white/10">💵 Tahsilat</a>
-                <a href="gider.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📉 Gider</a>
-                <a href="kullanici.html" class="px-3 py-2 rounded-lg hover:bg-white/10">👥 Kullanıcılar</a>
-                <a href="loglar.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📜 Loglar</a>
-                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700">🚪 Çıkış</button>
+                <button id="anasayfaBtn" class="px-3 py-2 rounded-lg hover:bg-white/10 transition">🏠 Ana Sayfa</button>
+                <button id="borclarBtn" class="px-3 py-2 rounded-lg hover:bg-white/10 transition admin-only">📝 Borçlar</button>
+                <button id="giderlerBtn" class="px-3 py-2 rounded-lg hover:bg-white/10 transition admin-only">📉 Giderler</button>
+                <button id="kullaniciBtn" class="px-3 py-2 rounded-lg hover:bg-white/10 transition admin-only">👥 Kullanıcılar</button>
+                <button id="loglarBtn" class="px-3 py-2 rounded-lg hover:bg-white/10 transition admin-only">📜 Loglar</button>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition">🚪 Çıkış</button>
             </div>
         </div>
     </nav>
@@ -89,287 +134,277 @@
                 <div class="flex items-center gap-3">
                     <span class="text-2xl">📅</span>
                     <input type="date" id="tarih" class="border p-2 rounded-xl text-lg font-semibold">
+                    <button id="bugunBtn" class="bg-gray-200 px-3 py-2 rounded-xl text-sm hover:bg-gray-300">Bugün</button>
                 </div>
-                <div class="text-sm text-gray-500">
-                    Tarih seçin veya boş bırakın (bugün gösterir)
-                </div>
+                <div class="text-sm text-gray-500">Tarih seçin veya boş bırakın (bugün gösterir)</div>
             </div>
         </div>
 
         <!-- İstatistik Kartları -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="stat-card stat-card-1 bg-white rounded-2xl shadow-md p-4 card">
+            <div class="stat-card stat-card-1 bg-white rounded-2xl shadow-md p-4">
                 <p class="text-gray-500 text-sm">🚛 Bugünkü Alış</p>
                 <p class="text-2xl font-bold text-green-600" id="toplamAlis">0 ₺</p>
             </div>
-            <div class="stat-card stat-card-2 bg-white rounded-2xl shadow-md p-4 card">
+            <div class="stat-card stat-card-2 bg-white rounded-2xl shadow-md p-4">
                 <p class="text-gray-500 text-sm">💰 Bugünkü Satış</p>
                 <p class="text-2xl font-bold text-blue-600" id="toplamSatis">0 ₺</p>
             </div>
-            <div class="stat-card stat-card-3 bg-white rounded-2xl shadow-md p-4 card">
+            <div class="stat-card stat-card-3 bg-white rounded-2xl shadow-md p-4">
                 <p class="text-gray-500 text-sm">📈 Bugünkü Kar</p>
                 <p class="text-2xl font-bold text-purple-600" id="toplamKar">0 ₺</p>
             </div>
-            <div class="stat-card stat-card-4 bg-white rounded-2xl shadow-md p-4 card">
+            <div class="stat-card stat-card-4 bg-white rounded-2xl shadow-md p-4">
                 <p class="text-gray-500 text-sm">💵 Bugünkü Tahsilat</p>
                 <p class="text-2xl font-bold text-red-600" id="toplamTahsilat">0 ₺</p>
             </div>
         </div>
 
-        <!-- Satış Ekleme Formu -->
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4">➕ Yeni Satış Ekle</h2>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <select id="urun_id" class="border p-3 rounded-xl">
-                    <option value="">Ürün Seç</option>
-                </select>
-                <input type="number" id="litre" placeholder="Litre" class="border p-3 rounded-xl" step="any">
-                <input type="number" id="alis_fiyat" placeholder="Alış Fiyatı (TL/L)" class="border p-3 rounded-xl" step="any">
-                <input type="number" id="satis_fiyat" placeholder="Satış Fiyatı (TL/L)" class="border p-3 rounded-xl" step="any">
-                <button id="satisEkleBtn" class="btn-primary text-white p-3 rounded-xl font-semibold">Satış Ekle</button>
+        <!-- Ana Sayfa İçeriği (Dashboard) -->
+        <div id="anaSayfa" class="space-y-6">
+            <!-- Satış Ekleme -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">➕ Satış Ekle</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <select id="urun_id" class="border p-3 rounded-xl">
+                        <option value="">Ürün Seç</option>
+                    </select>
+                    <input type="number" id="litre" placeholder="Litre" class="border p-3 rounded-xl" step="any">
+                    <input type="number" id="alis_fiyat" placeholder="Alış Fiyatı (TL/L)" class="border p-3 rounded-xl" step="any">
+                    <input type="number" id="satis_fiyat" placeholder="Satış Fiyatı (TL/L)" class="border p-3 rounded-xl" step="any">
+                    <button id="satisEkleBtn" class="btn-primary text-white p-3 rounded-xl font-semibold">Satış Ekle</button>
+                </div>
+                <div id="anlikKar" class="mt-3 text-center text-lg font-bold text-green-600 hidden"></div>
             </div>
-            <div id="anlikKar" class="mt-3 text-center text-lg font-bold text-green-600 hidden"></div>
+
+            <!-- Gün Sonu Ödemeleri -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">💵 Gün Sonu Ödemeleri</h2>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="bg-green-50 p-3 rounded-xl">
+                        <label class="text-sm text-green-700">Nakit (TL)</label>
+                        <input type="number" id="nakit" class="w-full border p-2 rounded-lg" value="0" step="any">
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-xl">
+                        <label class="text-sm text-blue-700">Havale (TL)</label>
+                        <input type="number" id="havale" class="w-full border p-2 rounded-lg" value="0" step="any">
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-xl">
+                        <label class="text-sm text-purple-700">POS (TL)</label>
+                        <input type="number" id="pos" class="w-full border p-2 rounded-lg" value="0" step="any">
+                    </div>
+                    <div class="bg-red-50 p-3 rounded-xl">
+                        <label class="text-sm text-red-700">Borç (TL)</label>
+                        <input type="number" id="borc" class="w-full border p-2 rounded-lg" value="0" step="any">
+                    </div>
+                    <button id="gunSonuBtn" class="btn-primary text-white p-3 rounded-xl font-semibold">Kaydet</button>
+                </div>
+            </div>
+
+            <!-- Gider Ekleme -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6 admin-only" id="giderForm">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">📉 Gider Ekle</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <select id="gider_kategori" class="border p-3 rounded-xl">
+                        <option value="Elektrik">⚡ Elektrik</option>
+                        <option value="Su">💧 Su</option>
+                        <option value="Kira">🏠 Kira</option>
+                        <option value="Personel">👥 Personel</option>
+                        <option value="Bakım">🔧 Bakım</option>
+                        <option value="Vergi">📄 Vergi</option>
+                        <option value="Diğer">📌 Diğer</option>
+                    </select>
+                    <input type="text" id="gider_aciklama" placeholder="Açıklama" class="border p-3 rounded-xl">
+                    <input type="number" id="gider_miktar" placeholder="Miktar (TL)" class="border p-3 rounded-xl" step="any">
+                    <button id="giderEkleBtn" class="btn-warning text-white p-3 rounded-xl font-semibold col-span-2">Gider Ekle</button>
+                </div>
+            </div>
+
+            <!-- Borç Ekleme -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6 admin-only" id="borcForm">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">📝 Borç Ekle</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <input type="text" id="borc_musteri" placeholder="Müşteri Adı" class="border p-3 rounded-xl">
+                    <input type="number" id="borc_miktar" placeholder="Borç Tutarı (TL)" class="border p-3 rounded-xl" step="any">
+                    <input type="text" id="borc_aciklama" placeholder="Açıklama" class="border p-3 rounded-xl">
+                    <button id="borcEkleBtn" class="btn-danger text-white p-3 rounded-xl font-semibold">Borç Ekle</button>
+                </div>
+            </div>
+
+            <!-- Satış Listesi -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <h2 class="text-xl font-bold text-[#0A2F6C]">📋 Satış Listesi</h2>
+                    <button id="satisExcelBtn" class="bg-green-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-600">📎 Excel</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3 text-left">Saat</th>
+                                <th class="p-3 text-left">Ürün</th>
+                                <th class="p-3 text-left">Litre</th>
+                                <th class="p-3 text-left">Alış</th>
+                                <th class="p-3 text-left">Satış</th>
+                                <th class="p-3 text-left">Kar</th>
+                                <th class="p-3 text-left">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="satisListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Borç Listesi -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6 admin-only" id="borcListe">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <h2 class="text-xl font-bold text-[#0A2F6C]">📋 Borç Listesi</h2>
+                    <input type="text" id="borcArama" placeholder="🔍 Müşteri ara..." class="border p-2 rounded-xl text-sm">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3 text-left">Tarih</th>
+                                <th class="p-3 text-left">Müşteri</th>
+                                <th class="p-3 text-left">Borç</th>
+                                <th class="p-3 text-left">Kalan</th>
+                                <th class="p-3 text-left">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borcListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gider Listesi -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6 admin-only" id="giderListe">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                    <h2 class="text-xl font-bold text-[#0A2F6C]">📋 Gider Listesi</h2>
+                    <input type="text" id="giderArama" placeholder="🔍 Kategori ara..." class="border p-2 rounded-xl text-sm">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3 text-left">Tarih</th>
+                                <th class="p-3 text-left">Kategori</th>
+                                <th class="p-3 text-left">Açıklama</th>
+                                <th class="p-3 text-left">Miktar</th>
+                                <th class="p-3 text-left">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="giderListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Grafik -->
+            <div class="section-card bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">📊 Ödeme Yöntemleri Dağılımı</h2>
+                <canvas id="odemeChart" height="150"></canvas>
+            </div>
         </div>
 
-        <!-- Gün Sonu Ödeme Girişi -->
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4">💵 Gün Sonu Ödemeleri</h2>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div class="bg-green-50 p-3 rounded-xl">
-                    <label class="text-sm text-green-700">Nakit (TL)</label>
-                    <input type="number" id="nakit" class="w-full border p-2 rounded-lg" value="0" step="any">
+        <!-- Borçlar Sayfası (Gizli) -->
+        <div id="borclarSayfa" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">📝 Tüm Borçlar</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3">Tarih</th>
+                                <th class="p-3">Müşteri</th>
+                                <th class="p-3">Borç</th>
+                                <th class="p-3">Kalan</th>
+                                <th class="p-3">Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tumBorclarListesi"></tbody>
+                    </table>
                 </div>
-                <div class="bg-blue-50 p-3 rounded-xl">
-                    <label class="text-sm text-blue-700">Havale (TL)</label>
-                    <input type="number" id="havale" class="w-full border p-2 rounded-lg" value="0" step="any">
-                </div>
-                <div class="bg-purple-50 p-3 rounded-xl">
-                    <label class="text-sm text-purple-700">POS (TL)</label>
-                    <input type="number" id="pos" class="w-full border p-2 rounded-lg" value="0" step="any">
-                </div>
-                <div class="bg-red-50 p-3 rounded-xl">
-                    <label class="text-sm text-red-700">Borç (TL)</label>
-                    <input type="number" id="borc" class="w-full border p-2 rounded-lg" value="0" step="any">
-                </div>
-                <button id="gunSonuBtn" class="bg-[#0A2F6C] text-white p-3 rounded-xl font-semibold">Kaydet</button>
             </div>
         </div>
 
-        <!-- Satış Listesi -->
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4">📋 Günlük Satış Listesi</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-3 text-left">Saat</th>
-                            <th class="p-3 text-left">Ürün</th>
-                            <th class="p-3 text-left">Litre</th>
-                            <th class="p-3 text-left">Alış Fiyatı</th>
-                            <th class="p-3 text-left">Satış Fiyatı</th>
-                            <th class="p-3 text-left">Kar</th>
-                            <th class="p-3 text-left">İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="satisListesi"></tbody>
-                </table>
+        <!-- Giderler Sayfası (Gizli) -->
+        <div id="giderlerSayfa" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">📉 Tüm Giderler</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3">Tarih</th>
+                                <th class="p-3">Kategori</th>
+                                <th class="p-3">Açıklama</th>
+                                <th class="p-3">Miktar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tumGiderlerListesi"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- Grafik -->
-        <div class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-xl font-bold mb-4">📊 Ödeme Yöntemleri Dağılımı</h2>
-            <canvas id="odemeChart" height="150"></canvas>
+        <!-- Kullanıcı Yönetimi Sayfası (Gizli) -->
+        <div id="kullaniciSayfa" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">👥 Kullanıcı Yönetimi</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <input type="email" id="user_email" placeholder="E-posta" class="border p-3 rounded-xl">
+                    <input type="password" id="user_sifre" placeholder="Şifre" class="border p-3 rounded-xl">
+                    <input type="text" id="user_adsoyad" placeholder="Ad Soyad" class="border p-3 rounded-xl">
+                    <select id="user_yetki" class="border p-3 rounded-xl">
+                        <option value="user">İzleyici</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button id="userEkleBtn" class="btn-primary text-white p-3 rounded-xl font-semibold col-span-4">Kullanıcı Ekle</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3">ID</th>
+                                <th class="p-3">E-posta</th>
+                                <th class="p-3">Ad Soyad</th>
+                                <th class="p-3">Yetki</th>
+                                <th class="p-3">Durum</th>
+                                <th class="p-3">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kullaniciListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loglar Sayfası (Gizli) -->
+        <div id="loglarSayfa" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 text-[#0A2F6C]">📜 Giriş Logları</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3">Email</th>
+                                <th class="p-3">IP Adresi</th>
+                                <th class="p-3">Giriş Zamanı</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loglarListesi"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        let yetki = '';
         let odemeChart;
-        let currentTarih = '';
+        let currentPage = 'anasayfa';
 
-        async function loadUrunler() {
-            const res = await fetch('/api/urunler');
-            const urunler = await res.json();
-            const select = document.getElementById('urun_id');
-            select.innerHTML = '<option value="">Ürün Seç</option>' + urunler.map(u => `<option value="${u.id}">${u.ad}</option>`).join('');
-        }
-
-        async function loadIstatistik() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-            currentTarih = tarih;
-
-            const res = await fetch(`/api/istatistik?tarih=${tarih}`);
-            const data = await res.json();
-
-            document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
-            document.getElementById('toplamSatis').innerHTML = formatMoney(data.toplamSatis);
-            document.getElementById('toplamKar').innerHTML = formatMoney(data.toplamKar);
-            document.getElementById('toplamTahsilat').innerHTML = formatMoney(data.tahsilat);
-
-            document.getElementById('nakit').value = data.nakit;
-            document.getElementById('havale').value = data.havale;
-            document.getElementById('pos').value = data.pos;
-            document.getElementById('borc').value = data.borc;
-        }
-
-        async function loadSatisListesi() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-
-            const res = await fetch(`/api/satis/tarih?tarih=${tarih}`);
-            const satislar = await res.json();
-
-            let html = '';
-            for (let s of satislar) {
-                html += `<tr class="border-b hover:bg-gray-50">
-                    <td class="p-3">${s.saat || '-'}</td>
-                    <td class="p-3 font-semibold">${s.urun_adi}</td>
-                    <td class="p-3">${formatLiter(s.litre)}</td>
-                    <td class="p-3">${formatMoney(s.alis_fiyat)}</td>
-                    <td class="p-3">${formatMoney(s.satis_fiyat)}</td>
-                    <td class="p-3 font-bold text-green-600">${formatMoney(s.kar)}</td>
-                    <td class="p-3"><button onclick="deleteSatis(${s.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs">Sil</button></td>
-                </tr>`;
-            }
-            if (satislar.length === 0) html = '<tr><td colspan="7" class="text-center py-8 text-gray-500">Satış bulunamadı</td></tr>';
-            document.getElementById('satisListesi').innerHTML = html;
-        }
-
-        async function loadOdemeChart() {
-            const res = await fetch('/api/odeme-rapor');
-            const data = await res.json();
-            const odemeData = data[0] || {
-                nakit: 0,
-                havale: 0,
-                pos: 0,
-                borc: 0
-            };
-
-            if (odemeChart) odemeChart.destroy();
-            const ctx = document.getElementById('odemeChart').getContext('2d');
-            odemeChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Nakit', 'Havale', 'POS', 'Borç'],
-                    datasets: [{
-                        data: [odemeData.nakit, odemeData.havale, odemeData.pos, odemeData.borc],
-                        backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        window.deleteSatis = async function(id) {
-            if (confirm('Satışı silmek istediğinize emin misiniz?')) {
-                await fetch(`/api/satis/${id}`, {
-                    method: 'DELETE'
-                });
-                loadIstatistik();
-                loadSatisListesi();
-                loadOdemeChart();
-                showToast('Satış silindi', 'success');
-            }
-        };
-
-        document.getElementById('satisEkleBtn').onclick = async() => {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-
-            const urun_id = document.getElementById('urun_id').value;
-            const litre = parseFloat(document.getElementById('litre').value);
-            const alis_fiyat = parseFloat(document.getElementById('alis_fiyat').value);
-            const satis_fiyat = parseFloat(document.getElementById('satis_fiyat').value);
-
-            if (!urun_id || !litre || !alis_fiyat || !satis_fiyat) {
-                showToast('Tüm alanları doldurun', 'error');
-                return;
-            }
-
-            const saat = new Date().toLocaleTimeString('tr-TR');
-            const res = await fetch('/api/satis', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tarih,
-                    urun_id,
-                    litre,
-                    alis_fiyat,
-                    satis_fiyat,
-                    saat
-                })
-            });
-            const data = await res.json();
-
-            if (res.ok) {
-                showToast(`Satış eklendi! Kar: ${formatMoney(data.kar)}`, 'success');
-                document.getElementById('litre').value = '';
-                document.getElementById('alis_fiyat').value = '';
-                document.getElementById('satis_fiyat').value = '';
-                loadIstatistik();
-                loadSatisListesi();
-                loadOdemeChart();
-            } else {
-                showToast('Hata oluştu', 'error');
-            }
-        };
-
-        document.getElementById('gunSonuBtn').onclick = async() => {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-
-            const nakit = parseFloat(document.getElementById('nakit').value) || 0;
-            const havale = parseFloat(document.getElementById('havale').value) || 0;
-            const pos = parseFloat(document.getElementById('pos').value) || 0;
-            const borc = parseFloat(document.getElementById('borc').value) || 0;
-
-            const res = await fetch('/api/gun-sonu', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    tarih,
-                    nakit,
-                    havale,
-                    pos,
-                    borc
-                })
-            });
-
-            if (res.ok) {
-                showToast('Gün sonu kaydedildi', 'success');
-                loadIstatistik();
-                loadOdemeChart();
-            } else {
-                showToast('Hata oluştu', 'error');
-            }
-        };
-
-        document.getElementById('tarih').addEventListener('change', () => {
-            loadIstatistik();
-            loadSatisListesi();
-        });
-
-        document.getElementById('cikisBtn').onclick = async() => {
-            await fetch('/api/logout', {
-                method: 'POST'
-            });
-            window.location.href = '/';
-        };
-
+        // ============ GENEL FONKSİYONLAR ============
         function formatMoney(amount) {
             return (amount || 0).toLocaleString('tr-TR', {
                 minimumFractionDigits: 2
@@ -382,15 +417,271 @@
             }) + ' L';
         }
 
-        function showToast(msg, type) {
-            alert(msg);
+        // ============ SAYFA GEÇİŞLERİ ============
+        function showPage(page) {
+            document.getElementById('anaSayfa').classList.add('hidden');
+            document.getElementById('borclarSayfa').classList.add('hidden');
+            document.getElementById('giderlerSayfa').classList.add('hidden');
+            document.getElementById('kullaniciSayfa').classList.add('hidden');
+            document.getElementById('loglarSayfa').classList.add('hidden');
+
+            if (page === 'anasayfa') document.getElementById('anaSayfa').classList.remove('hidden');
+            else if (page === 'borclar') document.getElementById('borclarSayfa').classList.remove('hidden');
+            else if (page === 'giderler') document.getElementById('giderlerSayfa').classList.remove('hidden');
+            else if (page === 'kullanici') document.getElementById('kullaniciSayfa').classList.remove('hidden');
+            else if (page === 'loglar') document.getElementById('loglarSayfa').classList.remove('hidden');
+            currentPage = page;
         }
 
-        loadUrunler();
-        loadIstatistik();
-        loadSatisListesi();
-        loadOdemeChart();
-        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
+        // ============ DASHBOARD VERİLERİ ============
+        async function loadDashboard() {
+            let tarih = document.getElementById('tarih').value;
+            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            const res = await fetch(`/api/istatistik?tarih=${tarih}`);
+            const data = await res.json();
+            document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
+            document.getElementById('toplamSatis').innerHTML = formatMoney(data.toplamSatis);
+            document.getElementById('toplamKar').innerHTML = formatMoney(data.toplamKar);
+            document.getElementById('toplamTahsilat').innerHTML = formatMoney(data.tahsilat);
+            document.getElementById('nakit').value = data.nakit || 0;
+            document.getElementById('havale').value = data.havale || 0;
+            document.getElementById('pos').value = data.pos || 0;
+            document.getElementById('borc').value = data.borc || 0;
+        }
+
+        // ============ ÜRÜNLER ============
+        async function loadUrunler() {
+            const res = await fetch('/api/urunler');
+            const urunler = await res.json();
+            const select = document.getElementById('urun_id');
+            select.innerHTML = '<option value="">Ürün Seç</option>';
+            for (let u of urunler) select.innerHTML += `<option value="${u.id}">${u.ad}</option>`;
+        }
+
+        // ============ SATIŞ İŞLEMLERİ ============
+        async function loadSatis() {
+            let tarih = document.getElementById('tarih').value;
+            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            const res = await fetch(`/api/satis/tarih?tarih=${tarih}`);
+            const satislar = await res.json();
+            let html = '';
+            for (let s of satislar) {
+                html += `<tr class="border-b hover:bg-gray-50">
+                    <td class="p-3">${s.saat || '-'}</td>
+                    <td class="p-3 font-semibold">${s.urun_adi}</td>
+                    <td class="p-3">${formatLiter(s.litre)}</td>
+                    <td class="p-3">${formatMoney(s.alis_fiyat)}</td>
+                    <td class="p-3">${formatMoney(s.satis_fiyat)}</td>
+                    <td class="p-3 font-bold text-green-600">${formatMoney(s.kar)}</td>
+                    <td class="p-3">${yetki === 'admin' ? `<button onclick="deleteSatis(${s.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs">Sil</button>` : '-'}</td>
+                </td>`;
+            }
+            if(satislar.length === 0) html = '<tr><td colspan="7" class="text-center py-8 text-gray-500">Satış bulunamadı</td></tr>';
+            document.getElementById('satisListesi').innerHTML = html;
+        }
+
+        window.deleteSatis = async (id) => {
+            if(confirm('Satışı silmek istediğinize emin misiniz?')) {
+                await fetch(`/api/satis/${id}`, { method: 'DELETE' });
+                loadSatis();
+                loadDashboard();
+                loadOdemeChart();
+            }
+        };
+
+        document.getElementById('satisEkleBtn').onclick = async () => {
+            let tarih = document.getElementById('tarih').value;
+            if(!tarih) tarih = new Date().toISOString().slice(0,10);
+            const urun_id = document.getElementById('urun_id').value;
+            const litre = parseFloat(document.getElementById('litre').value);
+            const alis_fiyat = parseFloat(document.getElementById('alis_fiyat').value);
+            const satis_fiyat = parseFloat(document.getElementById('satis_fiyat').value);
+            if(!urun_id || !litre || !alis_fiyat || !satis_fiyat) { alert('Tüm alanları doldurun'); return; }
+            const saat = new Date().toLocaleTimeString('tr-TR');
+            const res = await fetch('/api/satis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tarih, urun_id, litre, alis_fiyat, satis_fiyat, saat })
+            });
+            if(res.ok) { alert('Satış eklendi'); document.getElementById('litre').value = ''; document.getElementById('alis_fiyat').value = ''; document.getElementById('satis_fiyat').value = ''; loadSatis(); loadDashboard(); loadOdemeChart(); }
+            else alert('Hata oluştu');
+        };
+
+        // ============ GÜN SONU ============
+        document.getElementById('gunSonuBtn').onclick = async () => {
+            let tarih = document.getElementById('tarih').value;
+            if(!tarih) tarih = new Date().toISOString().slice(0,10);
+            const nakit = parseFloat(document.getElementById('nakit').value) || 0;
+            const havale = parseFloat(document.getElementById('havale').value) || 0;
+            const pos = parseFloat(document.getElementById('pos').value) || 0;
+            const borc = parseFloat(document.getElementById('borc').value) || 0;
+            const res = await fetch('/api/gun-sonu', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tarih, nakit, havale, pos, borc })
+            });
+            if(res.ok) { alert('Gün sonu kaydedildi'); loadDashboard(); loadOdemeChart(); }
+            else alert('Hata oluştu');
+        };
+
+        // ============ GİDERLER ============
+        async function loadGiderler() {
+            const res = await fetch('/api/giderler');
+            const giderler = await res.json();
+            let html = '';
+            for(let g of giderler) {
+                html += `<tr class="border-b hover:bg-gray-50"><td class="p-3">${g.tarih}</td><td class="p-3">${g.kategori}</td><td class="p-3">${g.aciklama || '-'}</td><td class="p-3 font-bold text-red-600">${formatMoney(g.miktar)}</td><td class="p-3"><button onclick="deleteGider(${g.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs">Sil</button></td></tr>`;
+            }
+            if(giderler.length === 0) html = '<tr><td colspan="5" class="text-center py-8 text-gray-500">Gider bulunamadı</td></tr>';
+            document.getElementById('giderListesi').innerHTML = html;
+            document.getElementById('tumGiderlerListesi').innerHTML = html;
+        }
+        window.deleteGider = async (id) => { if(confirm('Gideri sil?')) { await fetch(`/api/gider/${id}`, { method: 'DELETE' }); loadGiderler(); } };
+        document.getElementById('giderEkleBtn').onclick = async () => {
+            let tarih = document.getElementById('tarih').value; if(!tarih) tarih = new Date().toISOString().slice(0,10);
+            const kategori = document.getElementById('gider_kategori').value;
+            const aciklama = document.getElementById('gider_aciklama').value;
+            const miktar = parseFloat(document.getElementById('gider_miktar').value);
+            if(!miktar) { alert('Miktar girin'); return; }
+            const res = await fetch('/api/gider', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tarih, kategori, aciklama, miktar }) });
+            if(res.ok) { alert('Gider eklendi'); document.getElementById('gider_aciklama').value = ''; document.getElementById('gider_miktar').value = ''; loadGiderler(); }
+            else alert('Hata');
+        };
+
+        // ============ BORÇLAR ============
+        async function loadBorclar() {
+            const res = await fetch('/api/borc');
+            const borclar = await res.json();
+            let html = '', html2 = '';
+            for(let b of borclar) {
+                const durum = b.kalan_tl <= 0 ? 'Ödendi' : 'Bekliyor';
+                html += `<tr class="border-b hover:bg-gray-50"><td class="p-3">${b.tarih}</td><td class="p-3 font-semibold">${b.musteri_adi}</td><td class="p-3">${formatMoney(b.miktar_tl)}</td><td class="p-3 font-bold text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-3">${yetki === 'admin' ? `<button onclick="deleteBorc(${b.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs">Sil</button>` : '-'}</td></tr>`;
+                html2 += `<tr class="border-b hover:bg-gray-50"><td class="p-3">${b.tarih}</td><td class="p-3">${b.musteri_adi}</td><td class="p-3">${formatMoney(b.miktar_tl)}</td><td class="p-3">${formatMoney(b.kalan_tl)}</td><td class="p-3">${durum}</td></tr>`;
+            }
+            if(borclar.length === 0) { html = '<tr><td colspan="5" class="text-center py-8 text-gray-500">Borç bulunamadı</td></tr>'; html2 = html; }
+            document.getElementById('borcListesi').innerHTML = html;
+            document.getElementById('tumBorclarListesi').innerHTML = html2;
+        }
+        window.deleteBorc = async (id) => { if(confirm('Borcu sil?')) { await fetch(`/api/borc/${id}`, { method: 'DELETE' }); loadBorclar(); } };
+        document.getElementById('borcEkleBtn').onclick = async () => {
+            let tarih = document.getElementById('tarih').value; if(!tarih) tarih = new Date().toISOString().slice(0,10);
+            const musteri_adi = document.getElementById('borc_musteri').value;
+            const miktar_tl = parseFloat(document.getElementById('borc_miktar').value);
+            const aciklama = document.getElementById('borc_aciklama').value;
+            if(!musteri_adi || !miktar_tl) { alert('Müşteri adı ve borç tutarı girin'); return; }
+            const res = await fetch('/api/borc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tarih, musteri_adi, miktar_tl, aciklama }) });
+            if(res.ok) { alert('Borç eklendi'); document.getElementById('borc_musteri').value = ''; document.getElementById('borc_miktar').value = ''; document.getElementById('borc_aciklama').value = ''; loadBorclar(); }
+            else alert('Hata');
+        };
+
+        // ============ KULLANICILAR ============
+        async function loadKullanicilar() {
+            const res = await fetch('/api/kullanicilar');
+            const users = await res.json();
+            let html = '';
+            for(let u of users) {
+                html += `<tr class="border-b hover:bg-gray-50"><td class="p-3">${u.id}</td><td class="p-3">${u.email}</td><td class="p-3">${u.adsoyad}</td><td class="p-3">${u.yetki === 'admin' ? 'Admin' : 'İzleyici'}</td><td class="p-3">${u.aktif == 1 ? 'Aktif' : 'Pasif'}</td><td class="p-3"><button onclick="deleteUser(${u.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs">Sil</button> <button onclick="editUser(${u.id}, '${u.adsoyad}', '${u.yetki}', ${u.aktif})" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Düzenle</button></td></tr>`;
+            }
+            document.getElementById('kullaniciListesi').innerHTML = html;
+        }
+        window.deleteUser = async (id) => { if(confirm('Kullanıcıyı sil?')) { await fetch(`/api/kullanici/${id}`, { method: 'DELETE' }); loadKullanicilar(); } };
+        window.editUser = async (id, adsoyad, yetki, aktif) => {
+            const yeniAd = prompt('Yeni ad soyad:', adsoyad); if(!yeniAd) return;
+            const yeniYetki = prompt('Yeni yetki (admin/user):', yetki); if(!yeniYetki || (yeniYetki !== 'admin' && yeniYetki !== 'user')) return;
+            const yeniDurum = prompt('Durum (1=aktif, 0=pasif):', aktif); if(yeniDurum !== '0' && yeniDurum !== '1') return;
+            await fetch(`/api/kullanici/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ adsoyad: yeniAd, yetki: yeniYetki, aktif: parseInt(yeniDurum) }) });
+            loadKullanicilar();
+        };
+        document.getElementById('userEkleBtn').onclick = async () => {
+            const email = document.getElementById('user_email').value;
+            const sifre = document.getElementById('user_sifre').value;
+            const adsoyad = document.getElementById('user_adsoyad').value;
+            const yetki = document.getElementById('user_yetki').value;
+            if(!email || !sifre || !adsoyad) { alert('Tüm alanları doldurun'); return; }
+            const res = await fetch('/api/kullanici', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, sifre, adsoyad, yetki }) });
+            if(res.ok) { alert('Kullanıcı eklendi'); document.getElementById('user_email').value = ''; document.getElementById('user_sifre').value = ''; document.getElementById('user_adsoyad').value = ''; loadKullanicilar(); }
+            else alert('Hata');
+        };
+
+        // ============ LOGLAR ============
+        async function loadLoglar() {
+            const res = await fetch('/api/loglar');
+            const logs = await res.json();
+            let html = '';
+            for(let l of logs) {
+                const tarih = new Date(l.giris_zamani).toLocaleString('tr-TR');
+                html += `<tr class="border-b hover:bg-gray-50"><td class="p-3">${l.email}</td><td class="p-3 font-mono">${l.ip}</td><td class="p-3">${tarih}</td></tr>`;
+            }
+            document.getElementById('loglarListesi').innerHTML = html;
+        }
+
+        // ============ GRAFİK ============
+        async function loadOdemeChart() {
+            const res = await fetch('/api/odeme-rapor');
+            const data = await res.json();
+            const odemeData = data[0] || { nakit: 0, havale: 0, pos: 0, borc: 0 };
+            if(odemeChart) odemeChart.destroy();
+            const ctx = document.getElementById('odemeChart').getContext('2d');
+            odemeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['Nakit', 'Havale', 'POS', 'Borç'], datasets: [{ data: [odemeData.nakit, odemeData.havale, odemeData.pos, odemeData.borc], backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        // ============ EXCEL EXPORT ============
+        document.getElementById('satisExcelBtn').onclick = async () => {
+            let tarih = document.getElementById('tarih').value;
+            if(!tarih) tarih = new Date().toISOString().slice(0,10);
+            const res = await fetch(`/api/satis/tarih?tarih=${tarih}`);
+            const data = await res.json();
+            let csv = 'Saat,Ürün,Litre,Alış Fiyatı,Satış Fiyatı,Kar\n';
+            for(let d of data) csv += `${d.saat},${d.urun_adi},${d.litre},${d.alis_fiyat},${d.satis_fiyat},${d.kar}\n`;
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv' });
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `satis_${tarih}.csv`; link.click();
+        };
+
+        // ============ SAYFA YÜKLENİŞ ============
+        document.getElementById('tarih').addEventListener('change', () => { loadDashboard(); loadSatis(); });
+        document.getElementById('bugunBtn').onclick = () => { document.getElementById('tarih').value = new Date().toISOString().slice(0,10); loadDashboard(); loadSatis(); };
+        
+        document.getElementById('anasayfaBtn').onclick = () => showPage('anasayfa');
+        document.getElementById('borclarBtn').onclick = () => showPage('borclar');
+        document.getElementById('giderlerBtn').onclick = () => showPage('giderler');
+        document.getElementById('kullaniciBtn').onclick = () => showPage('kullanici');
+        document.getElementById('loglarBtn').onclick = () => showPage('loglar');
+        
+        document.getElementById('cikisBtn').onclick = async () => { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/'; };
+
+        document.getElementById('borcArama').addEventListener('input', () => { const val = document.getElementById('borcArama').value.toLowerCase(); const rows = document.querySelectorAll('#borcListesi tr'); for(let r of rows) { r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none'; } });
+        document.getElementById('giderArama').addEventListener('input', () => { const val = document.getElementById('giderArama').value.toLowerCase(); const rows = document.querySelectorAll('#giderListesi tr'); for(let r of rows) { r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none'; } });
+
+        (async () => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            yetki = user.yetki;
+            const isAdmin = yetki === 'admin';
+            document.getElementById('userBadge').innerHTML = isAdmin ? '👑 Admin' : '👁️ İzleyici';
+            document.getElementById('userBadge').classList.add(isAdmin ? 'bg-green-500/20 text-green-300' : 'bg-blue-500/20 text-blue-300');
+            if(isAdmin) {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('admin-only'));
+            } else {
+                document.getElementById('giderForm').style.display = 'none';
+                document.getElementById('borcForm').style.display = 'none';
+                document.getElementById('borcListe').style.display = 'none';
+                document.getElementById('giderListe').style.display = 'none';
+            }
+            document.getElementById('tarih').value = new Date().toISOString().slice(0,10);
+            await loadUrunler();
+            await loadDashboard();
+            await loadSatis();
+            await loadBorclar();
+            await loadGiderler();
+            await loadKullanicilar();
+            await loadLoglar();
+            await loadOdemeChart();
+            showPage('anasayfa');
+        })();
     </script>
 </body>
 
