@@ -54,11 +54,7 @@ db.exec(`
         urun_id INTEGER,
         litre REAL,
         birim_fiyat REAL,
-        toplam_tutar REAL,
-        nakit REAL DEFAULT 0,
-        havale REAL DEFAULT 0,
-        pos REAL DEFAULT 0,
-        borc REAL DEFAULT 0
+        toplam_tutar REAL
     );
 
     CREATE TABLE IF NOT EXISTS borc (
@@ -85,6 +81,16 @@ db.exec(`
         kategori TEXT,
         aciklama TEXT,
         miktar REAL
+    );
+
+    CREATE TABLE IF NOT EXISTS gun_sonu (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tarih TEXT UNIQUE,
+        nakit REAL DEFAULT 0,
+        havale REAL DEFAULT 0,
+        pos REAL DEFAULT 0,
+        borc REAL DEFAULT 0,
+        toplam REAL DEFAULT 0
     );
 `);
 
@@ -223,10 +229,10 @@ app.delete('/api/alis/:id', auth, adminOnly, (req, res) => {
 
 // ============ SATIŞ ============
 app.post('/api/satis', auth, adminOnly, (req, res) => {
-    const { tarih, urun_id, litre, birim_fiyat, nakit, havale, pos, borc } = req.body;
-    const toplam = (parseFloat(nakit) || 0) + (parseFloat(havale) || 0) + (parseFloat(pos) || 0) + (parseFloat(borc) || 0);
-    const stmt = db.prepare(`INSERT INTO satis (tarih, urun_id, litre, birim_fiyat, toplam_tutar, nakit, havale, pos, borc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    const info = stmt.run(tarih, urun_id, litre, birim_fiyat, toplam, nakit || 0, havale || 0, pos || 0, borc || 0);
+    const { tarih, urun_id, litre, birim_fiyat } = req.body;
+    const toplam = litre * birim_fiyat;
+    const stmt = db.prepare(`INSERT INTO satis (tarih, urun_id, litre, birim_fiyat, toplam_tutar) VALUES (?, ?, ?, ?, ?)`);
+    const info = stmt.run(tarih, urun_id, litre, birim_fiyat, toplam);
     res.json({ id: info.lastInsertRowid, mesaj: 'Satış eklendi' });
 });
 
@@ -236,10 +242,10 @@ app.get('/api/satis', auth, (req, res) => {
 });
 
 app.put('/api/satis/:id', auth, adminOnly, (req, res) => {
-    const { tarih, urun_id, litre, birim_fiyat, nakit, havale, pos, borc } = req.body;
-    const toplam = (parseFloat(nakit) || 0) + (parseFloat(havale) || 0) + (parseFloat(pos) || 0) + (parseFloat(borc) || 0);
-    const stmt = db.prepare(`UPDATE satis SET tarih = ?, urun_id = ?, litre = ?, birim_fiyat = ?, toplam_tutar = ?, nakit = ?, havale = ?, pos = ?, borc = ? WHERE id = ?`);
-    stmt.run(tarih, urun_id, litre, birim_fiyat, toplam, nakit || 0, havale || 0, pos || 0, borc || 0, req.params.id);
+    const { tarih, urun_id, litre, birim_fiyat } = req.body;
+    const toplam = litre * birim_fiyat;
+    const stmt = db.prepare(`UPDATE satis SET tarih = ?, urun_id = ?, litre = ?, birim_fiyat = ?, toplam_tutar = ? WHERE id = ?`);
+    stmt.run(tarih, urun_id, litre, birim_fiyat, toplam, req.params.id);
     res.json({ mesaj: 'Satış güncellendi' });
 });
 
@@ -247,6 +253,44 @@ app.delete('/api/satis/:id', auth, adminOnly, (req, res) => {
     const stmt = db.prepare(`DELETE FROM satis WHERE id = ?`);
     stmt.run(req.params.id);
     res.json({ mesaj: 'Satış silindi' });
+});
+
+// ============ GÜNLÜK SATIŞ (Gün Sonu için) ============
+app.get('/api/gunluk-satis', auth, (req, res) => {
+    const { tarih } = req.query;
+
+    const satislar = db.prepare(`SELECT s.*, u.ad as urun_adi FROM satis s JOIN urunler u ON s.urun_id = u.id WHERE s.tarih = ?`).all(tarih);
+    const toplamStmt = db.prepare(`SELECT SUM(toplam_tutar) as toplam FROM satis WHERE tarih = ?`).get(tarih);
+
+    res.json({
+        satislar: satislar || [],
+        toplam: toplamStmt ? toplamStmt.toplam : 0
+    });
+});
+
+// ============ GÜN SONU ============
+app.post('/api/gun-sonu', auth, adminOnly, (req, res) => {
+    const { tarih, nakit, havale, pos, borc } = req.body;
+    const toplam = nakit + havale + pos + borc;
+
+    try {
+        const stmt = db.prepare(`INSERT OR REPLACE INTO gun_sonu (tarih, nakit, havale, pos, borc, toplam) VALUES (?, ?, ?, ?, ?, ?)`);
+        stmt.run(tarih, nakit, havale, pos, borc, toplam);
+        res.json({ mesaj: 'Gün sonu kaydedildi' });
+    } catch (err) {
+        res.status(400).json({ hata: 'Kayıt hatası' });
+    }
+});
+
+app.get('/api/gun-sonu', auth, (req, res) => {
+    const rows = db.prepare(`SELECT * FROM gun_sonu ORDER BY tarih DESC`).all();
+    res.json(rows || []);
+});
+
+app.delete('/api/gun-sonu/:id', auth, adminOnly, (req, res) => {
+    const stmt = db.prepare(`DELETE FROM gun_sonu WHERE id = ?`);
+    stmt.run(req.params.id);
+    res.json({ mesaj: 'Kayıt silindi' });
 });
 
 // ============ BORÇ ============
@@ -326,6 +370,7 @@ app.get('/api/istatistik', auth, (req, res) => {
     const bugunBorc = db.prepare(`SELECT SUM(miktar_tl) as toplam FROM borc WHERE tarih = ?`).get(gun);
     const aylikAlis = db.prepare(`SELECT SUM(toplam_tutar) as toplam FROM alis WHERE tarih >= ?`).get(ayBaslangic);
     const aylikSatis = db.prepare(`SELECT SUM(toplam_tutar) as toplam FROM satis WHERE tarih >= ?`).get(ayBaslangic);
+    const bugunTahsilat = db.prepare(`SELECT SUM(toplam) as toplam FROM gun_sonu WHERE tarih = ?`).get(gun);
 
     const alislar = db.prepare(`SELECT urun_id, SUM(litre) as toplam FROM alis GROUP BY urun_id`).all();
     const satislar = db.prepare(`SELECT urun_id, SUM(litre) as toplam FROM satis GROUP BY urun_id`).all();
@@ -360,6 +405,7 @@ app.get('/api/istatistik', auth, (req, res) => {
         bugunAlis: (bugunAlis && bugunAlis.toplam) ? bugunAlis.toplam : 0,
         bugunSatis: (bugunSatis && bugunSatis.toplam) ? bugunSatis.toplam : 0,
         bugunBorc: (bugunBorc && bugunBorc.toplam) ? bugunBorc.toplam : 0,
+        bugunTahsilat: (bugunTahsilat && bugunTahsilat.toplam) ? bugunTahsilat.toplam : 0,
         aylikAlis: (aylikAlis && aylikAlis.toplam) ? aylikAlis.toplam : 0,
         aylikSatis: (aylikSatis && aylikSatis.toplam) ? aylikSatis.toplam : 0,
         stoklar: stokListe
@@ -373,7 +419,7 @@ app.get('/api/rapor', auth, (req, res) => {
     const satis = db.prepare(`SELECT SUM(toplam_tutar) as toplam FROM satis WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
     const alis = db.prepare(`SELECT SUM(toplam_tutar) as toplam FROM alis WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
     const gider = db.prepare(`SELECT SUM(miktar) as toplam FROM giderler WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
-    const odeme = db.prepare(`SELECT SUM(nakit) as nakit, SUM(havale) as havale, SUM(pos) as pos, SUM(borc) as borc FROM satis WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
+    const gunSonu = db.prepare(`SELECT SUM(nakit) as nakit, SUM(havale) as havale, SUM(pos) as pos, SUM(borc) as borc FROM gun_sonu WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
     const gunlukSatislar = db.prepare(`SELECT tarih, SUM(toplam_tutar) as toplam FROM satis WHERE tarih BETWEEN ? AND ? GROUP BY tarih ORDER BY tarih`).all(baslangic, bitis);
 
     res.json({
@@ -381,7 +427,7 @@ app.get('/api/rapor', auth, (req, res) => {
         toplamAlis: (alis && alis.toplam) ? alis.toplam : 0,
         toplamGider: (gider && gider.toplam) ? gider.toplam : 0,
         toplamKar: ((satis && satis.toplam) || 0) - ((alis && alis.toplam) || 0) - ((gider && gider.toplam) || 0),
-        odemeYontemleri: odeme ? odeme : { nakit: 0, havale: 0, pos: 0, borc: 0 },
+        odemeYontemleri: gunSonu ? gunSonu : { nakit: 0, havale: 0, pos: 0, borc: 0 },
         gunlukSatislar: gunlukSatislar || []
     });
 });
@@ -389,7 +435,7 @@ app.get('/api/rapor', auth, (req, res) => {
 // ============ ÖDEME RAPORU ============
 app.get('/api/odeme-rapor', auth, (req, res) => {
     const { baslangic, bitis } = req.query;
-    const rows = db.prepare(`SELECT SUM(nakit) as nakit, SUM(havale) as havale, SUM(pos) as pos, SUM(borc) as borc FROM satis WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
+    const rows = db.prepare(`SELECT SUM(nakit) as nakit, SUM(havale) as havale, SUM(pos) as pos, SUM(borc) as borc FROM gun_sonu WHERE tarih BETWEEN ? AND ?`).get(baslangic, bitis);
     res.json(rows ? [rows] : []);
 });
 
