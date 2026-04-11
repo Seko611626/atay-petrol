@@ -3,239 +3,156 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giriş Logları | Atay Petrol</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .log-card {
-            transition: all 0.3s ease;
+        * {
+            font-family: 'Poppins', sans-serif;
         }
         
-        .log-card:hover {
-            transform: translateY(-2px);
-        }
-        
-        .ip-address {
-            font-family: 'Courier New', monospace;
+        body {
+            background: #f0f4f8;
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <nav class="navbar text-white p-4 shadow-lg">
+<body class="min-h-screen">
+    <nav class="bg-[#0A2F6C] text-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
             <div class="flex items-center gap-3">
-                <div class="animate-float">
-                    <h1 class="text-2xl font-bold">📜 GİRİŞ LOGLARI</h1>
-                </div>
-                <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full">Admin Only</span>
+                <h1 class="text-2xl font-bold">📜 GİRİŞ LOGLARI</h1>
+                <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full">Admin Panel</span>
             </div>
-            <div class="space-x-2 flex flex-wrap gap-1">
-                <a href="dashboard.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🏠 Ana</a>
-                <a href="satis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💰 Satış</a>
-                <a href="alis.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">🚛 Alış</a>
-                <a href="gider.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📉 Gider</a>
-                <a href="borc.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📝 Borçlar</a>
-                <a href="tahsilat.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">💵 Tahsilat</a>
-                <a href="rapor.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📊 Rapor</a>
-                <a href="kullanici.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">👥 Kullanıcılar</a>
-                <a href="loglar.html" class="hover:text-cyan-300 px-3 py-2 rounded-lg transition-all hover:bg-white/10">📜 Loglar</a>
-                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all hover:scale-105">🚪 Çıkış</button>
+            <div class="flex gap-2 flex-wrap">
+                <a href="dashboard.html" class="px-3 py-2 rounded-lg hover:bg-white/10">🏠 Ana</a>
+                <a href="borc.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📝 Borçlar</a>
+                <a href="tahsilat.html" class="px-3 py-2 rounded-lg hover:bg-white/10">💵 Tahsilat</a>
+                <a href="gider.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📉 Gider</a>
+                <a href="kullanici.html" class="px-3 py-2 rounded-lg hover:bg-white/10">👥 Kullanıcılar</a>
+                <a href="loglar.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📜 Loglar</a>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700">🚪 Çıkış</button>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto p-4 sm:p-6">
-        <!-- İstatistik Kartları -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 animate-fadeLeft log-card">
-                <p class="text-sm text-gray-500">📊 Toplam Giriş</p>
-                <p class="text-2xl font-bold text-blue-600" id="toplamGiris">0</p>
-            </div>
-            <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl p-4 animate-fadeUp log-card">
-                <p class="text-sm text-gray-500">👥 Benzersiz Kullanıcı</p>
-                <p class="text-2xl font-bold text-purple-600" id="benzersizKullanici">0</p>
-            </div>
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 animate-fadeDown log-card">
-                <p class="text-sm text-gray-500">📅 Bugünkü Giriş</p>
-                <p class="text-2xl font-bold text-green-600" id="bugunGiris">0</p>
-            </div>
-            <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 animate-fadeRight log-card">
-                <p class="text-sm text-gray-500">🕐 Son Giriş</p>
-                <p class="text-sm font-bold text-orange-600" id="sonGiris">-</p>
-            </div>
-        </div>
-
-        <!-- Log Listesi -->
-        <div class="bg-white rounded-2xl shadow-md p-4 sm:p-6 animate-fadeUp">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-                <h2 class="text-xl font-bold gradient-text">🌐 Giriş Kayıtları (IP & Zaman)</h2>
-                <div class="flex flex-wrap gap-2">
-                    <div class="relative">
-                        <input type="text" id="aramaInput" placeholder="🔍 Email veya IP ara..." class="border p-2 rounded-xl text-sm pl-8 w-48">
-                        <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">🔍</span>
-                    </div>
+    <div class="container mx-auto p-4">
+        <div class="bg-white rounded-2xl shadow-md p-6">
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                <h2 class="text-xl font-bold text-[#0A2F6C]">🌐 Son Girişler (IP & Zaman)</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="aramaInput" placeholder="🔍 Email veya IP ara..." class="border p-2 rounded-xl text-sm">
                     <input type="date" id="tarihFiltre" class="border p-2 rounded-xl text-sm">
-                    <button onclick="exportLoglarToExcel()" class="bg-green-500 text-white px-3 py-2 rounded-xl text-sm hover:bg-green-600 transition-all flex items-center gap-1">
-                        📎 Excel
-                    </button>
-                    <button onclick="refreshLogs()" class="bg-[#0A2F6C] text-white px-3 py-2 rounded-xl text-sm hover:bg-[#1E4D8C] transition-all flex items-center gap-1">
-                        🔄 Yenile
-                    </button>
+                    <button onclick="refreshLogs()" class="bg-[#0A2F6C] text-white px-3 py-2 rounded-xl text-sm">🔄 Yenile</button>
                 </div>
             </div>
             <div class="overflow-x-auto">
-                <div id="logListesi" class="min-w-[800px]"></div>
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-3 text-left">ID</th>
+                            <th class="p-3 text-left">Email</th>
+                            <th class="p-3 text-left">IP Adresi</th>
+                            <th class="p-3 text-left">Giriş Zamanı</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logListesi"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
-        var tumLoglar = [];
+        let tumLoglar = [];
 
         async function loadLoglar() {
-            var res = await fetch('/api/loglar');
-            tumLoglar = await res.json();
-            filtreleVeGoster();
-            istatistikleriGuncelle();
-        }
-
-        function istatistikleriGuncelle() {
-            var toplam = tumLoglar.length;
-            var benzersiz = {};
-            var bugun = new Date().toISOString().slice(0, 10);
-            var bugunSayisi = 0;
-            var sonGirisTarihi = '';
-
-            for (var i = 0; i < tumLoglar.length; i++) {
-                var log = tumLoglar[i];
-                benzersiz[log.email] = true;
-                var logTarih = log.giris_zamani.substring(0, 10);
-                if (logTarih === bugun) bugunSayisi++;
-                if (i === 0) sonGirisTarihi = log.giris_zamani;
-            }
-
-            document.getElementById('toplamGiris').innerHTML = toplam;
-            document.getElementById('benzersizKullanici').innerHTML = Object.keys(benzersiz).length;
-            document.getElementById('bugunGiris').innerHTML = bugunSayisi;
-
-            if (sonGirisTarihi) {
-                var sonGiris = new Date(sonGirisTarihi).toLocaleString('tr-TR');
-                document.getElementById('sonGiris').innerHTML = sonGiris;
+            try {
+                const res = await fetch('/api/loglar');
+                tumLoglar = await res.json();
+                filtreleVeGoster();
+            } catch (e) {
+                console.error('Loglar yüklenirken hata:', e);
+                document.getElementById('logListesi').innerHTML = '<tr><td colspan="4" class="text-center py-8 text-red-500">Veritabanı hatası</td>';
             }
         }
 
         function filtreleVeGoster() {
-            var aramaInput = document.getElementById('aramaInput');
-            var arama = aramaInput ? aramaInput.value.toLowerCase() : '';
-            var tarihFiltre = document.getElementById('tarihFiltre') ? document.getElementById('tarihFiltre').value : '';
+            const aramaInput = document.getElementById('aramaInput');
+            const arama = aramaInput ? aramaInput.value.toLowerCase() : '';
+            const tarihFiltre = document.getElementById('tarihFiltre') ? document.getElementById('tarihFiltre').value : '';
 
-            var filtrelenmis = [];
-            for (var i = 0; i < tumLoglar.length; i++) {
-                var log = tumLoglar[i];
-                var emailVar = log.email.toLowerCase().indexOf(arama) !== -1;
-                var ipVar = log.ip.toLowerCase().indexOf(arama) !== -1;
-                var uyuyorMu = emailVar || ipVar;
-                var tarihUyuyor = tarihFiltre === '' || log.giris_zamani.substring(0, 10) === tarihFiltre;
-                if (uyuyorMu && tarihUyuyor) {
+            let filtrelenmis = [];
+            for (let i = 0; i < tumLoglar.length; i++) {
+                const log = tumLoglar[i];
+                const emailVar = log.email.toLowerCase().indexOf(arama) !== -1;
+                const ipVar = log.ip.toLowerCase().indexOf(arama) !== -1;
+                const uyuyor = emailVar || ipVar;
+                const tarihUyuyor = tarihFiltre === '' || log.giris_zamani.substring(0, 10) === tarihFiltre;
+                if (uyuyor && tarihUyuyor) {
                     filtrelenmis.push(log);
                 }
             }
 
-            var html = '';
-            html += '<div class="mb-3 p-2 bg-gray-100 rounded-lg flex justify-between items-center">';
-            html += '<span class="text-sm font-semibold">📊 Toplam: ' + filtrelenmis.length + ' kayıt</span>';
-            html += '</div>';
-            html += '<table class="w-full"><thead><tr class="bg-gradient-to-r from-gray-100 to-gray-200">';
-            html += '<th class="p-3 rounded-tl-xl text-left">ID</th>';
-            html += '<th class="p-3 text-left">Email</th>';
-            html += '<th class="p-3 text-left">IP Adresi</th>';
-            html += '<th class="p-3 text-left">Giriş Zamanı</th>';
-            html += '<th class="p-3 text-left">Tarih</th>';
-            html += '<th class="p-3 rounded-tr-xl text-left">Saat</th>';
-            html += '</tr></thead><tbody>';
+            let html = '';
+            for (let i = 0; i < filtrelenmis.length; i++) {
+                const log = filtrelenmis[i];
+                const tarihObj = new Date(log.giris_zamani);
+                const tarihStr = tarihObj.toLocaleDateString('tr-TR');
+                const saatStr = tarihObj.toLocaleTimeString('tr-TR');
+                let ipClass = '';
+                if (log.ip === '::1' || log.ip === '127.0.0.1') ipClass = 'text-green-600 font-semibold';
+                else if (log.ip.indexOf('192.168.') === 0) ipClass = 'text-blue-600';
 
-            if (filtrelenmis.length === 0) {
-                html += '<tr><td colspan="6" class="text-center py-8 text-gray-500">Kayıt bulunamadı</td></tr>';
-            } else {
-                for (var i = 0; i < filtrelenmis.length; i++) {
-                    var log = filtrelenmis[i];
-                    var tarihObj = new Date(log.giris_zamani);
-                    var tarihStr = tarihObj.toLocaleDateString('tr-TR');
-                    var saatStr = tarihObj.toLocaleTimeString('tr-TR');
-
-                    var ipClass = '';
-                    if (log.ip === '::1' || log.ip === '127.0.0.1') {
-                        ipClass = 'text-green-600 font-semibold';
-                    } else if (log.ip.indexOf('192.168.') === 0) {
-                        ipClass = 'text-blue-600';
-                    }
-
-                    html += '<tr class="table-row border-b hover:bg-gray-50">';
-                    html += '<td class="p-3">' + log.id + '</td>';
-                    html += '<td class="p-3 font-semibold">' + log.email + '</td>';
-                    html += '<td class="p-3 ip-address ' + ipClass + '">' + log.ip + '</td>';
-                    html += '<td class="p-3">' + log.giris_zamani.replace('T', ' ').substring(0, 19) + '</td>';
-                    html += '<td class="p-3">' + tarihStr + '</td>';
-                    html += '<td class="p-3">' + saatStr + '</td>';
-                    html += '</tr>';
-                }
+                html += '<tr class="border-b hover:bg-gray-50">';
+                html += '<td class="p-3">' + log.id + '</td>';
+                html += '<td class="p-3 font-semibold">' + log.email + '</td>';
+                html += '<td class="p-3 font-mono ' + ipClass + '">' + log.ip + '</td>';
+                html += '<td class="p-3">' + tarihStr + ' ' + saatStr + '</td>';
+                html += '</tr>';
             }
-            html += '</tbody></table>';
+            if (filtrelenmis.length === 0) {
+                html = '<tr><td colspan="4" class="text-center py-8 text-gray-500">Kayıt bulunamadı</td></tr>';
+            }
             document.getElementById('logListesi').innerHTML = html;
         }
 
-        window.exportLoglarToExcel = function() {
-            if (tumLoglar.length === 0) {
-                showToast('Veri yok', 'warning');
-                return;
-            }
-            var exportData = [];
-            for (var i = 0; i < tumLoglar.length; i++) {
-                var log = tumLoglar[i];
-                var tarihObj = new Date(log.giris_zamani);
-                exportData.push({
-                    ID: log.id,
-                    Email: log.email,
-                    IPAdresi: log.ip,
-                    GirisZamani: log.giris_zamani,
-                    Tarih: tarihObj.toLocaleDateString('tr-TR'),
-                    Saat: tarihObj.toLocaleTimeString('tr-TR')
-                });
-            }
-            exportToExcel(exportData, 'giris_loglari');
-        };
-
         window.refreshLogs = function() {
             loadLoglar();
-            showToast('🔄 Loglar yenilendi', 'success');
+            alert('Loglar yenilendi');
         };
 
-        var aramaInput = document.getElementById('aramaInput');
+        const aramaInput = document.getElementById('aramaInput');
         if (aramaInput) {
             aramaInput.addEventListener('input', filtreleVeGoster);
         }
-        var tarihFiltre = document.getElementById('tarihFiltre');
+        const tarihFiltre = document.getElementById('tarihFiltre');
         if (tarihFiltre) {
             tarihFiltre.addEventListener('change', filtreleVeGoster);
         }
 
+        const cikisBtn = document.getElementById('cikisBtn');
+        if (cikisBtn) {
+            cikisBtn.onclick = async function() {
+                await fetch('/api/logout', {
+                    method: 'POST'
+                });
+                window.location.href = '/';
+            };
+        }
+
         (async function() {
-            var me = await fetch('/api/me');
-            var user = await me.json();
-
-            if (user.yetki !== 'admin') {
-                document.body.innerHTML = '<div class="flex items-center justify-center min-h-screen p-4"><div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-xl shadow-lg max-w-md"><div class="flex items-center gap-3"><span class="text-3xl">⚠️</span><div><p class="font-bold">Yetkisiz Erişim</p><p>Bu sayfaya erişim yetkiniz yok. Sadece admin kullanıcılar görebilir.</p><a href="dashboard.html" class="mt-3 inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all">Ana Sayfaya Dön</a></div></div></div></div>';
-                return;
+            try {
+                const me = await fetch('/api/me');
+                const user = await me.json();
+                if (user.yetki !== 'admin') {
+                    window.location.href = '/dashboard-viewer.html';
+                    return;
+                }
+                loadLoglar();
+            } catch (e) {
+                console.error('Sayfa yüklenirken hata:', e);
             }
-
-            await loadLoglar();
-
-            // Her 30 saniyede bir otomatik yenile
-            setInterval(loadLoglar, 30000);
         })();
     </script>
 </body>

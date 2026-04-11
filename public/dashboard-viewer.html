@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: #f0f4f8;
+        }
+        
+        .stat-card {
+            border-left: 4px solid;
+        }
+        
+        .stat-card-1 {
+            border-left-color: #10B981;
+        }
+        
+        .stat-card-2 {
+            border-left-color: #3B82F6;
+        }
+        
+        .stat-card-3 {
+            border-left-color: #8B5CF6;
+        }
+        
+        .stat-card-4 {
+            border-left-color: #EF4444;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-[#0A2F6C] text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold">⛽ ATAY PETROL</h1>
+                <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">İzleyici</span>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                <a href="dashboard-viewer.html" class="px-3 py-2 rounded-lg hover:bg-white/10">🏠 Dashboard</a>
+                <a href="borc.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📝 Borçlar</a>
+                <a href="rapor-viewer.html" class="px-3 py-2 rounded-lg hover:bg-white/10">📊 Rapor</a>
+                <button id="cikisBtn" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700">🚪 Çıkış</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4">
+        <!-- Tarih Seçici -->
+        <div class="bg-white rounded-2xl shadow-md p-4 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">📅</span>
+                    <input type="date" id="tarih" class="border p-2 rounded-xl text-lg font-semibold">
+                </div>
+                <div class="text-sm text-gray-500">
+                    Tarih seçin veya boş bırakın (bugün gösterir)
+                </div>
+            </div>
+        </div>
+
+        <!-- İstatistik Kartları -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="stat-card stat-card-1 bg-white rounded-2xl shadow-md p-4">
+                <p class="text-gray-500 text-sm">🚛 Bugünkü Alış</p>
+                <p class="text-2xl font-bold text-green-600" id="toplamAlis">0 ₺</p>
+            </div>
+            <div class="stat-card stat-card-2 bg-white rounded-2xl shadow-md p-4">
+                <p class="text-gray-500 text-sm">💰 Bugünkü Satış</p>
+                <p class="text-2xl font-bold text-blue-600" id="toplamSatis">0 ₺</p>
+            </div>
+            <div class="stat-card stat-card-3 bg-white rounded-2xl shadow-md p-4">
+                <p class="text-gray-500 text-sm">📈 Bugünkü Kar</p>
+                <p class="text-2xl font-bold text-purple-600" id="toplamKar">0 ₺</p>
+            </div>
+            <div class="stat-card stat-card-4 bg-white rounded-2xl shadow-md p-4">
+                <p class="text-gray-500 text-sm">💵 Bugünkü Tahsilat</p>
+                <p class="text-2xl font-bold text-red-600" id="toplamTahsilat">0 ₺</p>
+            </div>
+        </div>
+
+        <!-- Satış Listesi (Sadece görüntüleme, ekleme yok) -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">📋 Günlük Satış Listesi</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-3 text-left">Saat</th>
+                            <th class="p-3 text-left">Ürün</th>
+                            <th class="p-3 text-left">Litre</th>
+                            <th class="p-3 text-left">Alış Fiyatı</th>
+                            <th class="p-3 text-left">Satış Fiyatı</th>
+                            <th class="p-3 text-left">Kar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="satisListesi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Grafik -->
+        <div class="bg-white rounded-2xl shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">📊 Ödeme Yöntemleri Dağılımı</h2>
+            <canvas id="odemeChart" height="150"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let odemeChart;
+
+        async function loadIstatistik() {
+            let tarih = document.getElementById('tarih').value;
+            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+
+            const res = await fetch(`/api/istatistik?tarih=${tarih}`);
+            const data = await res.json();
+
+            document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
+            document.getElementById('toplamSatis').innerHTML = formatMoney(data.toplamSatis);
+            document.getElementById('toplamKar').innerHTML = formatMoney(data.toplamKar);
+            document.getElementById('toplamTahsilat').innerHTML = formatMoney(data.tahsilat);
+        }
+
+        async function loadSatisListesi() {
+            let tarih = document.getElementById('tarih').value;
+            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+
+            const res = await fetch(`/api/satis/tarih?tarih=${tarih}`);
+            const satislar = await res.json();
+
+            let html = '';
+            for (let s of satislar) {
+                html += `<tr class="border-b hover:bg-gray-50">
+                    <td class="p-3">${s.saat || '-'}</td>
+                    <td class="p-3 font-semibold">${s.urun_adi}</td>
+                    <td class="p-3">${formatLiter(s.litre)}</td>
+                    <td class="p-3">${formatMoney(s.alis_fiyat)}</td>
+                    <td class="p-3">${formatMoney(s.satis_fiyat)}</td>
+                    <td class="p-3 font-bold text-green-600">${formatMoney(s.kar)}</td>
+                </tr>`;
+            }
+            if (satislar.length === 0) html = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Satış bulunamadı</td></tr>';
+            document.getElementById('satisListesi').innerHTML = html;
+        }
+
+        async function loadOdemeChart() {
+            const res = await fetch('/api/odeme-rapor');
+            const data = await res.json();
+            const odemeData = data[0] || {
+                nakit: 0,
+                havale: 0,
+                pos: 0,
+                borc: 0
+            };
+
+            if (odemeChart) odemeChart.destroy();
+            const ctx = document.getElementById('odemeChart').getContext('2d');
+            odemeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Nakit', 'Havale', 'POS', 'Borç'],
+                    datasets: [{
+                        data: [odemeData.nakit, odemeData.havale, odemeData.pos, odemeData.borc],
+                        backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('tarih').addEventListener('change', () => {
+            loadIstatistik();
+            loadSatisListesi();
+        });
+
+        document.getElementById('cikisBtn').onclick = async() => {
+            await fetch('/api/logout', {
+                method: 'POST'
+            });
+            window.location.href = '/';
+        };
+
+        function formatMoney(amount) {
+            return (amount || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' ₺';
+        }
+
+        function formatLiter(litre) {
+            return (litre || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' L';
+        }
+
+        loadIstatistik();
+        loadSatisListesi();
+        loadOdemeChart();
+        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
+    </script>
+</body>
+
+</html>
