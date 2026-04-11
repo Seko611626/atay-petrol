@@ -55,7 +55,7 @@
             background: #b91c1c !important;
         }
         
-        .table-container {
+        .card {
             background: white;
             border-radius: 24px;
             padding: 20px;
@@ -70,6 +70,21 @@
             font-size: 18px;
             border-left: 3px solid #0A2F6C;
             padding-left: 12px;
+        }
+        
+        input {
+            width: 200px;
+            padding: 8px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
         
         table {
@@ -90,22 +105,23 @@
             border-bottom: 1px solid #e2e8f0;
         }
         
-        input {
-            width: 200px;
-            padding: 8px 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #00B4D8;
+        .btn-refresh {
+            background: #0A2F6C;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
         }
         
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
                 text-align: center;
+            }
+            input {
+                width: 100%;
             }
         }
     </style>
@@ -119,10 +135,11 @@
             <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="dashboard.html">📊 Ana Sayfa</a>
+            <a href="admin.html">📊 Ana Sayfa</a>
             <a href="borc.html">📝 Borçlar</a>
             <a href="tahsilat.html">💵 Tahsilat</a>
             <a href="gider.html">📉 Giderler</a>
+            <a href="rapor.html">📊 Rapor</a>
             <a href="kullanici.html">👥 Kullanıcılar</a>
             <a href="loglar.html">📜 Loglar</a>
             <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
@@ -130,12 +147,12 @@
     </div>
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <div class="table-container">
+        <div class="card">
             <div class="form-title">📜 Giriş Logları (IP & Zaman)</div>
-            <div style="margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <div style="margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                 <input type="text" id="aramaInput" placeholder="🔍 Email veya IP ara...">
                 <input type="date" id="tarihFiltre">
-                <button id="yenileBtn" style="background:#0A2F6C;color:white;border:none;padding:8px 20px;border-radius:40px;cursor:pointer;">🔄 Yenile</button>
+                <button id="yenileBtn" class="btn-refresh">🔄 Yenile</button>
             </div>
             <div style="max-height: 500px; overflow-y: auto;">
                 <table class="w-full">
@@ -154,6 +171,16 @@
     </div>
 
     <script>
+        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            if (user.yetki !== 'admin') {
+                window.location.href = '/viewer.html';
+                return;
+            }
+        })();
+
         let tumLoglar = [];
 
         async function loadLoglar() {
@@ -165,13 +192,11 @@
         function filtreleVeGoster() {
             let arama = document.getElementById('aramaInput').value.toLowerCase();
             let tarihFiltre = document.getElementById('tarihFiltre').value;
-
             let filtrelenmis = tumLoglar.filter(log => {
                 let uyuyor = log.email.toLowerCase().includes(arama) || log.ip.toLowerCase().includes(arama);
                 let tarihUyuyor = tarihFiltre === '' || log.giris_zamani.substring(0, 10) === tarihFiltre;
                 return uyuyor && tarihUyuyor;
             });
-
             let html = '';
             for (let log of filtrelenmis) {
                 let tarih = new Date(log.giris_zamani).toLocaleString('tr-TR');
@@ -196,7 +221,6 @@
             });
             window.location.href = '/';
         };
-
         loadLoglar();
     </script>
 </body>

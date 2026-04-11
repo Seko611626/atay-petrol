@@ -80,13 +80,6 @@
             border-radius: 14px;
         }
         
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #00B4D8;
-            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
-        }
-        
         .btn-danger {
             background: #EF4444;
             color: white;
@@ -135,33 +128,14 @@
             gap: 12px;
         }
         
-        .yetkisiz-box {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 24px;
-            max-width: 500px;
-            margin: 50px auto;
-        }
-        
-        .yetkisiz-box h2 {
-            color: #dc2626;
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
-        
-        .yetkisiz-box p {
-            color: #64748b;
-            margin-bottom: 24px;
-        }
-        
-        .yetkisiz-box a {
-            background: #0A2F6C;
+        .btn-delete {
+            background: #ef4444;
             color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
-            text-decoration: none;
-            display: inline-block;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
         }
         
         @media (max-width: 768px) {
@@ -174,77 +148,73 @@
 </head>
 
 <body>
-    <div id="adminContent" style="display: none;">
-        <div class="navbar">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 24px;">⛽</span>
-                <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-                <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
-            </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <a href="dashboard.html">📊 Ana Sayfa</a>
-                <a href="borc.html">📝 Borçlar</a>
-                <a href="tahsilat.html">💵 Tahsilat</a>
-                <a href="gider.html">📉 Giderler</a>
-                <a href="rapor.html">📊 Rapor</a>
-                <a href="kullanici.html">👥 Kullanıcılar</a>
-                <a href="loglar.html">📜 Loglar</a>
-                <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
-            </div>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⛽</span>
+            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
         </div>
-
-        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-            <!-- Gider Ekleme -->
-            <div class="card">
-                <div class="form-title">➕ Yeni Gider Ekle</div>
-                <div class="form-grid">
-                    <input type="date" id="tarih" value="">
-                    <select id="kategori">
-                        <option value="Elektrik">⚡ Elektrik</option>
-                        <option value="Su">💧 Su</option>
-                        <option value="Kira">🏠 Kira</option>
-                        <option value="Personel">👥 Personel</option>
-                        <option value="Bakım">🔧 Bakım</option>
-                        <option value="Vergi">📄 Vergi</option>
-                        <option value="Diğer">📌 Diğer</option>
-                    </select>
-                    <input type="text" id="aciklama" placeholder="Açıklama">
-                    <input type="number" id="miktar" placeholder="Miktar (TL)" step="any">
-                    <button id="giderEkleBtn" class="btn-danger">Gider Ekle</button>
-                </div>
-            </div>
-
-            <!-- Gider Listesi -->
-            <div class="table-container">
-                <div class="form-title">📋 Gider Geçmişi</div>
-                <div style="max-height: 500px; overflow-y: auto;">
-                    <table class="w-full">
-                        <thead>
-                            <tr>
-                                <th>Tarih</th>
-                                <th>Kategori</th>
-                                <th>Açıklama</th>
-                                <th>Miktar</th>
-                                <th>İşlem</th>
-                            </tr>
-                        </thead>
-                        <tbody id="giderListesi"></tbody>
-                    </table>
-                </div>
-            </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="admin.html">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
+            <a href="rapor.html">📊 Rapor</a>
+            <a href="kullanici.html">👥 Kullanıcılar</a>
+            <a href="loglar.html">📜 Loglar</a>
+            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
         </div>
     </div>
 
-    <div id="yetkisizContent" style="display: none;">
-        <div class="yetkisiz-box">
-            <h2>⚠️ Yetkisiz Erişim</h2>
-            <p>Bu sayfaya erişim yetkiniz yok. Sadece admin kullanıcılar gider ekleyebilir ve silebilir.</p>
-            <a href="viewer.html">Ana Sayfaya Dön</a>
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <div class="card">
+            <div class="form-title">➕ Yeni Gider Ekle</div>
+            <div class="form-grid">
+                <input type="date" id="tarih" value="">
+                <select id="kategori">
+                    <option value="Elektrik">⚡ Elektrik</option>
+                    <option value="Su">💧 Su</option>
+                    <option value="Kira">🏠 Kira</option>
+                    <option value="Personel">👥 Personel</option>
+                    <option value="Bakım">🔧 Bakım</option>
+                    <option value="Vergi">📄 Vergi</option>
+                    <option value="Diğer">📌 Diğer</option>
+                </select>
+                <input type="text" id="aciklama" placeholder="Açıklama">
+                <input type="number" id="miktar" placeholder="Miktar (TL)" step="any">
+                <button id="giderEkleBtn" class="btn-danger">Gider Ekle</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="form-title">📋 Gider Geçmişi</div>
+            <div style="max-height: 500px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Kategori</th>
+                            <th>Açıklama</th>
+                            <th>Miktar</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="giderListesi"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        let yetki = '';
+        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            if (user.yetki !== 'admin') {
+                window.location.href = '/viewer.html';
+                return;
+            }
+        })();
 
         function formatMoney(amount) {
             return (amount || 0).toLocaleString('tr-TR', {
@@ -263,7 +233,7 @@
                     <td class="p-2">${icon} ${g.kategori}</td>
                     <td class="p-2">${g.aciklama || '-'}</td>
                     <td class="p-2 text-red-600 font-bold">${formatMoney(g.miktar)}</td>
-                    <td class="p-2"><button onclick="deleteGider(${g.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;">Sil</button></td>
+                    <td class="p-2"><button onclick="deleteGider(${g.id})" class="btn-delete">Sil</button></td>
                 </tr>`;
             }
             if (!giderler.length) html = '<tr><td colspan="5" class="text-center text-gray-500">Gider bulunamadı</td>';
@@ -300,10 +270,12 @@
             });
             if (res.ok) {
                 alert('Gider eklendi');
-                loadGiderler();
                 document.getElementById('aciklama').value = '';
                 document.getElementById('miktar').value = '';
-            } else alert('Hata');
+                loadGiderler();
+            } else {
+                alert('Hata oluştu');
+            }
         };
 
         document.getElementById('cikisBtn').onclick = async() => {
@@ -313,21 +285,7 @@
             window.location.href = '/';
         };
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-
-        (async() => {
-            const me = await fetch('/api/me');
-            const user = await me.json();
-            yetki = user.yetki;
-
-            if (yetki === 'admin') {
-                document.getElementById('adminContent').style.display = 'block';
-                document.getElementById('yetkisizContent').style.display = 'none';
-                await loadGiderler();
-            } else {
-                document.getElementById('adminContent').style.display = 'none';
-                document.getElementById('yetkisizContent').style.display = 'block';
-            }
-        })();
+        loadGiderler();
     </script>
 </body>
 

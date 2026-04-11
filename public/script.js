@@ -1,4 +1,5 @@
-// Ortak fonksiyonlar
+// Atay Petrol - Ortak Fonksiyonlar
+
 function formatMoney(amount) {
     if (amount === undefined || amount === null) amount = 0;
     return amount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';

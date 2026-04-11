@@ -80,13 +80,6 @@
             border-radius: 14px;
         }
         
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #00B4D8;
-            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
-        }
-        
         .btn-primary {
             background: #0A2F6C;
             color: white;
@@ -95,28 +88,26 @@
             border-radius: 40px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s;
         }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            background: #1E4D8C;
+        .btn-warning {
+            background: #eab308;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
         }
         
         .btn-danger {
-            background: #EF4444;
+            background: #ef4444;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
+            padding: 4px 12px;
+            border-radius: 20px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            background: #dc2626;
+            font-size: 12px;
         }
         
         .table-container {
@@ -168,10 +159,11 @@
             <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="dashboard.html">📊 Ana Sayfa</a>
+            <a href="admin.html">📊 Ana Sayfa</a>
             <a href="borc.html">📝 Borçlar</a>
             <a href="tahsilat.html">💵 Tahsilat</a>
             <a href="gider.html">📉 Giderler</a>
+            <a href="rapor.html">📊 Rapor</a>
             <a href="kullanici.html">👥 Kullanıcılar</a>
             <a href="loglar.html">📜 Loglar</a>
             <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
@@ -179,7 +171,6 @@
     </div>
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <!-- Kullanıcı Ekleme -->
         <div class="card">
             <div class="form-title">➕ Yeni Kullanıcı Ekle</div>
             <div class="form-grid">
@@ -187,18 +178,17 @@
                 <input type="password" id="sifre" placeholder="Şifre">
                 <input type="text" id="adsoyad" placeholder="Ad Soyad">
                 <select id="yetki">
-                    <option value="user">👁️ İzleyici (Sadece Görüntüleme)</option>
-                    <option value="admin">👑 Admin (Tam Yetki)</option>
+                    <option value="user">👁️ İzleyici</option>
+                    <option value="admin">👑 Admin</option>
                 </select>
                 <button id="kullaniciEkleBtn" class="btn-primary">Kullanıcı Ekle</button>
             </div>
         </div>
 
-        <!-- Kullanıcı Listesi -->
         <div class="table-container">
             <div class="form-title">📋 Mevcut Kullanıcılar</div>
             <div style="max-height: 500px; overflow-y: auto;">
-                <table>
+                <table class="w-full">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -216,6 +206,16 @@
     </div>
 
     <script>
+        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            if (user.yetki !== 'admin') {
+                window.location.href = '/viewer.html';
+                return;
+            }
+        })();
+
         async function loadKullanicilar() {
             const res = await fetch('/api/kullanicilar');
             const kullanicilar = await res.json();
@@ -232,12 +232,12 @@
                     <td class="p-2 ${yetkiClass}">${yetkiText}</td>
                     <td class="p-2 ${durumClass}">${durumText}</td>
                     <td class="p-2">
-                        <button onclick="editKullanici(${k.id}, '${k.adsoyad}', '${k.yetki}', ${k.aktif})" style="background:#eab308;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-right:5px;">Düzenle</button>
-                        <button onclick="deleteKullanici(${k.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;">Sil</button>
+                        <button onclick="editKullanici(${k.id}, '${k.adsoyad}', '${k.yetki}', ${k.aktif})" class="btn-warning mr-1">Düzenle</button>
+                        <button onclick="deleteKullanici(${k.id})" class="btn-danger">Sil</button>
                     </td>
                 </tr>`;
             }
-            if (!kullanicilar.length) html = '<tr><td colspan="6" class="text-center text-gray-500">Kullanıcı bulunamadı</td></tr>';
+            if (!kullanicilar.length) html = '<tr><td colspan="6" class="text-center text-gray-500">Kullanıcı bulunamadı</td>';
             document.getElementById('kullaniciListesi').innerHTML = html;
         }
 
@@ -254,8 +254,7 @@
                 alert('Durum 1 veya 0 olmalıdır');
                 return;
             }
-
-            await fetch(`/api/kullanici/${id}`, {
+            const res = await fetch(`/api/kullanici/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -266,17 +265,25 @@
                     aktif: parseInt(yeniDurum)
                 })
             });
-            loadKullanicilar();
-            alert('Kullanıcı güncellendi');
+            if (res.ok) {
+                alert('Kullanıcı güncellendi');
+                loadKullanicilar();
+            } else {
+                alert('Güncelleme hatası');
+            }
         };
 
         window.deleteKullanici = async(id) => {
             if (confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) {
-                await fetch(`/api/kullanici/${id}`, {
+                const res = await fetch(`/api/kullanici/${id}`, {
                     method: 'DELETE'
                 });
-                loadKullanicilar();
-                alert('Kullanıcı silindi');
+                if (res.ok) {
+                    alert('Kullanıcı silindi');
+                    loadKullanicilar();
+                } else {
+                    alert('Silme hatası');
+                }
             }
         };
 
@@ -316,7 +323,6 @@
             });
             window.location.href = '/';
         };
-
         loadKullanicilar();
     </script>
 </body>

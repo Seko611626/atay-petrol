@@ -165,11 +165,6 @@
             border-radius: 14px;
         }
         
-        input:focus {
-            outline: none;
-            border-color: #00B4D8;
-        }
-        
         .admin-only {
             display: none;
         }
@@ -191,14 +186,14 @@
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 24px;">⛽</span>
             <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span id="rolBadge" class="admin-only" style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
-            <span id="izleyiciBadge" style="background: #3B82F620; padding: 2px 10px; border-radius: 40px; font-size: 11px;">İzleyici</span>
+            <span id="adminBadge" class="admin-only" style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+            <span id="viewerBadge" style="background: #3B82F620; padding: 2px 10px; border-radius: 40px; font-size: 11px;">İzleyici</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="viewer.html" id="anaSayfaLink">📊 Ana Sayfa</a>
-            <a href="borc-viewer.html">📝 Borçlar</a>
-            <a href="tahsilat-viewer.html">💵 Tahsilat</a>
-            <a href="gider-viewer.html">📉 Giderler</a>
+            <a href="admin.html" id="anaSayfaLink">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
             <a href="rapor.html">📊 Rapor</a>
             <a href="kullanici.html" id="kullaniciLink" class="admin-only">👥 Kullanıcılar</a>
             <a href="loglar.html" id="loglarLink" class="admin-only">📜 Loglar</a>
@@ -207,7 +202,6 @@
     </div>
 
     <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 20px;">
-        <!-- Tarih Seçici -->
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -220,7 +214,6 @@
             </div>
         </div>
 
-        <!-- Özet Kartları -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="toplamSatis">0 ₺</div>
@@ -248,7 +241,6 @@
             </div>
         </div>
 
-        <!-- Satış Listesi -->
         <div class="table-container">
             <div class="form-title">📋 Satış Listesi</div>
             <div style="max-height: 300px; overflow-y: auto;">
@@ -267,7 +259,6 @@
             </div>
         </div>
 
-        <!-- Alış Listesi -->
         <div class="table-container">
             <div class="form-title">📋 Alış Listesi</div>
             <div style="max-height: 300px; overflow-y: auto;">
@@ -287,7 +278,6 @@
             </div>
         </div>
 
-        <!-- Borç Listesi -->
         <div class="table-container">
             <div class="form-title">📝 Borç Listesi</div>
             <div style="max-height: 300px; overflow-y: auto;">
@@ -307,7 +297,6 @@
             </div>
         </div>
 
-        <!-- Tahsilat Listesi -->
         <div class="table-container">
             <div class="form-title">💵 Tahsilat Listesi</div>
             <div style="max-height: 300px; overflow-y: auto;">
@@ -325,7 +314,6 @@
             </div>
         </div>
 
-        <!-- Gider Listesi -->
         <div class="table-container">
             <div class="form-title">📉 Gider Listesi</div>
             <div style="max-height: 300px; overflow-y: auto;">
@@ -343,10 +331,9 @@
             </div>
         </div>
 
-        <!-- Gün Sonu Ödemeleri -->
         <div class="card">
             <div class="form-title">💵 Gün Sonu Ödemeleri</div>
-            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 12px;">
+            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
                 <div class="stat-card">
                     <div class="stat-value" id="gunSonuNakit">0 ₺</div>
                     <div class="stat-label">Nakit</div>
@@ -386,45 +373,44 @@
             let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
             const res = await fetch(`/api/rapor/tum?tarih=${tarih}`);
             const data = await res.json();
-
             document.getElementById('toplamSatis').innerHTML = formatMoney(data.toplamSatis);
             document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
             document.getElementById('toplamBorc').innerHTML = formatMoney(data.toplamBorc);
             document.getElementById('toplamTahsilat').innerHTML = formatMoney(data.toplamTahsilat);
             document.getElementById('toplamGider').innerHTML = formatMoney(data.toplamGider);
-            let karElement = document.getElementById('karZarar');
-            karElement.innerHTML = formatMoney(data.kar);
-            karElement.style.color = data.kar >= 0 ? '#10B981' : '#EF4444';
+            let karElem = document.getElementById('karZarar');
+            karElem.innerHTML = formatMoney(data.kar);
+            karElem.style.color = data.kar >= 0 ? '#10B981' : '#EF4444';
 
-            let satisHtml = '';
-            for (let s of data.satislar) satisHtml += `<tr><td class="p-2">${s.tarih}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.birim_fiyat)}</td><td class="p-2 font-bold">${formatMoney(s.toplam_tutar)}</td></tr>`;
-            if (!data.satislar.length) satisHtml = '<tr><td colspan="5" class="text-center text-gray-500">Satış yok</td>';
+            let satisHtml = '',
+                alisHtml = '',
+                borcHtml = '',
+                tahsilatHtml = '',
+                giderHtml = '';
+            for (let s of data.satislar) satisHtml += `<tr><td class="p-2">${s.tarih}${s.urun_adi}${formatLiter(s.litre)}${formatMoney(s.birim_fiyat)}${formatMoney(s.toplam_tutar)}`;
+            if (!data.satislar.length) satisHtml = '<tr><td colspan="5" class="text-center">Satış yok';
             document.getElementById('satisListesi').innerHTML = satisHtml;
 
-            let alisHtml = '';
-            for (let a of data.alislar) alisHtml += `<tr><td class="p-2">${a.tarih}</td><td class="p-2">${a.urun_adi}</td><td class="p-2">${formatLiter(a.litre)}</td><td class="p-2">${formatMoney(a.birim_fiyat)}</td><td class="p-2">${a.tedarikci || '-'}</td><td class="p-2">${formatMoney(a.toplam_tutar)}</tr>`;
-            if (!data.alislar.length) alisHtml = '<tr><td colspan="6" class="text-center text-gray-500">Alış yok</td>';
+            for (let a of data.alislar) alisHtml += `<tr><td class="p-2">${a.tarih}${a.urun_adi}${formatLiter(a.litre)}${formatMoney(a.birim_fiyat)}${a.tedarikci || '-'}${formatMoney(a.toplam_tutar)}`;
+            if (!data.alislar.length) alisHtml = '<tr><td colspan="6" class="text-center">Alış yok';
             document.getElementById('alisListesi').innerHTML = alisHtml;
 
-            let borcHtml = '';
-            for (let b of data.borclar) borcHtml += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${b.urun_adi}</td><td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-2">${b.aciklama || '-'}</tr>`;
-            if (!data.borclar.length) borcHtml = '<tr><td colspan="6" class="text-center text-gray-500">Borç yok</td>';
+            for (let b of data.borclar) borcHtml += `<tr><td class="p-2">${b.tarih}${b.musteri_adi}${b.urun_adi}${formatMoney(b.miktar_tl)}${formatMoney(b.kalan_tl)}${b.aciklama || '-'}`;
+            if (!data.borclar.length) borcHtml = '<td><td colspan="6" class="text-center">Borç yok';
             document.getElementById('borcListesi').innerHTML = borcHtml;
 
-            let tahsilatHtml = '';
             for (let t of data.tahsilatlar) {
                 let icon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
-                tahsilatHtml += `<tr><td class="p-2">${t.tarih}</td><td class="p-2">${t.musteri_adi}</td><td class="p-2 text-green-600">${formatMoney(t.miktar)}</td><td class="p-2">${icon} ${t.odeme_yontemi || '-'}</tr>`;
+                tahsilatHtml += `<tr><td class="p-2">${t.tarih}${t.musteri_adi}${formatMoney(t.miktar)}${icon} ${t.odeme_yontemi || '-'}`;
             }
-            if (!data.tahsilatlar.length) tahsilatHtml = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat yok</td>';
+            if (!data.tahsilatlar.length) tahsilatHtml = '<tr><td colspan="4" class="text-center">Tahsilat yok';
             document.getElementById('tahsilatListesi').innerHTML = tahsilatHtml;
 
-            let giderHtml = '';
             for (let g of data.giderler) {
                 let icon = g.kategori === 'Elektrik' ? '⚡' : (g.kategori === 'Su' ? '💧' : (g.kategori === 'Kira' ? '🏠' : (g.kategori === 'Personel' ? '👥' : (g.kategori === 'Bakım' ? '🔧' : (g.kategori === 'Vergi' ? '📄' : '📌')))));
-                giderHtml += `<tr><td class="p-2">${g.tarih}</td><td class="p-2">${icon} ${g.kategori}</td><td class="p-2">${g.aciklama || '-'}</td><td class="p-2 text-red-600">${formatMoney(g.miktar)}</tr>`;
+                giderHtml += `<tr><td class="p-2">${g.tarih}${icon} ${g.kategori}${g.aciklama || '-'}${formatMoney(g.miktar)}`;
             }
-            if (!data.giderler.length) giderHtml = '<tr><td colspan="4" class="text-center text-gray-500">Gider yok</td>';
+            if (!data.giderler.length) giderHtml = '<tr><td colspan="4" class="text-center">Gider yok';
             document.getElementById('giderListesi').innerHTML = giderHtml;
 
             if (data.gunSonu) {
@@ -432,11 +418,6 @@
                 document.getElementById('gunSonuHavale').innerHTML = formatMoney(data.gunSonu.havale);
                 document.getElementById('gunSonuPos').innerHTML = formatMoney(data.gunSonu.pos);
                 document.getElementById('gunSonuBorc').innerHTML = formatMoney(data.gunSonu.borc);
-            } else {
-                document.getElementById('gunSonuNakit').innerHTML = formatMoney(0);
-                document.getElementById('gunSonuHavale').innerHTML = formatMoney(0);
-                document.getElementById('gunSonuPos').innerHTML = formatMoney(0);
-                document.getElementById('gunSonuBorc').innerHTML = formatMoney(0);
             }
         }
 
@@ -444,18 +425,17 @@
             let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
             const res = await fetch(`/api/rapor/tum?tarih=${tarih}`);
             const data = await res.json();
-            let csv = `"${tarih} TARİHLİ RAPOR"\n\n`;
-            csv += `"SATIŞ LİSTESİ"\n"Tarih","Ürün","Litre","Birim Fiyat","Toplam"\n`;
-            for (let s of data.satislar) csv += `"${s.tarih}","${s.urun_adi}",${s.litre},${s.birim_fiyat},${s.toplam_tutar}\n`;
-            csv += `\n"ALIŞ LİSTESİ"\n"Tarih","Ürün","Litre","Birim Fiyat","Tedarikçi","Toplam"\n`;
-            for (let a of data.alislar) csv += `"${a.tarih}","${a.urun_adi}",${a.litre},${a.birim_fiyat},"${a.tedarikci || '-'}",${a.toplam_tutar}\n`;
-            csv += `\n"BORÇ LİSTESİ"\n"Tarih","Müşteri","Ürün","Borç Tutarı","Kalan","Açıklama"\n`;
-            for (let b of data.borclar) csv += `"${b.tarih}","${b.musteri_adi}","${b.urun_adi}",${b.miktar_tl},${b.kalan_tl},"${b.aciklama || '-'}"\n`;
-            csv += `\n"TAHSİLAT LİSTESİ"\n"Tarih","Müşteri","Tahsilat","Ödeme Türü"\n`;
-            for (let t of data.tahsilatlar) csv += `"${t.tarih}","${t.musteri_adi}",${t.miktar},"${t.odeme_yontemi || '-'}"\n`;
-            csv += `\n"GİDER LİSTESİ"\n"Tarih","Kategori","Açıklama","Miktar"\n`;
-            for (let g of data.giderler) csv += `"${g.tarih}","${g.kategori}","${g.aciklama || '-'}",${g.miktar}\n`;
-            csv += `\n"ÖZET"\n"Toplam Satış",${data.toplamSatis}\n"Toplam Alış",${data.toplamAlis}\n"Toplam Borç",${data.toplamBorc}\n"Toplam Tahsilat",${data.toplamTahsilat}\n"Toplam Gider",${data.toplamGider}\n"Kar/Zarar",${data.kar}\n`;
+            let csv = `"${tarih} RAPORU"\n\n"SATIŞ"\nTarih,Ürün,Litre,Birim Fiyat,Toplam\n`;
+            for (let s of data.satislar) csv += `${s.tarih},${s.urun_adi},${s.litre},${s.birim_fiyat},${s.toplam_tutar}\n`;
+            csv += `\n"ALIŞ"\nTarih,Ürün,Litre,Birim Fiyat,Tedarikçi,Toplam\n`;
+            for (let a of data.alislar) csv += `${a.tarih},${a.urun_adi},${a.litre},${a.birim_fiyat},"${a.tedarikci || '-'}",${a.toplam_tutar}\n`;
+            csv += `\n"BORÇ"\nTarih,Müşteri,Ürün,Borç,Kalan,Açıklama\n`;
+            for (let b of data.borclar) csv += `${b.tarih},${b.musteri_adi},${b.urun_adi},${b.miktar_tl},${b.kalan_tl},"${b.aciklama || '-'}"\n`;
+            csv += `\n"TAHSİLAT"\nTarih,Müşteri,Tahsilat,Ödeme Türü\n`;
+            for (let t of data.tahsilatlar) csv += `${t.tarih},${t.musteri_adi},${t.miktar},"${t.odeme_yontemi || '-'}"\n`;
+            csv += `\n"GİDER"\nTarih,Kategori,Açıklama,Miktar\n`;
+            for (let g of data.giderler) csv += `${g.tarih},${g.kategori},"${g.aciklama || '-'}",${g.miktar}\n`;
+            csv += `\n"ÖZET"\nToplam Satış,${data.toplamSatis}\nToplam Alış,${data.toplamAlis}\nToplam Borç,${data.toplamBorc}\nToplam Tahsilat,${data.toplamTahsilat}\nToplam Gider,${data.toplamGider}\nKar/Zarar,${data.kar}\n`;
             const blob = new Blob(["\uFEFF" + csv], {
                 type: 'text/csv;charset=utf-8;'
             });
@@ -472,8 +452,8 @@
             });
             window.location.href = '/';
         };
-        document.getElementById('raporGetirBtn').onclick = () => loadRapor();
-        document.getElementById('excelExportBtn').onclick = () => exportToExcel();
+        document.getElementById('raporGetirBtn').onclick = loadRapor;
+        document.getElementById('excelExportBtn').onclick = exportToExcel;
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
 
         (async() => {
@@ -481,13 +461,13 @@
             const user = await me.json();
             yetki = user.yetki;
             if (yetki === 'admin') {
-                document.getElementById('rolBadge').style.display = 'inline-block';
-                document.getElementById('izleyiciBadge').style.display = 'none';
-                document.getElementById('anaSayfaLink').href = 'dashboard.html';
+                document.getElementById('adminBadge').style.display = 'inline-block';
+                document.getElementById('viewerBadge').style.display = 'none';
+                document.getElementById('anaSayfaLink').href = 'admin.html';
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
             } else {
-                document.getElementById('rolBadge').style.display = 'none';
-                document.getElementById('izleyiciBadge').style.display = 'inline-block';
+                document.getElementById('adminBadge').style.display = 'none';
+                document.getElementById('viewerBadge').style.display = 'inline-block';
                 document.getElementById('anaSayfaLink').href = 'viewer.html';
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
             }

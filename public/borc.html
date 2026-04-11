@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borçlar | Atay Petrol (İzleyici)</title>
+    <title>Borçlar | Atay Petrol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
@@ -80,6 +80,16 @@
             border-radius: 14px;
         }
         
+        .btn-primary {
+            background: #0A2F6C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
         .table-container {
             background: white;
             border-radius: 20px;
@@ -106,6 +116,26 @@
             border-bottom: 1px solid #e2e8f0;
         }
         
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -120,32 +150,33 @@
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 24px;">⛽</span>
             <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #3B82F620; padding: 2px 10px; border-radius: 40px; font-size: 11px;">İzleyici</span>
+            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="viewer.html">📊 Ana Sayfa</a>
-            <a href="borc-viewer.html">📝 Borçlar</a>
-            <a href="tahsilat-viewer.html">💵 Tahsilat</a>
-            <a href="gider-viewer.html">📉 Giderler</a>
+            <a href="admin.html">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
             <a href="rapor.html">📊 Rapor</a>
+            <a href="kullanici.html">👥 Kullanıcılar</a>
+            <a href="loglar.html">📜 Loglar</a>
             <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
         </div>
     </div>
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <!-- Tarih Seçici -->
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 24px;">📅</span>
-                    <input type="date" id="tarih" style="width: auto;">
-                    <button id="bugunBtn" style="background:#0A2F6C;color:white;border:none;padding:8px 16px;border-radius:40px;cursor:pointer;">Bugün</button>
-                </div>
-                <span style="font-size: 12px; color: #64748b;">Sadece görüntüleme modu</span>
+            <div class="form-title">➕ Yeni Borç Ekle</div>
+            <div class="form-grid">
+                <input type="date" id="tarih" value="">
+                <input type="text" id="musteri" placeholder="Müşteri Adı">
+                <select id="urun_id"><option value="">Ürün Seç</option></select>
+                <input type="number" id="miktar" placeholder="Borç Tutarı (TL)" step="any">
+                <input type="text" id="aciklama" placeholder="Açıklama">
+                <button id="borcEkleBtn" class="btn-primary">Borç Ekle</button>
             </div>
         </div>
 
-        <!-- Borç Listesi -->
         <div class="table-container">
             <div class="form-title">📋 Borç Listesi</div>
             <div style="max-height: 500px; overflow-y: auto;">
@@ -159,6 +190,7 @@
                             <th>Kalan</th>
                             <th>Açıklama</th>
                             <th>Durum</th>
+                            <th>İşlem</th>
                         </tr>
                     </thead>
                     <tbody id="borcListesi"></tbody>
@@ -168,15 +200,30 @@
     </div>
 
     <script>
+        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            if (user.yetki !== 'admin') {
+                window.location.href = '/viewer.html';
+                return;
+            }
+        })();
+
         function formatMoney(amount) {
             return (amount || 0).toLocaleString('tr-TR', {
                 minimumFractionDigits: 2
             }) + ' ₺';
         }
 
+        async function loadUrunler() {
+            const res = await fetch('/api/urunler');
+            const urunler = await res.json();
+            document.getElementById('urun_id').innerHTML = '<option value="">Ürün Seç</option>' + urunler.map(u => `<option value="${u.id}">${u.ad}</option>`).join('');
+        }
+
         async function loadBorclar() {
-            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/borc/tarih?tarih=${tarih}`);
+            const res = await fetch('/api/borc');
             const borclar = await res.json();
             let html = '';
             for (let b of borclar) {
@@ -190,11 +237,52 @@
                     <td class="p-2 text-red-600 font-bold">${formatMoney(b.kalan_tl)}</td>
                     <td class="p-2">${b.aciklama || '-'}</td>
                     <td class="p-2 ${durumClass}">${durum}</td>
+                    <td class="p-2"><button onclick="deleteBorc(${b.id})" class="btn-delete">Sil</button></td>
                 </tr>`;
             }
-            if (!borclar.length) html = '<tr><td colspan="7" class="text-center text-gray-500">Borç bulunamadı</td></tr>';
+            if (!borclar.length) html = '<tr><td colspan="8" class="text-center text-gray-500">Borç bulunamadı</td></tr>';
             document.getElementById('borcListesi').innerHTML = html;
         }
+
+        window.deleteBorc = async(id) => {
+            if (confirm('Bu borcu silmek istediğinize emin misiniz?')) {
+                await fetch(`/api/borc/${id}`, {
+                    method: 'DELETE'
+                });
+                loadBorclar();
+                alert('Borç silindi');
+            }
+        };
+
+        document.getElementById('borcEkleBtn').onclick = async() => {
+            const data = {
+                tarih: document.getElementById('tarih').value,
+                musteri_adi: document.getElementById('musteri').value,
+                urun_id: parseInt(document.getElementById('urun_id').value),
+                miktar_tl: parseFloat(document.getElementById('miktar').value),
+                aciklama: document.getElementById('aciklama').value
+            };
+            if (!data.tarih || !data.musteri_adi || !data.urun_id || !data.miktar_tl) {
+                alert('Tüm alanları doldurun');
+                return;
+            }
+            const res = await fetch('/api/borc', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert('Borç eklendi');
+                document.getElementById('musteri').value = '';
+                document.getElementById('miktar').value = '';
+                document.getElementById('aciklama').value = '';
+                loadBorclar();
+            } else {
+                alert('Hata oluştu');
+            }
+        };
 
         document.getElementById('cikisBtn').onclick = async() => {
             await fetch('/api/logout', {
@@ -202,13 +290,8 @@
             });
             window.location.href = '/';
         };
-        document.getElementById('bugunBtn').onclick = () => {
-            document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-            loadBorclar();
-        };
-        document.getElementById('tarih').addEventListener('change', () => loadBorclar());
-
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
+        loadUrunler();
         loadBorclar();
     </script>
 </body>

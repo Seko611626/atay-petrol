@@ -72,6 +72,7 @@
         </form>
         <div id="hata" class="text-red-300 text-center mt-4 text-sm"></div>
     </div>
+
     <script>
         document.getElementById('loginForm').addEventListener('submit', async(e) => {
             e.preventDefault();
@@ -91,7 +92,7 @@
             });
             const data = await res.json();
             if (res.ok) {
-                if (data.yetki === 'admin') window.location.href = '/dashboard.html';
+                if (data.yetki === 'admin') window.location.href = '/admin.html';
                 else window.location.href = '/viewer.html';
             } else {
                 document.getElementById('hata').innerText = data.hata || 'Giriş başarısız';

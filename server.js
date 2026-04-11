@@ -15,6 +15,7 @@ app.use(express.static('public'));
 
 const db = new Database('./database.sqlite');
 
+// TABLOLAR
 db.exec(`
     CREATE TABLE IF NOT EXISTS kullanicilar (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,16 +86,19 @@ db.exec(`
     );
 `);
 
+// ÜRÜNLER
 const urunler = ['Motorin', 'Benzin', 'LPG'];
 for (let i = 0; i < urunler.length; i++) {
     db.prepare(`INSERT OR IGNORE INTO urunler (ad) VALUES (?)`).run(urunler[i]);
 }
 
+// HESAPLAR
 const hash1 = bcrypt.hashSync('Atay2026', 10);
 const hash2 = bcrypt.hashSync('Diamond42', 10);
 db.prepare(`INSERT OR IGNORE INTO kullanicilar (email, sifre, adsoyad, yetki) VALUES (?, ?, ?, ?)`).run('atay@gmail.com', hash1, 'Burhan Atay', 'admin');
 db.prepare(`INSERT OR IGNORE INTO kullanicilar (email, sifre, adsoyad, yetki) VALUES (?, ?, ?, ?)`).run('izleyici@atay.com', hash2, 'İzleyici', 'user');
 
+// MIDDLEWARE
 function auth(req, res, next) {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ hata: 'Giriş yapılmamış' });
@@ -112,6 +116,7 @@ function adminOnly(req, res, next) {
     next();
 }
 
+// GİRİŞ / ÇIKIŞ
 app.post('/api/login', (req, res) => {
     const { email, sifre } = req.body;
     const user = db.prepare(`SELECT * FROM kullanicilar WHERE email = ? AND aktif = 1`).get(email);
@@ -133,10 +138,12 @@ app.get('/api/me', auth, (req, res) => {
     res.json({ email: req.user.email, yetki: req.user.yetki });
 });
 
+// ÜRÜNLER
 app.get('/api/urunler', auth, (req, res) => {
     res.json(db.prepare(`SELECT * FROM urunler`).all());
 });
 
+// ALIŞ
 app.post('/api/alis', auth, adminOnly, (req, res) => {
     const { tarih, urun_id, litre, birim_fiyat, tedarikci } = req.body;
     const toplam = litre * birim_fiyat;
@@ -158,6 +165,7 @@ app.delete('/api/alis/:id', auth, adminOnly, (req, res) => {
     res.json({ mesaj: 'Alış silindi' });
 });
 
+// SATIŞ
 app.post('/api/satis', auth, adminOnly, (req, res) => {
     const { tarih, urun_id, litre, birim_fiyat } = req.body;
     const toplam = litre * birim_fiyat;
@@ -179,6 +187,7 @@ app.delete('/api/satis/:id', auth, adminOnly, (req, res) => {
     res.json({ mesaj: 'Satış silindi' });
 });
 
+// BORÇ
 app.post('/api/borc', auth, adminOnly, (req, res) => {
     const { tarih, musteri_adi, urun_id, miktar_tl, aciklama } = req.body;
     const info = db.prepare(`INSERT INTO borc (tarih, musteri_adi, urun_id, miktar_tl, kalan_tl, aciklama) VALUES (?, ?, ?, ?, ?, ?)`).run(tarih, musteri_adi, urun_id, miktar_tl, miktar_tl, aciklama || '');
@@ -199,6 +208,7 @@ app.delete('/api/borc/:id', auth, adminOnly, (req, res) => {
     res.json({ mesaj: 'Borç silindi' });
 });
 
+// TAHSİLAT
 app.post('/api/tahsilat', auth, adminOnly, (req, res) => {
     const { tarih, borc_id, miktar, odeme_yontemi } = req.body;
     db.prepare(`INSERT INTO tahsilat (tarih, borc_id, miktar, odeme_yontemi) VALUES (?, ?, ?, ?)`).run(tarih, borc_id, miktar, odeme_yontemi);
@@ -215,6 +225,7 @@ app.get('/api/tahsilat/tarih', auth, (req, res) => {
     res.json(db.prepare(`SELECT tahsilat.*, borc.musteri_adi FROM tahsilat JOIN borc ON tahsilat.borc_id = borc.id WHERE tahsilat.tarih = ? ORDER BY id DESC`).all(tarih));
 });
 
+// GİDER
 app.post('/api/gider', auth, adminOnly, (req, res) => {
     const { tarih, kategori, aciklama, miktar } = req.body;
     const info = db.prepare(`INSERT INTO giderler (tarih, kategori, aciklama, miktar) VALUES (?, ?, ?, ?)`).run(tarih, kategori, aciklama, miktar);
@@ -235,15 +246,12 @@ app.delete('/api/gider/:id', auth, adminOnly, (req, res) => {
     res.json({ mesaj: 'Gider silindi' });
 });
 
+// GÜN SONU
 app.post('/api/gun-sonu', auth, adminOnly, (req, res) => {
     const { tarih, nakit, havale, pos, borc } = req.body;
     const toplam = nakit + havale + pos + borc;
     db.prepare(`INSERT OR REPLACE INTO gun_sonu (tarih, nakit, havale, pos, borc, toplam) VALUES (?, ?, ?, ?, ?, ?)`).run(tarih, nakit, havale, pos, borc, toplam);
     res.json({ mesaj: 'Gün sonu kaydedildi' });
-});
-
-app.get('/api/gun-sonu', auth, (req, res) => {
-    res.json(db.prepare(`SELECT * FROM gun_sonu ORDER BY tarih DESC`).all());
 });
 
 app.get('/api/gun-sonu/tarih', auth, (req, res) => {
@@ -252,23 +260,18 @@ app.get('/api/gun-sonu/tarih', auth, (req, res) => {
     res.json(row || { nakit: 0, havale: 0, pos: 0, borc: 0, toplam: 0 });
 });
 
+// DASHBOARD İSTATİSTİK
 app.get('/api/istatistik', auth, (req, res) => {
     const tarih = req.query.tarih || new Date().toISOString().slice(0, 10);
     const gunlukSatis = db.prepare(`SELECT SUM(toplam_tutar) as satis FROM satis WHERE tarih = ?`).get(tarih);
     const gunlukAlis = db.prepare(`SELECT SUM(toplam_tutar) as alis FROM alis WHERE tarih = ?`).get(tarih);
-    const gunlukBorc = db.prepare(`SELECT SUM(miktar_tl) as borc FROM borc WHERE tarih = ?`).get(tarih);
     const gunSonu = db.prepare(`SELECT * FROM gun_sonu WHERE tarih = ?`).get(tarih);
     const aylikSatis = db.prepare(`SELECT SUM(toplam_tutar) as satis FROM satis WHERE strftime('%Y-%m', tarih) = strftime('%Y-%m', 'now')`).get();
-    const aylikAlis = db.prepare(`SELECT SUM(toplam_tutar) as alis FROM alis WHERE strftime('%Y-%m', tarih) = strftime('%Y-%m', 'now')`).get();
-
     const stok = db.prepare(`SELECT u.ad, COALESCE(SUM(a.litre),0) - COALESCE(SUM(s.litre),0) as stok FROM urunler u LEFT JOIN alis a ON u.id = a.urun_id LEFT JOIN satis s ON u.id = s.urun_id GROUP BY u.id`).all();
-
     res.json({
         bugunSatis: gunlukSatis ? gunlukSatis.satis : 0,
         bugunAlis: gunlukAlis ? gunlukAlis.alis : 0,
-        bugunBorc: gunlukBorc ? gunlukBorc.borc : 0,
         aylikSatis: aylikSatis ? aylikSatis.satis : 0,
-        aylikAlis: aylikAlis ? aylikAlis.alis : 0,
         nakit: gunSonu ? gunSonu.nakit : 0,
         havale: gunSonu ? gunSonu.havale : 0,
         pos: gunSonu ? gunSonu.pos : 0,
@@ -278,6 +281,7 @@ app.get('/api/istatistik', auth, (req, res) => {
     });
 });
 
+// ÖDEME RAPORU (Grafik için)
 app.get('/api/odeme-rapor', auth, (req, res) => {
     const { tarih } = req.query;
     let row;
@@ -289,6 +293,7 @@ app.get('/api/odeme-rapor', auth, (req, res) => {
     res.json(row ? [row] : [{ nakit: 0, havale: 0, pos: 0, borc: 0 }]);
 });
 
+// RAPOR (Tüm veriler)
 app.get('/api/rapor/tum', auth, (req, res) => {
     const { tarih } = req.query;
     const satislar = db.prepare(`SELECT s.*, u.ad as urun_adi FROM satis s JOIN urunler u ON s.urun_id = u.id WHERE s.tarih = ? ORDER BY id DESC`).all(tarih);
@@ -297,35 +302,21 @@ app.get('/api/rapor/tum', auth, (req, res) => {
     const tahsilatlar = db.prepare(`SELECT t.*, b.musteri_adi FROM tahsilat t JOIN borc b ON t.borc_id = b.id WHERE t.tarih = ? ORDER BY t.id DESC`).all(tarih);
     const giderler = db.prepare(`SELECT * FROM giderler WHERE tarih = ? ORDER BY id DESC`).all(tarih);
     const gunSonu = db.prepare(`SELECT * FROM gun_sonu WHERE tarih = ?`).get(tarih);
-
     const toplamSatis = satislar.reduce((s, x) => s + x.toplam_tutar, 0);
     const toplamAlis = alislar.reduce((s, x) => s + x.toplam_tutar, 0);
     const toplamBorc = borclar.reduce((s, x) => s + x.miktar_tl, 0);
     const toplamTahsilat = tahsilatlar.reduce((s, x) => s + x.miktar, 0);
     const toplamGider = giderler.reduce((s, x) => s + x.miktar, 0);
     const kar = toplamSatis - toplamAlis - toplamGider;
-
-    res.json({
-        tarih,
-        satislar,
-        alislar,
-        borclar,
-        tahsilatlar,
-        giderler,
-        gunSonu,
-        toplamSatis,
-        toplamAlis,
-        toplamBorc,
-        toplamTahsilat,
-        toplamGider,
-        kar
-    });
+    res.json({ tarih, satislar, alislar, borclar, tahsilatlar, giderler, gunSonu, toplamSatis, toplamAlis, toplamBorc, toplamTahsilat, toplamGider, kar });
 });
 
+// LOGLAR
 app.get('/api/loglar', auth, adminOnly, (req, res) => {
     res.json(db.prepare(`SELECT * FROM login_log ORDER BY id DESC LIMIT 200`).all());
 });
 
+// KULLANICILAR
 app.get('/api/kullanicilar', auth, adminOnly, (req, res) => {
     res.json(db.prepare(`SELECT id, email, adsoyad, yetki, aktif FROM kullanicilar`).all());
 });
