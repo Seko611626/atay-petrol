@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raporlar | Atay Petrol</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             font-family: system-ui;
@@ -75,7 +74,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 16px;
             margin-bottom: 20px;
         }
@@ -89,12 +88,12 @@
         }
         
         .stat-value {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
         }
         
         .stat-label {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748b;
             margin-top: 4px;
         }
@@ -119,11 +118,13 @@
             background: #f8fafc;
             font-weight: 600;
             color: #0A2F6C;
+            font-size: 13px;
         }
         
         td {
             padding: 10px 12px;
             border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
         }
         
         .btn-excel {
@@ -142,23 +143,44 @@
             background: #059669;
         }
         
-        input,
-        select {
+        .btn-primary {
+            background: #0A2F6C;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #1E4D8C;
+        }
+        
+        input {
             padding: 8px 14px;
             border: 1px solid #e2e8f0;
             border-radius: 14px;
         }
         
-        input:focus,
-        select:focus {
+        input:focus {
             outline: none;
             border-color: #00B4D8;
+        }
+        
+        .admin-only {
+            display: none;
         }
         
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
                 text-align: center;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -169,16 +191,17 @@
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 24px;">⛽</span>
             <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+            <span id="rolBadge" class="admin-only" style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+            <span id="izleyiciBadge" style="background: #3B82F620; padding: 2px 10px; border-radius: 40px; font-size: 11px;">İzleyici</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="dashboard.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
+            <a href="viewer.html" id="anaSayfaLink">📊 Ana Sayfa</a>
+            <a href="borc-viewer.html">📝 Borçlar</a>
+            <a href="tahsilat-viewer.html">💵 Tahsilat</a>
+            <a href="gider-viewer.html">📉 Giderler</a>
             <a href="rapor.html">📊 Rapor</a>
-            <a href="kullanici.html">👥 Kullanıcılar</a>
-            <a href="loglar.html">📜 Loglar</a>
+            <a href="kullanici.html" id="kullaniciLink" class="admin-only">👥 Kullanıcılar</a>
+            <a href="loglar.html" id="loglarLink" class="admin-only">📜 Loglar</a>
             <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
         </div>
     </div>
@@ -190,7 +213,7 @@
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="font-size: 24px;">📅</span>
                     <input type="date" id="tarih" style="width: auto;">
-                    <button id="raporGetirBtn" class="btn-primary" style="padding: 8px 20px;">Raporu Getir</button>
+                    <button id="raporGetirBtn" class="btn-primary">Raporu Getir</button>
                     <button id="excelExportBtn" class="btn-excel">📎 Excel Export</button>
                 </div>
                 <span style="font-size: 12px; color: #64748b;">Seçilen tarihe ait tüm veriler</span>
@@ -198,7 +221,7 @@
         </div>
 
         <!-- Özet Kartları -->
-        <div class="stats-grid" id="ozetKartlari">
+        <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="toplamSatis">0 ₺</div>
                 <div class="stat-label">💰 Toplam Satış</div>
@@ -321,7 +344,7 @@
         </div>
 
         <!-- Gün Sonu Ödemeleri -->
-        <div class="table-container">
+        <div class="card">
             <div class="form-title">💵 Gün Sonu Ödemeleri</div>
             <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 12px;">
                 <div class="stat-card">
@@ -345,6 +368,8 @@
     </div>
 
     <script>
+        let yetki = '';
+
         function formatMoney(amount) {
             return (amount || 0).toLocaleString('tr-TR', {
                 minimumFractionDigits: 2
@@ -362,7 +387,6 @@
             const res = await fetch(`/api/rapor/tum?tarih=${tarih}`);
             const data = await res.json();
 
-            // Özet Kartları
             document.getElementById('toplamSatis').innerHTML = formatMoney(data.toplamSatis);
             document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
             document.getElementById('toplamBorc').innerHTML = formatMoney(data.toplamBorc);
@@ -372,52 +396,37 @@
             karElement.innerHTML = formatMoney(data.kar);
             karElement.style.color = data.kar >= 0 ? '#10B981' : '#EF4444';
 
-            // Satış Listesi
             let satisHtml = '';
-            for (let s of data.satislar) {
-                satisHtml += `<tr><td class="p-2">${s.tarih}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.birim_fiyat)}</td><td class="p-2 font-bold">${formatMoney(s.toplam_tutar)}</td></tr>`;
-            }
-            if (!data.satislar.length) satisHtml = '<tr><td colspan="5" class="text-center text-gray-500">Satış yok</td></tr>';
+            for (let s of data.satislar) satisHtml += `<tr><td class="p-2">${s.tarih}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.birim_fiyat)}</td><td class="p-2 font-bold">${formatMoney(s.toplam_tutar)}</td></tr>`;
+            if (!data.satislar.length) satisHtml = '<tr><td colspan="5" class="text-center text-gray-500">Satış yok</td>';
             document.getElementById('satisListesi').innerHTML = satisHtml;
 
-            // Alış Listesi
             let alisHtml = '';
-            for (let a of data.alislar) {
-                alisHtml += `<tr><td class="p-2">${a.tarih}</td><td class="p-2">${a.urun_adi}</td><td class="p-2">${formatLiter(a.litre)}</td>
-                <td class="p-2">${formatMoney(a.birim_fiyat)}</td><td class="p-2">${a.tedarikci || '-'}</td><td class="p-2">${formatMoney(a.toplam_tutar)}</td></tr>`;
-            }
-            if (!data.alislar.length) alisHtml = '<tr><td colspan="6" class="text-center text-gray-500">Alış yok</td></tr>';
+            for (let a of data.alislar) alisHtml += `<tr><td class="p-2">${a.tarih}</td><td class="p-2">${a.urun_adi}</td><td class="p-2">${formatLiter(a.litre)}</td><td class="p-2">${formatMoney(a.birim_fiyat)}</td><td class="p-2">${a.tedarikci || '-'}</td><td class="p-2">${formatMoney(a.toplam_tutar)}</tr>`;
+            if (!data.alislar.length) alisHtml = '<tr><td colspan="6" class="text-center text-gray-500">Alış yok</td>';
             document.getElementById('alisListesi').innerHTML = alisHtml;
 
-            // Borç Listesi
             let borcHtml = '';
-            for (let b of data.borclar) {
-                borcHtml += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${b.urun_adi}</td>
-                <td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-2">${b.aciklama || '-'}</td></tr>`;
-            }
-            if (!data.borclar.length) borcHtml = '<tr><td colspan="6" class="text-center text-gray-500">Borç yok</td></tr>';
+            for (let b of data.borclar) borcHtml += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${b.urun_adi}</td><td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-2">${b.aciklama || '-'}</tr>`;
+            if (!data.borclar.length) borcHtml = '<tr><td colspan="6" class="text-center text-gray-500">Borç yok</td>';
             document.getElementById('borcListesi').innerHTML = borcHtml;
 
-            // Tahsilat Listesi
             let tahsilatHtml = '';
             for (let t of data.tahsilatlar) {
                 let icon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
-                tahsilatHtml += `<tr><td class="p-2">${t.tarih}</td><td class="p-2">${t.musteri_adi}</td>
-                <td class="p-2 text-green-600">${formatMoney(t.miktar)}</td><td class="p-2">${icon} ${t.odeme_yontemi || '-'}</td></tr>`;
+                tahsilatHtml += `<tr><td class="p-2">${t.tarih}</td><td class="p-2">${t.musteri_adi}</td><td class="p-2 text-green-600">${formatMoney(t.miktar)}</td><td class="p-2">${icon} ${t.odeme_yontemi || '-'}</tr>`;
             }
-            if (!data.tahsilatlar.length) tahsilatHtml = '<td><td colspan="4" class="text-center text-gray-500">Tahsilat yok</td></tr>';
+            if (!data.tahsilatlar.length) tahsilatHtml = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat yok</td>';
             document.getElementById('tahsilatListesi').innerHTML = tahsilatHtml;
 
-            // Gider Listesi
             let giderHtml = '';
             for (let g of data.giderler) {
                 let icon = g.kategori === 'Elektrik' ? '⚡' : (g.kategori === 'Su' ? '💧' : (g.kategori === 'Kira' ? '🏠' : (g.kategori === 'Personel' ? '👥' : (g.kategori === 'Bakım' ? '🔧' : (g.kategori === 'Vergi' ? '📄' : '📌')))));
-                giderHtml += `<tr><td class="p-2">${g.tarih}</td><td class="p-2">${icon} ${g.kategori}</td><td class="p-2">${g.aciklama || '-'}</td><td class="p-2 text-red-600">${formatMoney(g.miktar)}</td></tr>`;
+                giderHtml += `<tr><td class="p-2">${g.tarih}</td><td class="p-2">${icon} ${g.kategori}</td><td class="p-2">${g.aciklama || '-'}</td><td class="p-2 text-red-600">${formatMoney(g.miktar)}</tr>`;
             }
-            if (!data.giderler.length) giderHtml = '<tr><td colspan="4" class="text-center text-gray-500">Gider yok</td></tr>';
+            if (!data.giderler.length) giderHtml = '<tr><td colspan="4" class="text-center text-gray-500">Gider yok</td>';
             document.getElementById('giderListesi').innerHTML = giderHtml;
 
-            // Gün Sonu Ödemeleri
             if (data.gunSonu) {
                 document.getElementById('gunSonuNakit').innerHTML = formatMoney(data.gunSonu.nakit);
                 document.getElementById('gunSonuHavale').innerHTML = formatMoney(data.gunSonu.havale);
@@ -431,32 +440,22 @@
             }
         }
 
-        // Excel Export
         async function exportToExcel() {
             let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
             const res = await fetch(`/api/rapor/tum?tarih=${tarih}`);
             const data = await res.json();
-
             let csv = `"${tarih} TARİHLİ RAPOR"\n\n`;
-
-            csv += `"SATIŞ LİSTESİ"\n`;
-            csv += `"Tarih","Ürün","Litre","Birim Fiyat","Toplam"\n`;
+            csv += `"SATIŞ LİSTESİ"\n"Tarih","Ürün","Litre","Birim Fiyat","Toplam"\n`;
             for (let s of data.satislar) csv += `"${s.tarih}","${s.urun_adi}",${s.litre},${s.birim_fiyat},${s.toplam_tutar}\n`;
-            csv += `\n"ALIŞ LİSTESİ"\n`;
-            csv += `"Tarih","Ürün","Litre","Birim Fiyat","Tedarikçi","Toplam"\n`;
+            csv += `\n"ALIŞ LİSTESİ"\n"Tarih","Ürün","Litre","Birim Fiyat","Tedarikçi","Toplam"\n`;
             for (let a of data.alislar) csv += `"${a.tarih}","${a.urun_adi}",${a.litre},${a.birim_fiyat},"${a.tedarikci || '-'}",${a.toplam_tutar}\n`;
-            csv += `\n"BORÇ LİSTESİ"\n`;
-            csv += `"Tarih","Müşteri","Ürün","Borç Tutarı","Kalan","Açıklama"\n`;
+            csv += `\n"BORÇ LİSTESİ"\n"Tarih","Müşteri","Ürün","Borç Tutarı","Kalan","Açıklama"\n`;
             for (let b of data.borclar) csv += `"${b.tarih}","${b.musteri_adi}","${b.urun_adi}",${b.miktar_tl},${b.kalan_tl},"${b.aciklama || '-'}"\n`;
-            csv += `\n"TAHSİLAT LİSTESİ"\n`;
-            csv += `"Tarih","Müşteri","Tahsilat","Ödeme Türü"\n`;
+            csv += `\n"TAHSİLAT LİSTESİ"\n"Tarih","Müşteri","Tahsilat","Ödeme Türü"\n`;
             for (let t of data.tahsilatlar) csv += `"${t.tarih}","${t.musteri_adi}",${t.miktar},"${t.odeme_yontemi || '-'}"\n`;
-            csv += `\n"GİDER LİSTESİ"\n`;
-            csv += `"Tarih","Kategori","Açıklama","Miktar"\n`;
+            csv += `\n"GİDER LİSTESİ"\n"Tarih","Kategori","Açıklama","Miktar"\n`;
             for (let g of data.giderler) csv += `"${g.tarih}","${g.kategori}","${g.aciklama || '-'}",${g.miktar}\n`;
-            csv += `\n"ÖZET"\n`;
-            csv += `"Toplam Satış",${data.toplamSatis}\n"Toplam Alış",${data.toplamAlis}\n"Toplam Borç",${data.toplamBorc}\n"Toplam Tahsilat",${data.toplamTahsilat}\n"Toplam Gider",${data.toplamGider}\n"Kar/Zarar",${data.kar}\n`;
-
+            csv += `\n"ÖZET"\n"Toplam Satış",${data.toplamSatis}\n"Toplam Alış",${data.toplamAlis}\n"Toplam Borç",${data.toplamBorc}\n"Toplam Tahsilat",${data.toplamTahsilat}\n"Toplam Gider",${data.toplamGider}\n"Kar/Zarar",${data.kar}\n`;
             const blob = new Blob(["\uFEFF" + csv], {
                 type: 'text/csv;charset=utf-8;'
             });
@@ -477,7 +476,23 @@
         document.getElementById('excelExportBtn').onclick = () => exportToExcel();
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
 
-        loadRapor();
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            yetki = user.yetki;
+            if (yetki === 'admin') {
+                document.getElementById('rolBadge').style.display = 'inline-block';
+                document.getElementById('izleyiciBadge').style.display = 'none';
+                document.getElementById('anaSayfaLink').href = 'dashboard.html';
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
+            } else {
+                document.getElementById('rolBadge').style.display = 'none';
+                document.getElementById('izleyiciBadge').style.display = 'inline-block';
+                document.getElementById('anaSayfaLink').href = 'viewer.html';
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            }
+            loadRapor();
+        })();
     </script>
 </body>
 

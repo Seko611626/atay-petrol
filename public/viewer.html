@@ -293,7 +293,7 @@
             for (let s of satislar) {
                 html += `<tr><td class="p-2">${s.tarih}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.birim_fiyat)}</td><td class="p-2 font-bold">${formatMoney(s.toplam_tutar)}</td></tr>`;
             }
-            if (!satislar.length) html = '<td><td colspan="5" class="text-center text-gray-500">Satış yok</td>';
+            if (!satislar.length) html = '<tr><td colspan="5" class="text-center text-gray-500">Satış yok</td>';
             document.getElementById('satisListesi').innerHTML = html;
         }
 
