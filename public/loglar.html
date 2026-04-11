@@ -4,224 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Logları | Atay Petrol</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * {
-            font-family: system-ui;
-        }
-        
-        body {
-            background: #e8f4f8;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
-            color: white;
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .navbar a,
-        .navbar button {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .navbar a:hover,
-        .navbar button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .logout-btn {
-            background: #dc2626 !important;
-        }
-        
-        .logout-btn:hover {
-            background: #b91c1c !important;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-title {
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0A2F6C;
-            font-size: 18px;
-            border-left: 3px solid #0A2F6C;
-            padding-left: 12px;
-        }
-        
-        input {
-            width: 200px;
-            padding: 8px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 12px;
-            background: #f8fafc;
-            font-weight: 600;
-            color: #0A2F6C;
-        }
-        
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .btn-refresh {
-            background: #0A2F6C;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            input {
-                width: 100%;
-            }
-        }
-    </style>
+    <title>Giriş Logları - ATAY PETROL</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">⛽</span>
-            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+    <div class="container">
+        <div class="navbar">
+            <h2>⛽ ATAY PETROL - Giriş Logları</h2>
+            <div class="nav-links">
+                <a href="/admin.html">📊 Dashboard</a>
+                <a href="/borc.html">💰 Borçlar</a>
+                <a href="/tahsilat.html">💵 Tahsilat</a>
+                <a href="/gider.html">📉 Giderler</a>
+                <a href="/kullanici.html">👥 Kullanıcılar</a>
+                <a href="/loglar.html">📜 Loglar</a>
+                <a href="/rapor.html">📋 Rapor</a>
+                <button onclick="logout()">🚪 Çıkış</button>
+            </div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="admin.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
-            <a href="rapor.html">📊 Rapor</a>
-            <a href="kullanici.html">👥 Kullanıcılar</a>
-            <a href="loglar.html">📜 Loglar</a>
-            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
-        </div>
-    </div>
 
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <div class="card">
-            <div class="form-title">📜 Giriş Logları (IP & Zaman)</div>
-            <div style="margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                <input type="text" id="aramaInput" placeholder="🔍 Email veya IP ara...">
-                <input type="date" id="tarihFiltre">
-                <button id="yenileBtn" class="btn-refresh">🔄 Yenile</button>
-            </div>
-            <div style="max-height: 500px; overflow-y: auto;">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Email</th>
-                            <th>IP Adresi</th>
-                            <th>Giriş Zamanı</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logListesi"></tbody>
-                </table>
-            </div>
+        <div class="table-container">
+            <h3>📋 Giriş Logları</h3>
+            <table id="logTablosu">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>E-posta</th>
+                        <th>IP Adresi</th>
+                        <th>Giriş Zamanı</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
-        (async() => {
-            const me = await fetch('/api/me');
-            const user = await me.json();
-            if (user.yetki !== 'admin') {
-                window.location.href = '/viewer.html';
-                return;
-            }
-        })();
-
-        let tumLoglar = [];
-
-        async function loadLoglar() {
+        async function loglariYukle() {
             const res = await fetch('/api/loglar');
-            tumLoglar = await res.json();
-            filtreleVeGoster();
-        }
-
-        function filtreleVeGoster() {
-            let arama = document.getElementById('aramaInput').value.toLowerCase();
-            let tarihFiltre = document.getElementById('tarihFiltre').value;
-            let filtrelenmis = tumLoglar.filter(log => {
-                let uyuyor = log.email.toLowerCase().includes(arama) || log.ip.toLowerCase().includes(arama);
-                let tarihUyuyor = tarihFiltre === '' || log.giris_zamani.substring(0, 10) === tarihFiltre;
-                return uyuyor && tarihUyuyor;
+            const loglar = await res.json();
+            const tbody = document.querySelector('#logTablosu tbody');
+            tbody.innerHTML = '';
+            loglar.forEach(l => {
+                tbody.innerHTML += `<tr><td>${l.id}</td><td>${l.email}</td><td>${l.ip}</td><td>${l.zaman}</td></tr>`;
             });
-            let html = '';
-            for (let log of filtrelenmis) {
-                let tarih = new Date(log.giris_zamani).toLocaleString('tr-TR');
-                let ipClass = (log.ip === '::1' || log.ip === '127.0.0.1') ? 'text-green-600 font-semibold' : (log.ip.indexOf('192.168.') === 0 ? 'text-blue-600' : '');
-                html += `<tr>
-                    <td class="p-2">${log.id}</td>
-                    <td class="p-2 font-semibold">${log.email}</td>
-                    <td class="p-2 font-mono ${ipClass}">${log.ip}</td>
-                    <td class="p-2">${tarih}</td>
-                </tr>`;
-            }
-            if (!filtrelenmis.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Kayıt bulunamadı</td></tr>';
-            document.getElementById('logListesi').innerHTML = html;
         }
 
-        document.getElementById('aramaInput').addEventListener('input', filtreleVeGoster);
-        document.getElementById('tarihFiltre').addEventListener('change', filtreleVeGoster);
-        document.getElementById('yenileBtn').onclick = () => loadLoglar();
-        document.getElementById('cikisBtn').onclick = async() => {
+        async function logout() {
             await fetch('/api/logout', {
                 method: 'POST'
             });
-            window.location.href = '/';
-        };
-        loadLoglar();
+            window.location.href = '/index.html';
+        }
+
+        async function init() {
+            const res = await fetch('/api/me');
+            const user = await res.json();
+            if (!user || user.rol !== 'admin') window.location.href = '/index.html';
+            loglariYukle();
+        }
+        init();
     </script>
 </body>
 

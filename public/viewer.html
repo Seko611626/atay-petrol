@@ -4,372 +4,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İzleyici | Atay Petrol</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>İzleyici Panel - ATAY PETROL</title>
+    <link rel="stylesheet" href="/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        * {
-            font-family: system-ui;
-        }
-        
-        body {
-            background: #e8f4f8;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
-            color: white;
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .navbar a,
-        .navbar button {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .navbar a:hover,
-        .navbar button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .logout-btn {
-            background: #dc2626 !important;
-        }
-        
-        .logout-btn:hover {
-            background: #b91c1c !important;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid;
-            transition: all 0.2s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-card-1 {
-            border-left-color: #10B981;
-        }
-        
-        .stat-card-2 {
-            border-left-color: #3B82F6;
-        }
-        
-        .stat-card-3 {
-            border-left-color: #8B5CF6;
-        }
-        
-        .stat-card-4 {
-            border-left-color: #EF4444;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-title {
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0A2F6C;
-            font-size: 18px;
-            border-left: 3px solid #0A2F6C;
-            padding-left: 12px;
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-            overflow-x: auto;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 12px;
-            background: #f8fafc;
-            font-weight: 600;
-            color: #0A2F6C;
-        }
-        
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        
-        input {
-            width: auto;
-            padding: 8px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-        
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">⛽</span>
-            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #3B82F620; padding: 2px 10px; border-radius: 40px; font-size: 11px;">İzleyici</span>
+    <div class="container">
+        <div class="navbar">
+            <h2>⛽ ATAY PETROL - İzleyici Paneli</h2>
+            <div class="nav-links">
+                <a href="/viewer.html">📊 Dashboard</a>
+                <a href="/borc.html?viewer=1">💰 Borçlar</a>
+                <a href="/tahsilat.html?viewer=1">💵 Tahsilat</a>
+                <a href="/gider.html?viewer=1">📉 Giderler</a>
+                <a href="/rapor.html?viewer=1">📋 Rapor</a>
+                <button onclick="logout()">🚪 Çıkış</button>
+            </div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="viewer.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
-            <a href="rapor.html">📊 Rapor</a>
-            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
-        </div>
-    </div>
 
-    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 20px;">
-        <!-- Tarih Seçici -->
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 24px;">📅</span>
-                    <input type="date" id="tarih" style="width: auto;">
-                    <button id="bugunBtn" class="btn-primary" style="background:#0A2F6C;color:white;border:none;padding:8px 16px;border-radius:40px;cursor:pointer;">Bugün</button>
+        <div class="tarih-bar">
+            <label>📅 Tarih:</label>
+            <input type="date" id="tarihSecici">
+            <button class="btn-primary" onclick="bugunuGoster()">📆 Bugün</button>
+            <button class="btn-primary" onclick="verileriYukle()">🔄 Yenile</button>
+        </div>
+
+        <div class="kart-grid">
+            <div class="kart">
+                <h3>💰 Bugünkü Satış</h3>
+                <div class="deger" id="bugunSatis">0 ₺</div>
+            </div>
+            <div class="kart">
+                <h3>📈 Aylık Satış</h3>
+                <div class="deger" id="aylikSatis">0 ₺</div>
+            </div>
+            <div class="kart">
+                <h3>📉 Bugünkü Gider</h3>
+                <div class="deger" id="bugunGider">0 ₺</div>
+            </div>
+            <div class="kart">
+                <h3>💳 Toplam Borç</h3>
+                <div class="deger" id="toplamBorc">0 ₺</div>
+            </div>
+        </div>
+
+        <div class="kart-grid">
+            <div class="kart">
+                <h3>📊 Ödeme Dağılımı</h3>
+                <canvas id="odemeGrafigi" width="200" height="200"></canvas>
+                <div>
+                    <div>Nakit: <span id="nakitOzet">0</span> ₺</div>
+                    <div>Havale: <span id="havaleOzet">0</span> ₺</div>
+                    <div>POS: <span id="posOzet">0</span> ₺</div>
+                    <div>Borç: <span id="borcOzet">0</span> ₺</div>
                 </div>
-                <span style="font-size: 12px; color: #64748b;">Sadece görüntüleme modu - Tarih seçin, o günün verilerini görün</span>
             </div>
-        </div>
-
-        <!-- İstatistik Kartları -->
-        <div class="stats-grid">
-            <div class="stat-card stat-card-1">
-                <div style="font-size: 13px; color: #64748b;">🚛 Bugünkü Alış</div>
-                <div style="font-size: 28px; font-weight: 800;" id="bugunAlis">0 ₺</div>
-            </div>
-            <div class="stat-card stat-card-2">
-                <div style="font-size: 13px; color: #64748b;">💰 Bugünkü Satış</div>
-                <div style="font-size: 28px; font-weight: 800;" id="bugunSatis">0 ₺</div>
-            </div>
-            <div class="stat-card stat-card-3">
-                <div style="font-size: 13px; color: #64748b;">📈 Aylık Satış</div>
-                <div style="font-size: 28px; font-weight: 800;" id="aylikSatis">0 ₺</div>
-            </div>
-            <div class="stat-card stat-card-4">
-                <div style="font-size: 13px; color: #64748b;">💵 Bugünkü Tahsilat</div>
-                <div style="font-size: 28px; font-weight: 800;" id="bugunTahsilat">0 ₺</div>
-            </div>
-        </div>
-
-        <!-- Grafik ve Stok -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 20px;">
-            <div class="table-container">
-                <div class="form-title">📊 Ödeme Dağılımı (Seçilen Tarihe Göre)</div>
-                <canvas id="odemeChart" height="200"></canvas>
-            </div>
-            <div class="table-container">
-                <div class="form-title">🛢️ Stok Durumu</div>
+            <div class="kart">
+                <h3>📦 Stok Durumu</h3>
                 <div id="stokListesi"></div>
             </div>
         </div>
 
-        <!-- Satış Listesi -->
         <div class="table-container">
-            <div class="form-title">📋 Satış Listesi (Seçilen Tarih)</div>
-            <div style="max-height: 300px; overflow-y: auto;">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Ürün</th>
-                            <th>Litre</th>
-                            <th>Fiyat</th>
-                            <th>Toplam</th>
-                        </tr>
-                    </thead>
-                    <tbody id="satisListesi"></tbody>
-                </table>
-            </div>
+            <h3>📋 Bugünün Satış Listesi</h3>
+            <table id="satisTablosu">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ürün</th>
+                        <th>Litre</th>
+                        <th>Fiyat</th>
+                        <th>Tutar</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
 
-        <!-- Alış Listesi -->
         <div class="table-container">
-            <div class="form-title">📋 Alış Listesi (Seçilen Tarih)</div>
-            <div style="max-height: 300px; overflow-y: auto;">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Ürün</th>
-                            <th>Litre</th>
-                            <th>Fiyat</th>
-                            <th>Tedarikçi</th>
-                            <th>Toplam</th>
-                        </tr>
-                    </thead>
-                    <tbody id="alisListesi"></tbody>
-                </table>
-            </div>
+            <h3>📦 Bugünün Alış Listesi</h3>
+            <table id="alisTablosu">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ürün</th>
+                        <th>Litre</th>
+                        <th>Fiyat</th>
+                        <th>Tutar</th>
+                        <th>Tedarikçi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        let odemeChart;
+        let chart = null;
+        let currentDate = new Date().toISOString().split('T')[0];
 
-        function formatMoney(amount) {
-            return (amount || 0).toLocaleString('tr-TR', {
-                minimumFractionDigits: 2
-            }) + ' ₺';
-        }
-
-        function formatLiter(litre) {
-            return (litre || 0).toLocaleString('tr-TR', {
-                minimumFractionDigits: 2
-            }) + ' L';
-        }
-
-        async function loadDashboard() {
-            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/istatistik?tarih=${tarih}`);
+        async function verileriYukle() {
+            const res = await fetch(`/api/istatistik?tarih=${currentDate}`);
             const data = await res.json();
-            document.getElementById('bugunAlis').innerHTML = formatMoney(data.bugunAlis);
-            document.getElementById('bugunSatis').innerHTML = formatMoney(data.bugunSatis);
-            document.getElementById('aylikSatis').innerHTML = formatMoney(data.aylikSatis);
-            document.getElementById('bugunTahsilat').innerHTML = formatMoney(data.toplamTahsilat);
-            let stokHtml = '';
-            for (let s of data.stoklar) {
-                let renk = s.stok < 0 ? 'text-red-500' : (s.stok < 500 ? 'text-yellow-500' : 'text-green-600');
-                stokHtml += `<div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #e2e8f0;"><span>⛽ ${s.ad}</span><span class="${renk} font-bold">${formatLiter(s.stok)}</span></div>`;
-            }
-            document.getElementById('stokListesi').innerHTML = stokHtml || '<div class="text-center text-gray-500">Stok verisi yok</div>';
-        }
+            document.getElementById('bugunSatis').innerHTML = formatMoney(data.bugun_satis || 0);
+            document.getElementById('aylikSatis').innerHTML = formatMoney(data.aylik_satis || 0);
+            document.getElementById('bugunGider').innerHTML = formatMoney(data.bugun_gider || 0);
+            document.getElementById('toplamBorc').innerHTML = formatMoney(data.toplam_borc || 0);
 
-        async function loadSatis() {
-            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/satis/tarih?tarih=${tarih}`);
-            const satislar = await res.json();
-            let html = '';
-            for (let s of satislar) {
-                html += `<tr><td class="p-2">${s.tarih}${s.urun_adi}${formatLiter(s.litre)}${formatMoney(s.birim_fiyat)}${formatMoney(s.toplam_tutar)}`;
-            }
-            if (!satislar.length) html = '<tr><td colspan="5" class="text-center text-gray-500">Satış yok';
-            document.getElementById('satisListesi').innerHTML = html;
-        }
+            const satisRes = await fetch(`/api/satis?tarih=${currentDate}`);
+            const satislar = await satisRes.json();
+            const satisTbody = document.querySelector('#satisTablosu tbody');
+            satisTbody.innerHTML = '';
+            satislar.forEach(s => {
+                satisTbody.innerHTML += `<tr><td>${s.id}</td><td>${s.urun_adi}</td><td>${s.litre} L</td><td>${formatMoney(s.fiyat)}</td><td>${formatMoney(s.litre * s.fiyat)}</td></tr>`;
+            });
 
-        async function loadAlis() {
-            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/alis/tarih?tarih=${tarih}`);
-            const alislar = await res.json();
-            let html = '';
-            for (let a of alislar) {
-                html += `<tr><td class="p-2">${a.tarih}${a.urun_adi}${formatLiter(a.litre)}${formatMoney(a.birim_fiyat)}${a.tedarikci || '-'}${formatMoney(a.toplam_tutar)}`;
-            }
-            if (!alislar.length) html = '<tr><td colspan="6" class="text-center text-gray-500">Alış yok';
-            document.getElementById('alisListesi').innerHTML = html;
-        }
+            const alisRes = await fetch(`/api/alis?tarih=${currentDate}`);
+            const alislar = await alisRes.json();
+            const alisTbody = document.querySelector('#alisTablosu tbody');
+            alisTbody.innerHTML = '';
+            alislar.forEach(a => {
+                alisTbody.innerHTML += `<tr><td>${a.id}</td><td>${a.urun_adi}</td><td>${a.litre} L</td><td>${formatMoney(a.fiyat)}</td><td>${formatMoney(a.litre * a.fiyat)}</td><td>${a.tedarikci || '-'}</td></tr>`;
+            });
 
-        async function loadOdemeChart() {
-            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/odeme-rapor?tarih=${tarih}`);
-            const data = await res.json();
-            const od = data[0] || {
-                nakit: 0,
-                havale: 0,
-                pos: 0,
-                borc: 0
-            };
-            if (odemeChart) odemeChart.destroy();
-            odemeChart = new Chart(document.getElementById('odemeChart'), {
-                type: 'doughnut',
+            const odemeRes = await fetch(`/api/odeme-rapor?tarih=${currentDate}`);
+            const odeme = await odemeRes.json();
+            document.getElementById('nakitOzet').innerText = formatMoney(odeme.nakit || 0);
+            document.getElementById('havaleOzet').innerText = formatMoney(odeme.havale || 0);
+            document.getElementById('posOzet').innerText = formatMoney(odeme.pos || 0);
+            document.getElementById('borcOzet').innerText = formatMoney(odeme.borc || 0);
+
+            if (chart) chart.destroy();
+            chart = new Chart(document.getElementById('odemeGrafigi'), {
+                type: 'pie',
                 data: {
                     labels: ['Nakit', 'Havale', 'POS', 'Borç'],
                     datasets: [{
-                        data: [od.nakit, od.havale, od.pos, od.borc],
-                        backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'],
-                        borderWidth: 0
+                        data: [odeme.nakit || 0, odeme.havale || 0, odeme.pos || 0, odeme.borc || 0],
+                        backgroundColor: ['#2ecc71', '#3498db', '#e67e22', '#e74c3c']
                     }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
                 }
+            });
+
+            const stokRes = await fetch('/api/istatistik?tarih=' + currentDate);
+            const stokData = await stokRes.json();
+            const stokDiv = document.getElementById('stokListesi');
+            stokDiv.innerHTML = '';
+            stokData.stoklar.forEach(s => {
+                stokDiv.innerHTML += `<div><strong>${s.ad}:</strong> ${s.stok} L</div>`;
             });
         }
 
-        document.getElementById('cikisBtn').onclick = async() => {
+        function bugunuGoster() {
+            currentDate = new Date().toISOString().split('T')[0];
+            document.getElementById('tarihSecici').value = currentDate;
+            verileriYukle();
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY'
+            }).format(amount);
+        }
+
+        async function logout() {
             await fetch('/api/logout', {
                 method: 'POST'
             });
-            window.location.href = '/';
-        };
-        document.getElementById('bugunBtn').onclick = () => {
-            document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-            loadDashboard();
-            loadSatis();
-            loadAlis();
-            loadOdemeChart();
-        };
-        document.getElementById('tarih').addEventListener('change', () => {
-            loadDashboard();
-            loadSatis();
-            loadAlis();
-            loadOdemeChart();
-        });
+            window.location.href = '/index.html';
+        }
 
-        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-        loadDashboard();
-        loadSatis();
-        loadAlis();
-        loadOdemeChart();
+        async function init() {
+            // Viewer yetki kontrolü
+            const meRes = await fetch('/api/me');
+            const me = await meRes.json();
+            if (me && me.rol !== 'izleyici') {
+                window.location.href = '/admin.html';
+            }
+            document.getElementById('tarihSecici').value = currentDate;
+            document.getElementById('tarihSecici').addEventListener('change', (e) => {
+                currentDate = e.target.value;
+                verileriYukle();
+            });
+            verileriYukle();
+        }
+        init();
     </script>
 </body>
 

@@ -4,285 +4,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tahsilat | Atay Petrol</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * {
-            font-family: system-ui;
-        }
-        
-        body {
-            background: #e8f4f8;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
-            color: white;
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .navbar a,
-        .navbar button {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .navbar a:hover,
-        .navbar button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .logout-btn {
-            background: #dc2626 !important;
-        }
-        
-        .logout-btn:hover {
-            background: #b91c1c !important;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-title {
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0A2F6C;
-            font-size: 18px;
-            border-left: 3px solid #0A2F6C;
-            padding-left: 12px;
-        }
-        
-        input,
-        select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-        
-        .btn-success {
-            background: #10B981;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .btn-success:hover {
-            transform: translateY(-2px);
-            background: #059669;
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 12px;
-            background: #f8fafc;
-            font-weight: 600;
-            color: #0A2F6C;
-        }
-        
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-        }
-        
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+    <title>Tahsilat - ATAY PETROL</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">⛽</span>
-            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+    <div class="container">
+        <div class="navbar">
+            <h2>⛽ ATAY PETROL - Tahsilat Yönetimi</h2>
+            <div class="nav-links" id="navLinks"></div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="admin.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
-            <a href="rapor.html">📊 Rapor</a>
-            <a href="kullanici.html">👥 Kullanıcılar</a>
-            <a href="loglar.html">📜 Loglar</a>
-            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
-        </div>
-    </div>
 
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <div class="card">
-            <div class="form-title">➕ Tahsilat Ekle</div>
-            <div class="form-grid">
-                <input type="date" id="tarih" value="">
-                <select id="borc_id"><option value="">Borç Seçin</option></select>
-                <input type="number" id="miktar" placeholder="Tahsilat Tutarı (TL)" step="any">
-                <select id="odeme_yontemi">
-                    <option value="Nakit">💵 Nakit</option>
-                    <option value="Havale">🏦 Havale</option>
-                    <option value="POS">💳 POS</option>
-                </select>
-                <button id="tahsilatEkleBtn" class="btn-success">Tahsilat Yap</button>
-            </div>
+        <div id="adminForm" class="form-card" style="display:none;">
+            <h3>➕ Yeni Tahsilat Ekle</h3>
+            <div class="form-group"><label>Borç Seç</label><select id="borcSec"></select></div>
+            <div class="form-group"><label>Tahsilat Miktarı (₺)</label><input type="number" id="miktar" step="0.01"></div>
+            <div class="form-group"><label>Ödeme Türü</label><select id="odemeTuru"><option>Nakit</option><option>Havale</option><option>POS</option></select></div>
+            <div class="form-group"><label>Tarih</label><input type="date" id="tarih"></div>
+            <button class="btn-primary" onclick="tahsilatEkle()">Tahsilat Ekle</button>
         </div>
 
         <div class="table-container">
-            <div class="form-title">📋 Tahsilat Geçmişi</div>
-            <div style="max-height: 500px; overflow-y: auto;">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Müşteri</th>
-                            <th>Tahsilat</th>
-                            <th>Ödeme Türü</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tahsilatListesi"></tbody>
-                </table>
-            </div>
+            <h3>📋 Tahsilat Geçmişi</h3>
+            <table id="tahsilatTablosu">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Müşteri</th>
+                        <th>Miktar</th>
+                        <th>Ödeme Türü</th>
+                        <th>Tarih</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
-        (async() => {
-            const me = await fetch('/api/me');
-            const user = await me.json();
-            if (user.yetki !== 'admin') {
-                window.location.href = '/viewer.html';
-                return;
-            }
-        })();
+        let isAdmin = false;
 
-        function formatMoney(amount) {
-            return (amount || 0).toLocaleString('tr-TR', {
-                minimumFractionDigits: 2
-            }) + ' ₺';
+        async function checkAuthAndRole() {
+            const res = await fetch('/api/me');
+            const user = await res.json();
+            if (!user) window.location.href = '/index.html';
+            isAdmin = user.rol === 'admin';
+
+            const navLinks = document.getElementById('navLinks');
+            if (isAdmin) {
+                navLinks.innerHTML = `<a href="/admin.html">📊 Dashboard</a><a href="/borc.html">💰 Borçlar</a><a href="/tahsilat.html">💵 Tahsilat</a><a href="/gider.html">📉 Giderler</a><a href="/kullanici.html">👥 Kullanıcılar</a><a href="/loglar.html">📜 Loglar</a><a href="/rapor.html">📋 Rapor</a><button onclick="logout()">🚪 Çıkış</button>`;
+                document.getElementById('adminForm').style.display = 'block';
+                await borclariSelectYukle();
+            } else {
+                navLinks.innerHTML = `<a href="/viewer.html">📊 Dashboard</a><a href="/borc.html?viewer=1">💰 Borçlar</a><a href="/tahsilat.html?viewer=1">💵 Tahsilat</a><a href="/gider.html?viewer=1">📉 Giderler</a><a href="/rapor.html?viewer=1">📋 Rapor</a><button onclick="logout()">🚪 Çıkış</button>`;
+            }
+            tahsilatlariYukle();
         }
 
-        async function loadBorclarSelect() {
+        async function borclariSelectYukle() {
             const res = await fetch('/api/borc');
             const borclar = await res.json();
-            let html = '<option value="">Borç Seçin</option>';
-            for (let b of borclar) {
-                if (b.kalan_tl > 0) {
-                    html += `<option value="${b.id}">${b.musteri_adi} - Kalan: ${formatMoney(b.kalan_tl)}</option>`;
-                }
-            }
-            document.getElementById('borc_id').innerHTML = html;
+            const select = document.getElementById('borcSec');
+            select.innerHTML = '<option value="">Borç Seçin</option>';
+            borclar.forEach(b => {
+                select.innerHTML += `<option value="${b.id}">${b.musteri} - ${formatMoney(b.kalan)}</option>`;
+            });
         }
 
-        async function loadTahsilat() {
-            const res = await fetch('/api/tahsilat');
-            const tahsilatlar = await res.json();
-            let html = '';
-            for (let t of tahsilatlar) {
-                let icon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
-                html += `<tr>
-                    <td class="p-2">${t.tarih}</td>
-                    <td class="p-2 font-semibold">${t.musteri_adi}</td>
-                    <td class="p-2 text-green-600 font-bold">${formatMoney(t.miktar)}</td>
-                    <td class="p-2">${icon} ${t.odeme_yontemi || '-'}</td>
-                </tr>`;
-            }
-            if (!tahsilatlar.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat bulunamadı</td>';
-            document.getElementById('tahsilatListesi').innerHTML = html;
-        }
-
-        document.getElementById('tahsilatEkleBtn').onclick = async() => {
-            const data = {
-                tarih: document.getElementById('tarih').value,
-                borc_id: parseInt(document.getElementById('borc_id').value),
-                miktar: parseFloat(document.getElementById('miktar').value),
-                odeme_yontemi: document.getElementById('odeme_yontemi').value
-            };
-            if (!data.tarih || !data.borc_id || !data.miktar) {
-                alert('Tüm alanları doldurun');
+        async function tahsilatEkle() {
+            const borc_id = document.getElementById('borcSec').value;
+            const miktar = parseFloat(document.getElementById('miktar').value);
+            if (!borc_id || !miktar) {
+                alert('Borç ve miktar seçin');
                 return;
             }
-            const res = await fetch('/api/tahsilat', {
+            const data = {
+                borc_id: parseInt(borc_id),
+                miktar,
+                odeme_turu: document.getElementById('odemeTuru').value,
+                tarih: document.getElementById('tarih').value || new Date().toISOString().split('T')[0]
+            };
+            await fetch('/api/tahsilat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
-            if (res.ok) {
-                alert('Tahsilat eklendi');
-                loadTahsilat();
-                loadBorclarSelect();
-                document.getElementById('miktar').value = '';
-            } else {
-                alert('Hata oluştu');
-            }
-        };
+            alert('Tahsilat eklendi');
+            tahsilatlariYukle();
+            document.getElementById('miktar').value = '';
+        }
 
-        document.getElementById('cikisBtn').onclick = async() => {
+        async function tahsilatlariYukle() {
+            const res = await fetch('/api/borc');
+            const borclar = await res.json();
+            // Tahsilatlar için ayrı bir API yok, borçlardan kalan farkı gösteriyoruz
+            const tbody = document.querySelector('#tahsilatTablosu tbody');
+            tbody.innerHTML = '';
+            borclar.forEach(b => {
+                const tahsilEdilen = b.tutar - b.kalan;
+                if (tahsilEdilen > 0) {
+                    tbody.innerHTML += `<tr><td>${b.id}</td><td>${b.musteri}</td><td>${formatMoney(tahsilEdilen)}</td><td>-</td><td>${b.tarih}</td></tr>`;
+                }
+            });
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY'
+            }).format(amount);
+        }
+        async function logout() {
             await fetch('/api/logout', {
                 method: 'POST'
             });
-            window.location.href = '/';
-        };
-        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-        loadBorclarSelect();
-        loadTahsilat();
+            window.location.href = '/index.html';
+        }
+
+        document.getElementById('tarih').value = new Date().toISOString().split('T')[0];
+        checkAuthAndRole();
     </script>
 </body>
 

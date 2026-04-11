@@ -3,101 +3,73 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atay Petrol | Giriş</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #0A2F6C 0%, #1E4D8C 100%);
-            min-height: 100vh;
-            font-family: system-ui;
-        }
-        
-        .login-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 32px;
-            max-width: 400px;
-            margin: auto;
-        }
-        
-        .btn-login {
-            background: #0A2F6C;
-            transition: all 0.3s;
-            color: white;
-            padding: 12px;
-            border-radius: 40px;
-            font-weight: bold;
-            width: 100%;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-2px);
-            background: #1E4D8C;
-        }
-        
-        input {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 12px;
-            border-radius: 24px;
-            width: 100%;
-        }
-        
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #00B4D8;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ATAY PETROL - Giriş</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="login-card">
-        <div class="text-center mb-8">
-            <h1 class="text-5xl font-bold text-white">⛽ ATAY</h1>
-            <p class="text-2xl font-semibold text-cyan-300">Petrol Satış Takip</p>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>⛽ ATAY PETROL</h1>
+            <div class="subtitle">Yönetim Sistemi</div>
+            <input type="email" id="email" placeholder="E-posta" autocomplete="off">
+            <input type="password" id="sifre" placeholder="Şifre">
+            <button onclick="girisYap()">Giriş Yap</button>
+            <div id="errorMsg" class="error-msg"></div>
         </div>
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="E-posta" class="mb-4" required>
-            <input type="password" id="sifre" placeholder="Şifre" class="mb-6" required>
-            <button type="submit" class="btn-login">GİRİŞ YAP →</button>
-        </form>
-        <div id="hata" class="text-red-300 text-center mt-4 text-sm"></div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async(e) => {
-            e.preventDefault();
+        async function girisYap() {
             const email = document.getElementById('email').value;
             const sifre = document.getElementById('sifre').value;
-            const btn = e.target.querySelector('button');
-            btn.innerHTML = '⏳ Giriş yapılıyor...';
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    sifre
-                })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                if (data.yetki === 'admin') window.location.href = '/admin.html';
-                else window.location.href = '/viewer.html';
-            } else {
-                document.getElementById('hata').innerText = data.hata || 'Giriş başarısız';
-                btn.innerHTML = 'GİRİŞ YAP →';
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!email || !sifre) {
+                errorMsg.innerText = 'Lütfen e-posta ve şifre giriniz';
+                return;
             }
+
+            try {
+                // IP adresini al (basitçe)
+                let ip = 'bilinmiyor';
+                try {
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    ip = ipData.ip;
+                } catch (e) {}
+
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        sifre,
+                        ip
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.rol === 'admin') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/viewer.html';
+                    }
+                } else {
+                    errorMsg.innerText = data.error || 'Giriş başarısız';
+                }
+            } catch (err) {
+                errorMsg.innerText = 'Bağlantı hatası';
+            }
+        }
+
+        document.getElementById('sifre').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') girisYap();
         });
     </script>
 </body>

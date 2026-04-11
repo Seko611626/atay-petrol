@@ -1,31 +1,42 @@
-// Atay Petrol - Ortak Fonksiyonlar
+// Ortak API çağrıları
+async function apiCall(url, options = {}) {
+    const response = await fetch(url, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', ...options.headers }
+    });
+    if (response.status === 401) {
+        window.location.href = '/index.html';
+        return null;
+    }
+    return response.json();
+}
 
+// Oturum kontrolü
+async function checkAuth() {
+    const user = await apiCall('/api/me');
+    if (!user && !window.location.pathname.includes('index.html')) {
+        window.location.href = '/index.html';
+    }
+    return user;
+}
+
+// Logout
+async function logout() {
+    await apiCall('/api/logout', { method: 'POST' });
+    window.location.href = '/index.html';
+}
+
+// Format para
 function formatMoney(amount) {
-    if (amount === undefined || amount === null) amount = 0;
-    return amount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
+    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount);
 }
 
-function formatLiter(litre) {
-    if (litre === undefined || litre === null) litre = 0;
-    return litre.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' L';
+// Format tarih
+function getToday() {
+    return new Date().toISOString().split('T')[0];
 }
 
-function formatDate(dateString) {
-    if (!dateString) return '-';
-    let parts = dateString.split('-');
-    if (parts.length === 3) {
-        return parts[2] + '.' + parts[1] + '.' + parts[0];
-    }
-    return dateString;
-}
-
-function showToast(message, type) {
-    alert(message);
-}
-
-function setTodayDate(inputId) {
-    let input = document.getElementById(inputId);
-    if (input && !input.value) {
-        input.value = new Date().toISOString().slice(0, 10);
-    }
+// Ürünleri getir
+async function getUrunler() {
+    return await apiCall('/api/urunler');
 }

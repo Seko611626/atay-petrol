@@ -4,288 +4,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giderler | Atay Petrol</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        * {
-            font-family: system-ui;
-        }
-        
-        body {
-            background: #e8f4f8;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
-            color: white;
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .navbar a,
-        .navbar button {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .navbar a:hover,
-        .navbar button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .logout-btn {
-            background: #dc2626 !important;
-        }
-        
-        .logout-btn:hover {
-            background: #b91c1c !important;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-title {
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0A2F6C;
-            font-size: 18px;
-            border-left: 3px solid #0A2F6C;
-            padding-left: 12px;
-        }
-        
-        input,
-        select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-        }
-        
-        .btn-danger {
-            background: #EF4444;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            background: #dc2626;
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 16px;
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 12px;
-            background: #f8fafc;
-            font-weight: 600;
-            color: #0A2F6C;
-        }
-        
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-        }
-        
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+    <title>Giderler - ATAY PETROL</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">⛽</span>
-            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+    <div class="container">
+        <div class="navbar">
+            <h2>⛽ ATAY PETROL - Gider Yönetimi</h2>
+            <div class="nav-links" id="navLinks"></div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="admin.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
-            <a href="rapor.html">📊 Rapor</a>
-            <a href="kullanici.html">👥 Kullanıcılar</a>
-            <a href="loglar.html">📜 Loglar</a>
-            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
-        </div>
-    </div>
 
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <div class="card">
-            <div class="form-title">➕ Yeni Gider Ekle</div>
-            <div class="form-grid">
-                <input type="date" id="tarih" value="">
-                <select id="kategori">
-                    <option value="Elektrik">⚡ Elektrik</option>
-                    <option value="Su">💧 Su</option>
-                    <option value="Kira">🏠 Kira</option>
-                    <option value="Personel">👥 Personel</option>
-                    <option value="Bakım">🔧 Bakım</option>
-                    <option value="Vergi">📄 Vergi</option>
-                    <option value="Diğer">📌 Diğer</option>
-                </select>
-                <input type="text" id="aciklama" placeholder="Açıklama">
-                <input type="number" id="miktar" placeholder="Miktar (TL)" step="any">
-                <button id="giderEkleBtn" class="btn-danger">Gider Ekle</button>
-            </div>
+        <div id="adminForm" class="form-card" style="display:none;">
+            <h3>➕ Yeni Gider Ekle</h3>
+            <div class="form-group"><label>Kategori</label><select id="kategori"><option>Elektrik</option><option>Su</option><option>Personel</option><option>Kira</option><option>Diğer</option></select></div>
+            <div class="form-group"><label>Açıklama</label><input type="text" id="aciklama" placeholder="Açıklama"></div>
+            <div class="form-group"><label>Miktar (₺)</label><input type="number" id="miktar" step="0.01"></div>
+            <div class="form-group"><label>Tarih</label><input type="date" id="tarih"></div>
+            <button class="btn-primary" onclick="giderEkle()">Gider Ekle</button>
+        </div>
+
+        <div class="tarih-bar">
+            <label>📅 Tarih:</label>
+            <input type="date" id="tarihSecici">
+            <button class="btn-primary" onclick="giderleriYukle()">Filtrele</button>
         </div>
 
         <div class="table-container">
-            <div class="form-title">📋 Gider Geçmişi</div>
-            <div style="max-height: 500px; overflow-y: auto;">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Kategori</th>
-                            <th>Açıklama</th>
-                            <th>Miktar</th>
-                            <th>İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="giderListesi"></tbody>
-                </table>
-            </div>
+            <h3>📋 Gider Listesi</h3>
+            <table id="giderTablosu">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Kategori</th>
+                        <th>Açıklama</th>
+                        <th>Miktar</th>
+                        <th>Tarih</th>
+                        <th id="silBaslik">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        // YETKİ KONTROLÜ - İZLEYİCİ GİREMEZ
-        (async() => {
-            const me = await fetch('/api/me');
-            const user = await me.json();
-            if (user.yetki !== 'admin') {
-                window.location.href = '/viewer.html';
-                return;
-            }
-        })();
+        let isAdmin = false;
+        let currentDate = new Date().toISOString().split('T')[0];
 
-        function formatMoney(amount) {
-            return (amount || 0).toLocaleString('tr-TR', {
-                minimumFractionDigits: 2
-            }) + ' ₺';
+        async function checkAuthAndRole() {
+            const res = await fetch('/api/me');
+            const user = await res.json();
+            if (!user) window.location.href = '/index.html';
+            isAdmin = user.rol === 'admin';
+
+            const navLinks = document.getElementById('navLinks');
+            if (isAdmin) {
+                navLinks.innerHTML = `<a href="/admin.html">📊 Dashboard</a><a href="/borc.html">💰 Borçlar</a><a href="/tahsilat.html">💵 Tahsilat</a><a href="/gider.html">📉 Giderler</a><a href="/kullanici.html">👥 Kullanıcılar</a><a href="/loglar.html">📜 Loglar</a><a href="/rapor.html">📋 Rapor</a><button onclick="logout()">🚪 Çıkış</button>`;
+                document.getElementById('adminForm').style.display = 'block';
+                document.getElementById('silBaslik').style.display = 'table-cell';
+            } else {
+                navLinks.innerHTML = `<a href="/viewer.html">📊 Dashboard</a><a href="/borc.html?viewer=1">💰 Borçlar</a><a href="/tahsilat.html?viewer=1">💵 Tahsilat</a><a href="/gider.html?viewer=1">📉 Giderler</a><a href="/rapor.html?viewer=1">📋 Rapor</a><button onclick="logout()">🚪 Çıkış</button>`;
+                document.getElementById('silBaslik').style.display = 'none';
+            }
+
+            document.getElementById('tarihSecici').value = currentDate;
+            document.getElementById('tarihSecici').addEventListener('change', (e) => {
+                currentDate = e.target.value;
+                giderleriYukle();
+            });
+            giderleriYukle();
         }
 
-        async function loadGiderler() {
-            const res = await fetch('/api/giderler');
+        async function giderleriYukle() {
+            const res = await fetch(`/api/gider?tarih=${currentDate}`);
             const giderler = await res.json();
-            let html = '';
-            for (let g of giderler) {
-                let icon = g.kategori === 'Elektrik' ? '⚡' : (g.kategori === 'Su' ? '💧' : (g.kategori === 'Kira' ? '🏠' : (g.kategori === 'Personel' ? '👥' : (g.kategori === 'Bakım' ? '🔧' : (g.kategori === 'Vergi' ? '📄' : '📌')))));
-                html += `<tr>
-                    <td class="p-2">${g.tarih}</td>
-                    <td class="p-2">${icon} ${g.kategori}</td>
-                    <td class="p-2">${g.aciklama || '-'}</td>
-                    <td class="p-2 text-red-600 font-bold">${formatMoney(g.miktar)}</td>
-                    <td class="p-2"><button onclick="deleteGider(${g.id})" class="btn-delete">Sil</button></td>
-                </tr>`;
-            }
-            if (!giderler.length) html = '<tr><td colspan="5" class="text-center text-gray-500">Gider bulunamadı</td>';
-            document.getElementById('giderListesi').innerHTML = html;
+            const tbody = document.querySelector('#giderTablosu tbody');
+            tbody.innerHTML = '';
+            giderler.forEach(g => {
+                const row = tbody.insertRow();
+                let silButton = '';
+                if (isAdmin) silButton = `<td><button class="btn-danger" onclick="giderSil(${g.id})">Sil</button></td>`;
+                row.innerHTML = `
+                    <td>${g.id}</td>
+                    <td>${g.kategori}</td>
+                    <td>${g.aciklama}</td>
+                    <td>${formatMoney(g.miktar)}</td>
+                    <td>${g.tarih}</td>
+                    ${silButton ? silButton : '<td></td>'}
+                `;
+            });
         }
 
-        window.deleteGider = async(id) => {
-            if (confirm('Bu gideri silmek istediğinize emin misiniz?')) {
-                await fetch(`/api/gider/${id}`, {
-                    method: 'DELETE'
-                });
-                loadGiderler();
-                alert('Gider silindi');
-            }
-        };
-
-        document.getElementById('giderEkleBtn').onclick = async() => {
+        async function giderEkle() {
             const data = {
-                tarih: document.getElementById('tarih').value,
                 kategori: document.getElementById('kategori').value,
                 aciklama: document.getElementById('aciklama').value,
-                miktar: parseFloat(document.getElementById('miktar').value)
+                miktar: parseFloat(document.getElementById('miktar').value),
+                tarih: document.getElementById('tarih').value || new Date().toISOString().split('T')[0]
             };
-            if (!data.tarih || !data.miktar) {
-                alert('Tarih ve miktar giriniz');
+            if (!data.miktar) {
+                alert('Miktar girin');
                 return;
             }
-            const res = await fetch('/api/gider', {
+            await fetch('/api/gider', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
-            if (res.ok) {
-                alert('Gider eklendi');
-                document.getElementById('aciklama').value = '';
-                document.getElementById('miktar').value = '';
-                loadGiderler();
-            } else {
-                alert('Hata oluştu');
-            }
-        };
+            alert('Gider eklendi');
+            giderleriYukle();
+            document.getElementById('aciklama').value = '';
+            document.getElementById('miktar').value = '';
+        }
 
-        document.getElementById('cikisBtn').onclick = async() => {
+        async function giderSil(id) {
+            if (confirm('Gideri silmek istediğinize emin misiniz?')) {
+                await fetch(`/api/gider/${id}`, {
+                    method: 'DELETE'
+                });
+                giderleriYukle();
+            }
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY'
+            }).format(amount);
+        }
+        async function logout() {
             await fetch('/api/logout', {
                 method: 'POST'
             });
-            window.location.href = '/';
-        };
-        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-        loadGiderler();
+            window.location.href = '/index.html';
+        }
+
+        document.getElementById('tarih').value = new Date().toISOString().split('T')[0];
+        checkAuthAndRole();
     </script>
 </body>
 

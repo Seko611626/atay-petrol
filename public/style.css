@@ -1,80 +1,260 @@
-/* Diamond Mavi Tema - Atay Petrol */
-
-:root {
-    --diamond-dark: #0A2F6C;
-    --diamond-medium: #1E4D8C;
-    --diamond-light: #2E6DA4;
-    --diamond-gold: #00B4D8;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #e8f4f8;
-    margin: 0;
-    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
 }
 
 
-/* Buton stilleri */
+/* Giriş Sayfası */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.login-card h1 {
+    text-align: center;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+}
+
+.login-card .subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.error-msg {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+/* Ana Panel */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.navbar {
+    background: white;
+    border-radius: 15px;
+    padding: 15px 25px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar h2 {
+    color: #667eea;
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.nav-links a,
+.nav-links button {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links button:hover {
+    background: #667eea;
+    color: white;
+}
+
+
+/* Kartlar */
+
+.kart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.kart {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.kart:hover {
+    transform: translateY(-5px);
+}
+
+.kart h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.kart .deger {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1a1a2e;
+}
+
+.kart .birim {
+    font-size: 14px;
+    color: #666;
+}
+
+
+/* Formlar */
+
+.form-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
 
 .btn-primary {
-    background: var(--diamond-dark);
-    transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-    background: var(--diamond-medium);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .btn-danger {
-    background: #EF4444;
-    transition: all 0.2s ease;
-}
-
-.btn-danger:hover {
-    background: #DC2626;
-    transform: translateY(-1px);
-}
-
-.btn-success {
-    background: #10B981;
-    transition: all 0.2s ease;
-}
-
-.btn-success:hover {
-    background: #059669;
-    transform: translateY(-1px);
+    background: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 
-/* Kart hover */
+/* Tablolar */
 
-.card-hover {
-    transition: all 0.2s ease;
+.table-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    overflow-x: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.card-hover:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #667eea;
+    color: white;
+}
+
+tr:hover {
+    background: #f5f5f5;
 }
 
 
-/* Tablo satır hover */
+/* Tarih seçici */
 
-.table-row:hover {
-    background: #f1f5f9;
+.tarih-bar {
+    background: white;
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-
-/* Input focus */
-
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: var(--diamond-gold);
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+.tarih-bar input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
 
@@ -82,38 +262,16 @@ textarea:focus {
 
 @media (max-width: 768px) {
     .container {
-        padding: 12px;
+        padding: 10px;
     }
-    .stats-grid {
-        grid-template-columns: 1fr !important;
-    }
-    .form-grid {
-        grid-template-columns: 1fr !important;
-    }
-    .navbar .flex {
+    .navbar {
         flex-direction: column;
-        text-align: center;
+        gap: 10px;
     }
-}
-
-
-/* Scrollbar */
-
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: #e2e8f0;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--diamond-medium);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--diamond-dark);
+    .nav-links {
+        justify-content: center;
+    }
+    .kart-grid {
+        grid-template-columns: 1fr;
+    }
 }
