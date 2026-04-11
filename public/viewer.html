@@ -3,72 +3,133 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İzleyici | Atay Petrol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            font-family: system-ui;
+        }
+        
+        body {
+            background: #f0f4f8;
+        }
+        
+        .navbar {
+            background: #0A2F6C;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .navbar button {
+            background: #dc2626;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            border-left: 4px solid;
+        }
+        
+        .stat-card-1 {
+            border-left-color: #10B981;
+        }
+        
+        .stat-card-2 {
+            border-left-color: #3B82F6;
+        }
+        
+        .stat-card-3 {
+            border-left-color: #8B5CF6;
+        }
+        
+        .stat-card-4 {
+            border-left-color: #EF4444;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 10px;
+            background: #f8fafc;
+        }
+        
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+    </style>
 </head>
 
-<body class="min-h-screen">
-    <nav class="navbar text-white">
-        <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
-            <div class="flex items-center gap-2">
-                <h1 class="text-xl font-bold">⛽ ATAY PETROL</h1>
-                <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full">İzleyici</span>
-            </div>
-            <div class="flex gap-1 flex-wrap">
-                <button id="cikisBtn" class="bg-red-600/80 px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm transition">🚪 Çıkış</button>
-            </div>
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⛽</span>
+            <span style="font-weight: 800;">ATA Y PETROL</span>
+            <span style="background: #3B82F620; padding: 2px 10px; border-radius: 40px; font-size: 11px;">İzleyici</span>
         </div>
-    </nav>
+        <button id="cikisBtn">🚪 Çıkış</button>
+    </div>
 
-    <div class="container mx-auto p-3 sm:p-4">
-        <!-- Tarih Seçici -->
-        <div class="bg-white rounded-xl shadow-md p-3 mb-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">📅</span>
-                    <input type="date" id="tarih" class="border p-2 rounded-lg text-sm w-auto">
-                    <button id="bugunBtn" class="bg-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-300">Bugün</button>
-                </div>
-                <div class="text-xs text-gray-500">Sadece görüntüleme modu</div>
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 20px;">
+        <div class="stats-grid">
+            <div class="stat-card stat-card-1">
+                <div style="font-size: 13px;">🚛 Bugünkü Alış</div>
+                <div style="font-size: 28px; font-weight: 800;" id="toplamAlis">0 ₺</div>
             </div>
-        </div>
-
-        <!-- 4 İstatistik Kartı -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            <div class="stat-card stat-card-1 bg-white rounded-xl shadow p-3">
-                <p class="text-gray-500 text-xs">🚛 Bugünkü Alış</p>
-                <p class="text-xl font-bold text-green-600" id="toplamAlis">0 ₺</p>
+            <div class="stat-card stat-card-2">
+                <div style="font-size: 13px;">💰 Bugünkü Satış</div>
+                <div style="font-size: 28px; font-weight: 800;" id="toplamSatis">0 ₺</div>
             </div>
-            <div class="stat-card stat-card-2 bg-white rounded-xl shadow p-3">
-                <p class="text-gray-500 text-xs">💰 Bugünkü Satış</p>
-                <p class="text-xl font-bold text-blue-600" id="toplamSatis">0 ₺</p>
+            <div class="stat-card stat-card-3">
+                <div style="font-size: 13px;">📈 Bugünkü Kar</div>
+                <div style="font-size: 28px; font-weight: 800;" id="toplamKar">0 ₺</div>
             </div>
-            <div class="stat-card stat-card-3 bg-white rounded-xl shadow p-3">
-                <p class="text-gray-500 text-xs">📈 Bugünkü Kar</p>
-                <p class="text-xl font-bold text-purple-600" id="toplamKar">0 ₺</p>
-            </div>
-            <div class="stat-card stat-card-4 bg-white rounded-xl shadow p-3">
-                <p class="text-gray-500 text-xs">💵 Gelen Toplam</p>
-                <p class="text-xl font-bold text-red-600" id="toplamTahsilat">0 ₺</p>
+            <div class="stat-card stat-card-4">
+                <div style="font-size: 13px;">💵 Gelen Toplam</div>
+                <div style="font-size: 28px; font-weight: 800;" id="toplamTahsilat">0 ₺</div>
             </div>
         </div>
 
-        <!-- Ödeme Dağılımı Grafik -->
-        <div class="bg-white rounded-xl shadow-md p-4 mb-4">
-            <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📊 Ödeme Dağılımı</h2>
-            <canvas id="odemeChart" height="180"></canvas>
-        </div>
+        <div class="table-container">
+            <div style="font-weight: 700; margin-bottom: 12px;">📊 Ödeme Dağılımı</div><canvas id="odemeChart" height="200"></canvas></div>
 
-        <!-- Satış Listesi -->
-        <div class="bg-white rounded-xl shadow-md p-4 mb-4">
-            <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📋 Satış Listesi</h2>
-            <div class="overflow-x-auto max-h-64">
-                <table class="w-full text-sm">
-                    <thead class="sticky top-0 bg-gray-100">
+        <div class="table-container">
+            <div style="font-weight: 700; margin-bottom: 12px;">📋 Satış Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table>
+                    <thead>
                         <tr>
                             <th>Saat</th>
                             <th>Ürün</th>
@@ -83,32 +144,41 @@
             </div>
         </div>
 
-        <!-- Borç Listesi -->
-        <div class="bg-white rounded-xl shadow-md p-4">
-            <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📋 Borç Listesi</h2>
-            <div class="overflow-x-auto max-h-64">
-                <table class="w-full text-sm">
-                    <thead class="sticky top-0 bg-gray-100">
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Müşteri</th>
-                            <th>Borç</th>
-                            <th>Kalan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="borcListesi"></tbody>
+        <div class="table-container">
+            <div style="font-weight: 700; margin-bottom: 12px;">📋 Borç Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                </table>
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Müşteri</th>
+                        <th>Borç</th>
+                        <th>Kalan</th>
+                    </tr>
+                </thead>
+                <tbody id="borcListesi"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
         let odemeChart;
 
+        function formatMoney(amount) {
+            return (amount || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' ₺';
+        }
+
+        function formatLiter(litre) {
+            return (litre || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' L';
+        }
+
         async function loadDashboard() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            let tarih = new Date().toISOString().slice(0, 10);
             const res = await fetch(`/api/istatistik?tarih=${tarih}`);
             const data = await res.json();
             document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
@@ -118,63 +188,50 @@
         }
 
         async function loadSatis() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            let tarih = new Date().toISOString().slice(0, 10);
             const res = await fetch(`/api/satis/tarih?tarih=${tarih}`);
             const satislar = await res.json();
             let html = '';
-            for (let s of satislar) {
-                html += `<tr><td class="p-2">${s.saat || '-'}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.alis_fiyat)}</td><td class="p-2">${formatMoney(s.satis_fiyat)}</td><td class="p-2 text-green-600">${formatMoney(s.kar)}</td></tr>`;
-            }
-            if (satislar.length === 0) html = '<tr><td colspan="6" class="text-center py-4 text-gray-500">Satış yok</td></tr>';
+            for (let s of satislar) html += `<tr><td class="p-2">${s.saat||'-'}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.alis_fiyat)}</td><td class="p-2">${formatMoney(s.satis_fiyat)}</td><td class="p-2 text-green-600">${formatMoney(s.kar)}</td></tr>`;
+            if (!satislar.length) html = '<tr><td colspan="6" class="text-center">Satış yok</td></tr>';
             document.getElementById('satisListesi').innerHTML = html;
         }
 
         async function loadBorclar() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            let tarih = new Date().toISOString().slice(0, 10);
             const res = await fetch(`/api/borc/tarih?tarih=${tarih}`);
             const borclar = await res.json();
             let html = '';
-            for (let b of borclar) {
-                html += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td></tr>`;
-            }
-            if (borclar.length === 0) html = '<tr><td colspan="4" class="text-center py-4 text-gray-500">Borç yok</td></tr>';
+            for (let b of borclar) html += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td></tr>`;
+            if (!borclar.length) html = '<tr><td colspan="4" class="text-center">Borç yok</td></tr>';
             document.getElementById('borcListesi').innerHTML = html;
         }
 
         async function loadOdemeChart() {
             const res = await fetch('/api/odeme-rapor');
             const data = await res.json();
-            const odemeData = data[0] || {
+            const od = data[0] || {
                 nakit: 0,
                 havale: 0,
                 pos: 0,
                 borc: 0
             };
             if (odemeChart) odemeChart.destroy();
-            const ctx = document.getElementById('odemeChart').getContext('2d');
-            odemeChart = new Chart(ctx, {
+            odemeChart = new Chart(document.getElementById('odemeChart'), {
                 type: 'doughnut',
                 data: {
                     labels: ['Nakit', 'Havale', 'POS', 'Borç'],
                     datasets: [{
-                        data: [odemeData.nakit, odemeData.havale, odemeData.pos, odemeData.borc],
+                        data: [od.nakit, od.havale, od.pos, od.borc],
                         backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    size: 10
-                                }
-                            }
+                            position: 'bottom'
                         }
                     }
                 }
@@ -187,23 +244,10 @@
             });
             window.location.href = '/';
         };
-        document.getElementById('tarih').addEventListener('change', () => {
-            loadDashboard();
-            loadSatis();
-            loadBorclar();
-        });
-        document.getElementById('bugunBtn').onclick = () => {
-            document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-            loadDashboard();
-            loadSatis();
-            loadBorclar();
-        };
-
         loadDashboard();
         loadSatis();
         loadBorclar();
         loadOdemeChart();
-        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
     </script>
 </body>
 
