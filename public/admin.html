@@ -8,27 +8,104 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: #f0f4f8;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 10px 16px;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #0A2F6C;
+            transition: all 0.3s;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #1E4D8C;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            border-left: 4px solid;
+            transition: all 0.3s;
+            padding: 12px;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card-1 {
+            border-left-color: #10B981;
+        }
+        
+        .stat-card-2 {
+            border-left-color: #3B82F6;
+        }
+        
+        .stat-card-3 {
+            border-left-color: #8B5CF6;
+        }
+        
+        .stat-card-4 {
+            border-left-color: #EF4444;
+        }
+        
+        input,
+        select {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 8px 12px;
+            width: 100%;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00B4D8;
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar .flex {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
 </head>
 
 <body class="min-h-screen">
-    <!-- Navbar - Küçük ve Şık -->
-    <nav class="navbar text-white">
+    <!-- Navbar -->
+    <div class="navbar">
         <div class="container mx-auto flex justify-between items-center flex-wrap gap-2">
             <div class="flex items-center gap-2">
                 <h1 class="text-xl font-bold">⛽ ATAY PETROL</h1>
                 <span class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full">Admin</span>
             </div>
-            <div class="flex gap-1 flex-wrap">
-                <button id="anasayfaBtn" class="px-3 py-1.5 rounded-lg hover:bg-white/10 text-sm transition">📊 Ana</button>
-                <button id="borclarBtn" class="px-3 py-1.5 rounded-lg hover:bg-white/10 text-sm transition">📝 Borçlar</button>
-                <button id="giderlerBtn" class="px-3 py-1.5 rounded-lg hover:bg-white/10 text-sm transition">📉 Giderler</button>
-                <button id="kullaniciBtn" class="px-3 py-1.5 rounded-lg hover:bg-white/10 text-sm transition">👥 Kullanıcılar</button>
-                <button id="loglarBtn" class="px-3 py-1.5 rounded-lg hover:bg-white/10 text-sm transition">📜 Loglar</button>
-                <button id="cikisBtn" class="bg-red-600/80 px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm transition">🚪 Çıkış</button>
-            </div>
+            <button id="cikisBtn" class="bg-red-600/80 px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm transition">🚪 Çıkış</button>
         </div>
-    </nav>
+    </div>
 
     <div class="container mx-auto p-3 sm:p-4">
         <!-- Tarih Seçici -->
@@ -37,8 +114,6 @@
                 <div class="flex items-center gap-2">
                     <span class="text-xl">📅</span>
                     <input type="date" id="tarih" class="border p-2 rounded-lg text-sm w-auto">
-                    <button id="oncekiBtn" class="bg-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-300">◀ Önceki</button>
-                    <button id="sonrakiBtn" class="bg-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-300">Sonraki ▶</button>
                     <button id="bugunBtn" class="bg-gray-200 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-300">Bugün</button>
                 </div>
                 <div class="text-xs text-gray-500">Tarih seçin veya boş bırakın (bugün gösterir)</div>
@@ -47,19 +122,19 @@
 
         <!-- 4 İstatistik Kartı -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            <div class="stat-card stat-card-1 bg-white rounded-xl shadow p-3">
+            <div class="stat-card stat-card-1">
                 <p class="text-gray-500 text-xs">🚛 Bugünkü Alış</p>
                 <p class="text-xl font-bold text-green-600" id="toplamAlis">0 ₺</p>
             </div>
-            <div class="stat-card stat-card-2 bg-white rounded-xl shadow p-3">
+            <div class="stat-card stat-card-2">
                 <p class="text-gray-500 text-xs">💰 Bugünkü Satış</p>
                 <p class="text-xl font-bold text-blue-600" id="toplamSatis">0 ₺</p>
             </div>
-            <div class="stat-card stat-card-3 bg-white rounded-xl shadow p-3">
+            <div class="stat-card stat-card-3">
                 <p class="text-gray-500 text-xs">📈 Bugünkü Kar</p>
                 <p class="text-xl font-bold text-purple-600" id="toplamKar">0 ₺</p>
             </div>
-            <div class="stat-card stat-card-4 bg-white rounded-xl shadow p-3">
+            <div class="stat-card stat-card-4">
                 <p class="text-gray-500 text-xs">💵 Gelen Toplam</p>
                 <p class="text-xl font-bold text-red-600" id="toplamTahsilat">0 ₺</p>
             </div>
@@ -71,21 +146,21 @@
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 <div class="bg-green-50 p-2 rounded-lg">
                     <label class="text-xs text-green-700">Nakit (TL)</label>
-                    <input type="number" id="nakit" class="w-full border p-2 rounded-lg text-sm" value="0" step="any">
+                    <input type="number" id="nakit" class="border p-2 rounded-lg text-sm" value="0" step="any">
                 </div>
                 <div class="bg-blue-50 p-2 rounded-lg">
                     <label class="text-xs text-blue-700">Havale (TL)</label>
-                    <input type="number" id="havale" class="w-full border p-2 rounded-lg text-sm" value="0" step="any">
+                    <input type="number" id="havale" class="border p-2 rounded-lg text-sm" value="0" step="any">
                 </div>
                 <div class="bg-purple-50 p-2 rounded-lg">
                     <label class="text-xs text-purple-700">POS (TL)</label>
-                    <input type="number" id="pos" class="w-full border p-2 rounded-lg text-sm" value="0" step="any">
+                    <input type="number" id="pos" class="border p-2 rounded-lg text-sm" value="0" step="any">
                 </div>
                 <div class="bg-red-50 p-2 rounded-lg">
                     <label class="text-xs text-red-700">Borç (TL)</label>
-                    <input type="number" id="borc" class="w-full border p-2 rounded-lg text-sm" value="0" step="any">
+                    <input type="number" id="borc" class="border p-2 rounded-lg text-sm" value="0" step="any">
                 </div>
-                <button id="gunSonuBtn" class="btn-primary text-sm py-2 px-3 rounded-lg">Kaydet</button>
+                <button id="gunSonuBtn" class="btn-primary text-sm py-2">Kaydet</button>
             </div>
         </div>
 
@@ -99,7 +174,7 @@
                 <input type="number" id="litre" placeholder="Litre" class="border p-2 rounded-lg text-sm" step="any">
                 <input type="number" id="alis_fiyat" placeholder="Alış Fiyatı" class="border p-2 rounded-lg text-sm" step="any">
                 <input type="number" id="satis_fiyat" placeholder="Satış Fiyatı" class="border p-2 rounded-lg text-sm" step="any">
-                <button id="satisEkleBtn" class="btn-primary text-sm py-2 rounded-lg">Satış Ekle</button>
+                <button id="satisEkleBtn" class="btn-primary text-sm py-2">Satış Ekle</button>
             </div>
         </div>
 
@@ -133,11 +208,11 @@
             </div>
         </div>
 
-        <!-- Grafik ve Tablolar -->
+        <!-- Grafik ve Satış Listesi -->
         <div class="grid lg:grid-cols-2 gap-4 mb-4">
             <div class="bg-white rounded-xl shadow-md p-4">
                 <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📊 Ödeme Dağılımı</h2>
-                <canvas id="odemeChart" height="180"></canvas>
+                <canvas id="odemeChart" height="200"></canvas>
             </div>
             <div class="bg-white rounded-xl shadow-md p-4">
                 <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📋 Satış Listesi</h2>
@@ -161,10 +236,7 @@
         <!-- Borç Listesi ve Gider Listesi -->
         <div class="grid lg:grid-cols-2 gap-4">
             <div class="bg-white rounded-xl shadow-md p-4">
-                <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
-                    <h2 class="text-base font-bold text-[#0A2F6C]">📋 Borç Listesi</h2>
-                    <input type="text" id="borcArama" placeholder="🔍 Müşteri ara..." class="border p-1 rounded-lg text-sm w-32">
-                </div>
+                <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📋 Borç Listesi</h2>
                 <div class="overflow-x-auto max-h-64">
                     <table class="w-full text-sm">
                         <thead class="sticky top-0 bg-gray-100">
@@ -181,10 +253,7 @@
                 </div>
             </div>
             <div class="bg-white rounded-xl shadow-md p-4">
-                <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
-                    <h2 class="text-base font-bold text-[#0A2F6C]">📋 Gider Listesi</h2>
-                    <input type="text" id="giderArama" placeholder="🔍 Kategori ara..." class="border p-1 rounded-lg text-sm w-32">
-                </div>
+                <h2 class="text-base font-bold mb-3 text-[#0A2F6C]">📋 Gider Listesi</h2>
                 <div class="overflow-x-auto max-h-64">
                     <table class="w-full text-sm">
                         <thead class="sticky top-0 bg-gray-100">
@@ -203,23 +272,26 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
         let odemeChart;
-        let currentDate = '';
 
         async function loadUrunler() {
-            const res = await fetch('/api/urunler');
-            const urunler = await res.json();
-            const select = document.getElementById('urun_id');
-            select.innerHTML = '<option value="">Ürün Seç</option>';
-            for (let u of urunler) select.innerHTML += `<option value="${u.id}">${u.ad}</option>`;
+            try {
+                const res = await fetch('/api/urunler');
+                const urunler = await res.json();
+                const select = document.getElementById('urun_id');
+                select.innerHTML = '<option value="">Ürün Seç</option>';
+                for (let u of urunler) {
+                    select.innerHTML += `<option value="${u.id}">${u.ad}</option>`;
+                }
+            } catch (e) {
+                console.error('Ürünler yüklenemedi:', e);
+            }
         }
 
         async function loadDashboard() {
             let tarih = document.getElementById('tarih').value;
             if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-            currentDate = tarih;
             const res = await fetch(`/api/istatistik?tarih=${tarih}`);
             const data = await res.json();
             document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
@@ -241,7 +313,7 @@
             for (let s of satislar) {
                 html += `<tr><td class="p-2">${s.saat || '-'}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2 text-green-600">${formatMoney(s.kar)}</td><td class="p-2"><button onclick="deleteSatis(${s.id})" class="bg-red-500 text-white px-2 py-0.5 rounded text-xs">Sil</button></td></tr>`;
             }
-            if (satislar.length === 0) html = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Satış yok</td></tr>';
+            if (satislar.length === 0) html = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Satış yok</td>';
             document.getElementById('satisListesi').innerHTML = html;
         }
 
@@ -256,6 +328,93 @@
             }
         };
 
+        async function loadGiderler() {
+            let tarih = document.getElementById('tarih').value;
+            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            const res = await fetch(`/api/giderler/tarih?tarih=${tarih}`);
+            const giderler = await res.json();
+            let html = '';
+            for (let g of giderler) {
+                html += `<tr><td class="p-2">${g.tarih}</td><td class="p-2">${g.kategori}</td><td class="p-2">${g.aciklama || '-'}</td><td class="p-2 text-red-600">${formatMoney(g.miktar)}</td><td class="p-2"><button onclick="deleteGider(${g.id})" class="bg-red-500 text-white px-2 py-0.5 rounded text-xs">Sil</button></td></tr>`;
+            }
+            if (giderler.length === 0) html = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Gider yok</td>';
+            document.getElementById('giderListesi').innerHTML = html;
+        }
+
+        window.deleteGider = async(id) => {
+            if (confirm('Gideri sil?')) {
+                await fetch(`/api/gider/${id}`, {
+                    method: 'DELETE'
+                });
+                loadGiderler();
+            }
+        };
+
+        async function loadBorclar() {
+            let tarih = document.getElementById('tarih').value;
+            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
+            const res = await fetch(`/api/borc/tarih?tarih=${tarih}`);
+            const borclar = await res.json();
+            let html = '';
+            for (let b of borclar) {
+                html += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-2"><button onclick="deleteBorc(${b.id})" class="bg-red-500 text-white px-2 py-0.5 rounded text-xs">Sil</button></td></tr>`;
+            }
+            if (borclar.length === 0) html = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Borç yok</td>';
+            document.getElementById('borcListesi').innerHTML = html;
+        }
+
+        window.deleteBorc = async(id) => {
+            if (confirm('Borcu sil?')) {
+                await fetch(`/api/borc/${id}`, {
+                    method: 'DELETE'
+                });
+                loadBorclar();
+            }
+        };
+
+        async function loadOdemeChart() {
+            try {
+                const res = await fetch('/api/odeme-rapor');
+                const data = await res.json();
+                const odemeData = data[0] || {
+                    nakit: 0,
+                    havale: 0,
+                    pos: 0,
+                    borc: 0
+                };
+                if (odemeChart) odemeChart.destroy();
+                const ctx = document.getElementById('odemeChart').getContext('2d');
+                odemeChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Nakit', 'Havale', 'POS', 'Borç'],
+                        datasets: [{
+                            data: [odemeData.nakit, odemeData.havale, odemeData.pos, odemeData.borc],
+                            backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        size: 10
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('Grafik yüklenemedi:', e);
+            }
+        }
+
+        // Buton olayları
         document.getElementById('satisEkleBtn').onclick = async() => {
             let tarih = document.getElementById('tarih').value;
             if (!tarih) tarih = new Date().toISOString().slice(0, 10);
@@ -290,7 +449,9 @@
                 loadSatis();
                 loadDashboard();
                 loadOdemeChart();
-            } else alert('Hata');
+            } else {
+                alert('Hata oluştu');
+            }
         };
 
         document.getElementById('gunSonuBtn').onclick = async() => {
@@ -314,31 +475,11 @@
                 })
             });
             if (res.ok) {
-                alert('Kaydedildi');
+                alert('Gün sonu kaydedildi');
                 loadDashboard();
                 loadOdemeChart();
-            } else alert('Hata');
-        };
-
-        async function loadGiderler() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/giderler/tarih?tarih=${tarih}`);
-            const giderler = await res.json();
-            let html = '';
-            for (let g of giderler) {
-                html += `<tr><td class="p-2">${g.tarih}</td><td class="p-2">${g.kategori}</td><td class="p-2">${g.aciklama || '-'}</td><td class="p-2 text-red-600">${formatMoney(g.miktar)}</td><td class="p-2"><button onclick="deleteGider(${g.id})" class="bg-red-500 text-white px-2 py-0.5 rounded text-xs">Sil</button></td></tr>`;
-            }
-            if (giderler.length === 0) html = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Gider yok</td></tr>';
-            document.getElementById('giderListesi').innerHTML = html;
-        }
-
-        window.deleteGider = async(id) => {
-            if (confirm('Gideri sil?')) {
-                await fetch(`/api/gider/${id}`, {
-                    method: 'DELETE'
-                });
-                loadGiderler();
+            } else {
+                alert('Hata oluştu');
             }
         };
 
@@ -369,28 +510,8 @@
                 document.getElementById('gider_aciklama').value = '';
                 document.getElementById('gider_miktar').value = '';
                 loadGiderler();
-            } else alert('Hata');
-        };
-
-        async function loadBorclar() {
-            let tarih = document.getElementById('tarih').value;
-            if (!tarih) tarih = new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/borc/tarih?tarih=${tarih}`);
-            const borclar = await res.json();
-            let html = '';
-            for (let b of borclar) {
-                html += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-2"><button onclick="deleteBorc(${b.id})" class="bg-red-500 text-white px-2 py-0.5 rounded text-xs">Sil</button></td></tr>`;
-            }
-            if (borclar.length === 0) html = '<tr><td colspan="5" class="text-center py-4 text-gray-500">Borç yok</td></tr>';
-            document.getElementById('borcListesi').innerHTML = html;
-        }
-
-        window.deleteBorc = async(id) => {
-            if (confirm('Borcu sil?')) {
-                await fetch(`/api/borc/${id}`, {
-                    method: 'DELETE'
-                });
-                loadBorclar();
+            } else {
+                alert('Hata oluştu');
             }
         };
 
@@ -422,93 +543,10 @@
                 document.getElementById('borc_miktar').value = '';
                 document.getElementById('borc_aciklama').value = '';
                 loadBorclar();
-            } else alert('Hata');
-        };
-
-        async function loadOdemeChart() {
-            const res = await fetch('/api/odeme-rapor');
-            const data = await res.json();
-            const odemeData = data[0] || {
-                nakit: 0,
-                havale: 0,
-                pos: 0,
-                borc: 0
-            };
-            if (odemeChart) odemeChart.destroy();
-            const ctx = document.getElementById('odemeChart').getContext('2d');
-            odemeChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Nakit', 'Havale', 'POS', 'Borç'],
-                    datasets: [{
-                        data: [odemeData.nakit, odemeData.havale, odemeData.pos, odemeData.borc],
-                        backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#EF4444'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        async function loadKullanicilar() {
-            const res = await fetch('/api/kullanicilar');
-            const users = await res.json();
-            let html = '';
-            for (let u of users) {
-                html += `<tr><td class="p-1">${u.id}</td><td class="p-1">${u.email}</td><td class="p-1">${u.adsoyad}</td><td class="p-1">${u.yetki}</td><td class="p-1">${u.aktif == 1 ? 'Aktif' : 'Pasif'}</td><td class="p-1"><button onclick="deleteUser(${u.id})" class="bg-red-500 text-white px-1 py-0.5 rounded text-xs">Sil</button></td></tr>`;
+            } else {
+                alert('Hata oluştu');
             }
-            document.getElementById('kullaniciListesi').innerHTML = html;
-        }
-
-        // Sayfa geçişleri
-        document.getElementById('anasayfaBtn').onclick = () => {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('anaSayfa').classList.remove('hidden');
         };
-        document.getElementById('borclarBtn').onclick = () => {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('borclarSayfa').classList.remove('hidden');
-            loadBorclar();
-        };
-        document.getElementById('giderlerBtn').onclick = () => {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('giderlerSayfa').classList.remove('hidden');
-            loadGiderler();
-        };
-        document.getElementById('kullaniciBtn').onclick = () => {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('kullaniciSayfa').classList.remove('hidden');
-            loadKullanicilar();
-        };
-        document.getElementById('loglarBtn').onclick = () => {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('loglarSayfa').classList.remove('hidden');
-            loadLoglar();
-        };
-
-        async function loadLoglar() {
-            const res = await fetch('/api/loglar');
-            const logs = await res.json();
-            let html = '';
-            for (let l of logs) {
-                const tarih = new Date(l.giris_zamani).toLocaleString('tr-TR');
-                html += `<tr><td class="p-2">${l.email}</td><td class="p-2 font-mono">${l.ip}</td><td class="p-2">${tarih}</td></tr>`;
-            }
-            document.getElementById('loglarListesi').innerHTML = html;
-        }
 
         document.getElementById('cikisBtn').onclick = async() => {
             await fetch('/api/logout', {
@@ -516,12 +554,7 @@
             });
             window.location.href = '/';
         };
-        document.getElementById('tarih').addEventListener('change', () => {
-            loadDashboard();
-            loadSatis();
-            loadBorclar();
-            loadGiderler();
-        });
+
         document.getElementById('bugunBtn').onclick = () => {
             document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
             loadDashboard();
@@ -529,40 +562,27 @@
             loadBorclar();
             loadGiderler();
         };
-        document.getElementById('oncekiBtn').onclick = () => {
-            let tarih = new Date(document.getElementById('tarih').value || new Date());
-            tarih.setDate(tarih.getDate() - 1);
-            document.getElementById('tarih').value = tarih.toISOString().slice(0, 10);
+
+        document.getElementById('tarih').addEventListener('change', () => {
             loadDashboard();
             loadSatis();
             loadBorclar();
             loadGiderler();
-        };
-        document.getElementById('sonrakiBtn').onclick = () => {
-            let tarih = new Date(document.getElementById('tarih').value || new Date());
-            tarih.setDate(tarih.getDate() + 1);
-            document.getElementById('tarih').value = tarih.toISOString().slice(0, 10);
-            loadDashboard();
-            loadSatis();
-            loadBorclar();
-            loadGiderler();
-        };
-
-        document.getElementById('borcArama').addEventListener('input', () => {
-            const val = document.getElementById('borcArama').value.toLowerCase();
-            const rows = document.querySelectorAll('#borcListesi tr');
-            for (let r of rows) {
-                r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none';
-            }
-        });
-        document.getElementById('giderArama').addEventListener('input', () => {
-            const val = document.getElementById('giderArama').value.toLowerCase();
-            const rows = document.querySelectorAll('#giderListesi tr');
-            for (let r of rows) {
-                r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none';
-            }
         });
 
+        function formatMoney(amount) {
+            return (amount || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' ₺';
+        }
+
+        function formatLiter(litre) {
+            return (litre || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' L';
+        }
+
+        // Sayfa yüklendiğinde
         loadUrunler();
         loadDashboard();
         loadSatis();
