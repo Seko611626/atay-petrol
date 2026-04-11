@@ -151,6 +151,35 @@
             gap: 12px;
         }
         
+        .yetkisiz-box {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        
+        .yetkisiz-box h2 {
+            color: #dc2626;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .yetkisiz-box p {
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+        
+        .yetkisiz-box a {
+            background: #0A2F6C;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -161,61 +190,75 @@
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">⛽</span>
-            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+    <div id="adminContent" style="display: none;">
+        <div class="navbar">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">⛽</span>
+                <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+                <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="dashboard.html">📊 Ana Sayfa</a>
+                <a href="borc.html">📝 Borçlar</a>
+                <a href="tahsilat.html">💵 Tahsilat</a>
+                <a href="gider.html">📉 Giderler</a>
+                <a href="rapor.html">📊 Rapor</a>
+                <a href="kullanici.html">👥 Kullanıcılar</a>
+                <a href="loglar.html">📜 Loglar</a>
+                <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+            </div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="dashboard.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
-            <a href="kullanici.html">👥 Kullanıcılar</a>
-            <a href="loglar.html">📜 Loglar</a>
-            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+            <!-- Borç Ekleme Formu -->
+            <div class="card">
+                <div class="form-title">➕ Yeni Borç Ekle</div>
+                <div class="form-grid">
+                    <input type="date" id="tarih" value="">
+                    <input type="text" id="musteri" placeholder="Müşteri Adı">
+                    <select id="urun_id"><option value="">Ürün Seç</option></select>
+                    <input type="number" id="miktar" placeholder="Borç Tutarı (TL)" step="any">
+                    <input type="text" id="aciklama" placeholder="Açıklama">
+                    <button id="borcEkleBtn" class="btn-primary">Borç Ekle</button>
+                </div>
+            </div>
+
+            <!-- Borç Listesi -->
+            <div class="table-container">
+                <div class="form-title">📋 Borç Listesi</div>
+                <div style="max-height: 500px; overflow-y: auto;">
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Müşteri</th>
+                                <th>Ürün</th>
+                                <th>Borç</th>
+                                <th>Kalan</th>
+                                <th>Açıklama</th>
+                                <th>Durum</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borcListesi"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <!-- Borç Ekleme -->
-        <div class="card">
-            <div class="form-title">➕ Yeni Borç Ekle</div>
-            <div class="form-grid">
-                <input type="date" id="tarih" value="">
-                <input type="text" id="musteri" placeholder="Müşteri Adı">
-                <select id="urun_id"><option value="">Ürün Seç</option></select>
-                <input type="number" id="miktar" placeholder="Borç Tutarı (TL)" step="any">
-                <input type="text" id="aciklama" placeholder="Açıklama">
-                <button id="borcEkleBtn" class="btn-primary">Borç Ekle</button>
-            </div>
-        </div>
-
-        <!-- Borç Listesi -->
-        <div class="table-container">
-            <div class="form-title">📋 Borç Listesi</div>
-            <div style="max-height: 500px; overflow-y: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Müşteri</th>
-                            <th>Ürün</th>
-                            <th>Borç</th>
-                            <th>Kalan</th>
-                            <th>Açıklama</th>
-                            <th>Durum</th>
-                            <th>İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="borcListesi"></tbody>
-                </table>
-            </div>
+    <div id="yetkisizContent" style="display: none;">
+        <div class="yetkisiz-box">
+            <h2>⚠️ Yetkisiz Erişim</h2>
+            <p>Bu sayfaya erişim yetkiniz yok. Sadece admin kullanıcılar borç ekleyebilir ve silebilir.</p>
+            <a href="viewer.html">Ana Sayfaya Dön</a>
         </div>
     </div>
 
     <script>
+        let yetki = '';
+        let tumBorclar = [];
+
         function formatMoney(amount) {
             return (amount || 0).toLocaleString('tr-TR', {
                 minimumFractionDigits: 2
@@ -225,14 +268,15 @@
         async function loadUrunler() {
             const res = await fetch('/api/urunler');
             const urunler = await res.json();
-            document.getElementById('urun_id').innerHTML = '<option value="">Ürün Seç</option>' + urunler.map(u => `<option value="${u.id}">${u.ad}</option>`).join('');
+            const select = document.getElementById('urun_id');
+            select.innerHTML = '<option value="">Ürün Seç</option>' + urunler.map(u => `<option value="${u.id}">${u.ad}</option>`).join('');
         }
 
         async function loadBorclar() {
             const res = await fetch('/api/borc');
-            const borclar = await res.json();
+            tumBorclar = await res.json();
             let html = '';
-            for (let b of borclar) {
+            for (let b of tumBorclar) {
                 let durum = b.kalan_tl <= 0 ? '✅ Ödendi' : '⚠️ Bekliyor';
                 let durumClass = b.kalan_tl <= 0 ? 'text-green-600' : 'text-red-600';
                 html += `<tr>
@@ -243,12 +287,10 @@
                     <td class="p-2 text-red-600 font-bold">${formatMoney(b.kalan_tl)}</td>
                     <td class="p-2">${b.aciklama || '-'}</td>
                     <td class="p-2 ${durumClass}">${durum}</td>
-                    <td class="p-2">
-                        <button onclick="deleteBorc(${b.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;">Sil</button>
-                    </td>
+                    <td class="p-2"><button onclick="deleteBorc(${b.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;">Sil</button></td>
                 </tr>`;
             }
-            if (!borclar.length) html = '<tr><td colspan="8" class="text-center text-gray-500">Borç bulunamadı</td></tr>';
+            if (!tumBorclar.length) html = '<tr><td colspan="8" class="text-center text-gray-500">Borç bulunamadı</td>';
             document.getElementById('borcListesi').innerHTML = html;
         }
 
@@ -298,8 +340,21 @@
         };
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
 
-        loadUrunler();
-        loadBorclar();
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            yetki = user.yetki;
+
+            if (yetki === 'admin') {
+                document.getElementById('adminContent').style.display = 'block';
+                document.getElementById('yetkisizContent').style.display = 'none';
+                await loadUrunler();
+                await loadBorclar();
+            } else {
+                document.getElementById('adminContent').style.display = 'none';
+                document.getElementById('yetkisizContent').style.display = 'block';
+            }
+        })();
     </script>
 </body>
 

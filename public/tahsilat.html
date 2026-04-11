@@ -151,6 +151,35 @@
             gap: 12px;
         }
         
+        .yetkisiz-box {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        
+        .yetkisiz-box h2 {
+            color: #dc2626;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .yetkisiz-box p {
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+        
+        .yetkisiz-box a {
+            background: #0A2F6C;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -161,60 +190,73 @@
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">⛽</span>
-            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
-            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+    <div id="adminContent" style="display: none;">
+        <div class="navbar">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">⛽</span>
+                <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+                <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="dashboard.html">📊 Ana Sayfa</a>
+                <a href="borc.html">📝 Borçlar</a>
+                <a href="tahsilat.html">💵 Tahsilat</a>
+                <a href="gider.html">📉 Giderler</a>
+                <a href="rapor.html">📊 Rapor</a>
+                <a href="kullanici.html">👥 Kullanıcılar</a>
+                <a href="loglar.html">📜 Loglar</a>
+                <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+            </div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="dashboard.html">📊 Ana Sayfa</a>
-            <a href="borc.html">📝 Borçlar</a>
-            <a href="tahsilat.html">💵 Tahsilat</a>
-            <a href="gider.html">📉 Giderler</a>
-            <a href="kullanici.html">👥 Kullanıcılar</a>
-            <a href="loglar.html">📜 Loglar</a>
-            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+            <!-- Tahsilat Ekleme -->
+            <div class="card">
+                <div class="form-title">➕ Tahsilat Ekle</div>
+                <div class="form-grid">
+                    <input type="date" id="tarih" value="">
+                    <select id="borc_id"><option value="">Borç Seçin</option></select>
+                    <input type="number" id="miktar" placeholder="Tahsilat Tutarı (TL)" step="any">
+                    <select id="odeme_yontemi">
+                        <option value="Nakit">💵 Nakit</option>
+                        <option value="Havale">🏦 Havale</option>
+                        <option value="POS">💳 POS</option>
+                    </select>
+                    <button id="tahsilatEkleBtn" class="btn-success">Tahsilat Yap</button>
+                </div>
+            </div>
+
+            <!-- Tahsilat Listesi -->
+            <div class="table-container">
+                <div class="form-title">📋 Tahsilat Geçmişi</div>
+                <div style="max-height: 500px; overflow-y: auto;">
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Müşteri</th>
+                                <th>Tahsilat</th>
+                                <th>Ödeme Türü</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tahsilatListesi"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-        <!-- Tahsilat Ekleme -->
-        <div class="card">
-            <div class="form-title">➕ Tahsilat Ekle</div>
-            <div class="form-grid">
-                <input type="date" id="tarih" value="">
-                <select id="borc_id"><option value="">Borç Seçin</option></select>
-                <input type="number" id="miktar" placeholder="Tahsilat Tutarı (TL)" step="any">
-                <select id="odeme_yontemi">
-                    <option value="Nakit">💵 Nakit</option>
-                    <option value="Havale">🏦 Havale</option>
-                    <option value="POS">💳 POS</option>
-                </select>
-                <button id="tahsilatEkleBtn" class="btn-success">Tahsilat Yap</button>
-            </div>
-        </div>
-
-        <!-- Tahsilat Listesi -->
-        <div class="table-container">
-            <div class="form-title">📋 Tahsilat Geçmişi</div>
-            <div style="max-height: 500px; overflow-y: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Müşteri</th>
-                            <th>Tahsilat</th>
-                            <th>Ödeme Türü</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tahsilatListesi"></tbody>
-                </table>
-            </div>
+    <div id="yetkisizContent" style="display: none;">
+        <div class="yetkisiz-box">
+            <h2>⚠️ Yetkisiz Erişim</h2>
+            <p>Bu sayfaya erişim yetkiniz yok. Sadece admin kullanıcılar tahsilat yapabilir.</p>
+            <a href="viewer.html">Ana Sayfaya Dön</a>
         </div>
     </div>
 
     <script>
+        let yetki = '';
+
         function formatMoney(amount) {
             return (amount || 0).toLocaleString('tr-TR', {
                 minimumFractionDigits: 2
@@ -244,7 +286,7 @@
                     <td class="p-2">${icon} ${t.odeme_yontemi || '-'}</td>
                 </tr>`;
             }
-            if (!tahsilatlar.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat bulunamadı</td></tr>';
+            if (!tahsilatlar.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat bulunamadı</td>';
             document.getElementById('tahsilatListesi').innerHTML = html;
         }
 
@@ -282,8 +324,21 @@
         };
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
 
-        loadBorclarSelect();
-        loadTahsilat();
+        (async() => {
+            const me = await fetch('/api/me');
+            const user = await me.json();
+            yetki = user.yetki;
+
+            if (yetki === 'admin') {
+                document.getElementById('adminContent').style.display = 'block';
+                document.getElementById('yetkisizContent').style.display = 'none';
+                await loadBorclarSelect();
+                await loadTahsilat();
+            } else {
+                document.getElementById('adminContent').style.display = 'none';
+                document.getElementById('yetkisizContent').style.display = 'block';
+            }
+        })();
     </script>
 </body>
 
