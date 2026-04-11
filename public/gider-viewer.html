@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tahsilat | Atay Petrol (İzleyici)</title>
+    <title>Giderler | Atay Petrol (İzleyici)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
@@ -144,20 +144,20 @@
             </div>
         </div>
 
-        <!-- Tahsilat Listesi -->
+        <!-- Gider Listesi -->
         <div class="table-container">
-            <div class="form-title">📋 Tahsilat Geçmişi</div>
+            <div class="form-title">📋 Gider Geçmişi</div>
             <div style="max-height: 500px; overflow-y: auto;">
                 <table class="w-full">
                     <thead>
                         <tr>
                             <th>Tarih</th>
-                            <th>Müşteri</th>
-                            <th>Tahsilat</th>
-                            <th>Ödeme Türü</th>
+                            <th>Kategori</th>
+                            <th>Açıklama</th>
+                            <th>Miktar</th>
                         </tr>
                     </thead>
-                    <tbody id="tahsilatListesi"></tbody>
+                    <tbody id="giderListesi"></tbody>
                 </table>
             </div>
         </div>
@@ -170,22 +170,22 @@
             }) + ' ₺';
         }
 
-        async function loadTahsilat() {
+        async function loadGiderler() {
             let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
-            const res = await fetch(`/api/tahsilat/tarih?tarih=${tarih}`);
-            const tahsilatlar = await res.json();
+            const res = await fetch(`/api/giderler/tarih?tarih=${tarih}`);
+            const giderler = await res.json();
             let html = '';
-            for (let t of tahsilatlar) {
-                let icon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
+            for (let g of giderler) {
+                let icon = g.kategori === 'Elektrik' ? '⚡' : (g.kategori === 'Su' ? '💧' : (g.kategori === 'Kira' ? '🏠' : (g.kategori === 'Personel' ? '👥' : (g.kategori === 'Bakım' ? '🔧' : (g.kategori === 'Vergi' ? '📄' : '📌')))));
                 html += `<tr>
-                    <td class="p-2">${t.tarih}</td>
-                    <td class="p-2 font-semibold">${t.musteri_adi}</td>
-                    <td class="p-2 text-green-600 font-bold">${formatMoney(t.miktar)}</td>
-                    <td class="p-2">${icon} ${t.odeme_yontemi || '-'}</td>
+                    <td class="p-2">${g.tarih}</td>
+                    <td class="p-2">${icon} ${g.kategori}</td>
+                    <td class="p-2">${g.aciklama || '-'}</td>
+                    <td class="p-2 text-red-600 font-bold">${formatMoney(g.miktar)}</td>
                 </tr>`;
             }
-            if (!tahsilatlar.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat bulunamadı</td></tr>';
-            document.getElementById('tahsilatListesi').innerHTML = html;
+            if (!giderler.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Gider bulunamadı</td></tr>';
+            document.getElementById('giderListesi').innerHTML = html;
         }
 
         document.getElementById('cikisBtn').onclick = async() => {
@@ -196,12 +196,12 @@
         };
         document.getElementById('bugunBtn').onclick = () => {
             document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-            loadTahsilat();
+            loadGiderler();
         };
-        document.getElementById('tarih').addEventListener('change', () => loadTahsilat());
+        document.getElementById('tarih').addEventListener('change', () => loadGiderler());
 
         document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
-        loadTahsilat();
+        loadGiderler();
     </script>
 </body>
 
