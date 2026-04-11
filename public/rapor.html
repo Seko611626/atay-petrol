@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlar | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            font-family: system-ui;
+        }
+        
+        body {
+            background: #e8f4f8;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar a,
+        .navbar button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .navbar a:hover,
+        .navbar button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn {
+            background: #dc2626 !important;
+        }
+        
+        .logout-btn:hover {
+            background: #b91c1c !important;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-title {
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0A2F6C;
+            font-size: 18px;
+            border-left: 3px solid #0A2F6C;
+            padding-left: 12px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc, #fff);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #0A2F6C;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .btn-excel {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-excel:hover {
+            transform: translateY(-2px);
+            background: #059669;
+        }
+        
+        input,
+        select {
+            padding: 8px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00B4D8;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⛽</span>
+            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="dashboard.html">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
+            <a href="rapor.html">📊 Rapor</a>
+            <a href="kullanici.html">👥 Kullanıcılar</a>
+            <a href="loglar.html">📜 Loglar</a>
+            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 20px;">
+        <!-- Tarih Seçici -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;">📅</span>
+                    <input type="date" id="tarih" style="width: auto;">
+                    <button id="raporGetirBtn" class="btn-primary" style="padding: 8px 20px;">Raporu Getir</button>
+                    <button id="excelExportBtn" class="btn-excel">📎 Excel Export</button>
+                </div>
+                <span style="font-size: 12px; color: #64748b;">Seçilen tarihe ait tüm veriler</span>
+            </div>
+        </div>
+
+        <!-- Özet Kartları -->
+        <div class="stats-grid" id="ozetKartlari">
+            <div class="stat-card">
+                <div class="stat-value" id="toplamSatis">0 ₺</div>
+                <div class="stat-label">💰 Toplam Satış</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="toplamAlis">0 ₺</div>
+                <div class="stat-label">🚛 Toplam Alış</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="toplamBorc">0 ₺</div>
+                <div class="stat-label">📝 Toplam Borç</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="toplamTahsilat">0 ₺</div>
+                <div class="stat-label">💵 Toplam Tahsilat</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="toplamGider">0 ₺</div>
+                <div class="stat-label">📉 Toplam Gider</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="karZarar">0 ₺</div>
+                <div class="stat-label">📈 Kar / Zarar</div>
+            </div>
+        </div>
+
+        <!-- Satış Listesi -->
+        <div class="table-container">
+            <div class="form-title">📋 Satış Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Ürün</th>
+                            <th>Litre</th>
+                            <th>Birim Fiyat</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody id="satisListesi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Alış Listesi -->
+        <div class="table-container">
+            <div class="form-title">📋 Alış Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Ürün</th>
+                            <th>Litre</th>
+                            <th>Birim Fiyat</th>
+                            <th>Tedarikçi</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alisListesi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Borç Listesi -->
+        <div class="table-container">
+            <div class="form-title">📝 Borç Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Müşteri</th>
+                            <th>Ürün</th>
+                            <th>Borç Tutarı</th>
+                            <th>Kalan</th>
+                            <th>Açıklama</th>
+                        </tr>
+                    </thead>
+                    <tbody id="borcListesi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tahsilat Listesi -->
+        <div class="table-container">
+            <div class="form-title">💵 Tahsilat Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Müşteri</th>
+                            <th>Tahsilat</th>
+                            <th>Ödeme Türü</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tahsilatListesi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gider Listesi -->
+        <div class="table-container">
+            <div class="form-title">📉 Gider Listesi</div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Kategori</th>
+                            <th>Açıklama</th>
+                            <th>Miktar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="giderListesi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gün Sonu Ödemeleri -->
+        <div class="table-container">
+            <div class="form-title">💵 Gün Sonu Ödemeleri</div>
+            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                <div class="stat-card">
+                    <div class="stat-value" id="gunSonuNakit">0 ₺</div>
+                    <div class="stat-label">Nakit</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="gunSonuHavale">0 ₺</div>
+                    <div class="stat-label">Havale</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="gunSonuPos">0 ₺</div>
+                    <div class="stat-label">POS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="gunSonuBorc">0 ₺</div>
+                    <div class="stat-label">Borç</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatMoney(amount) {
+            return (amount || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' ₺';
+        }
+
+        function formatLiter(litre) {
+            return (litre || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' L';
+        }
+
+        async function loadRapor() {
+            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
+            const res = await fetch(`/api/rapor/tum?tarih=${tarih}`);
+            const data = await res.json();
+
+            // Özet Kartları
+            document.getElementById('toplamSatis').innerHTML = formatMoney(data.toplamSatis);
+            document.getElementById('toplamAlis').innerHTML = formatMoney(data.toplamAlis);
+            document.getElementById('toplamBorc').innerHTML = formatMoney(data.toplamBorc);
+            document.getElementById('toplamTahsilat').innerHTML = formatMoney(data.toplamTahsilat);
+            document.getElementById('toplamGider').innerHTML = formatMoney(data.toplamGider);
+            let karElement = document.getElementById('karZarar');
+            karElement.innerHTML = formatMoney(data.kar);
+            karElement.style.color = data.kar >= 0 ? '#10B981' : '#EF4444';
+
+            // Satış Listesi
+            let satisHtml = '';
+            for (let s of data.satislar) {
+                satisHtml += `<tr><td class="p-2">${s.tarih}</td><td class="p-2">${s.urun_adi}</td><td class="p-2">${formatLiter(s.litre)}</td><td class="p-2">${formatMoney(s.birim_fiyat)}</td><td class="p-2 font-bold">${formatMoney(s.toplam_tutar)}</td></tr>`;
+            }
+            if (!data.satislar.length) satisHtml = '<tr><td colspan="5" class="text-center text-gray-500">Satış yok</td></tr>';
+            document.getElementById('satisListesi').innerHTML = satisHtml;
+
+            // Alış Listesi
+            let alisHtml = '';
+            for (let a of data.alislar) {
+                alisHtml += `<tr><td class="p-2">${a.tarih}</td><td class="p-2">${a.urun_adi}</td><td class="p-2">${formatLiter(a.litre)}</td>
+                <td class="p-2">${formatMoney(a.birim_fiyat)}</td><td class="p-2">${a.tedarikci || '-'}</td><td class="p-2">${formatMoney(a.toplam_tutar)}</td></tr>`;
+            }
+            if (!data.alislar.length) alisHtml = '<tr><td colspan="6" class="text-center text-gray-500">Alış yok</td></tr>';
+            document.getElementById('alisListesi').innerHTML = alisHtml;
+
+            // Borç Listesi
+            let borcHtml = '';
+            for (let b of data.borclar) {
+                borcHtml += `<tr><td class="p-2">${b.tarih}</td><td class="p-2">${b.musteri_adi}</td><td class="p-2">${b.urun_adi}</td>
+                <td class="p-2">${formatMoney(b.miktar_tl)}</td><td class="p-2 text-red-600">${formatMoney(b.kalan_tl)}</td><td class="p-2">${b.aciklama || '-'}</td></tr>`;
+            }
+            if (!data.borclar.length) borcHtml = '<tr><td colspan="6" class="text-center text-gray-500">Borç yok</td></tr>';
+            document.getElementById('borcListesi').innerHTML = borcHtml;
+
+            // Tahsilat Listesi
+            let tahsilatHtml = '';
+            for (let t of data.tahsilatlar) {
+                let icon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
+                tahsilatHtml += `<tr><td class="p-2">${t.tarih}</td><td class="p-2">${t.musteri_adi}</td>
+                <td class="p-2 text-green-600">${formatMoney(t.miktar)}</td><td class="p-2">${icon} ${t.odeme_yontemi || '-'}</td></tr>`;
+            }
+            if (!data.tahsilatlar.length) tahsilatHtml = '<td><td colspan="4" class="text-center text-gray-500">Tahsilat yok</td></tr>';
+            document.getElementById('tahsilatListesi').innerHTML = tahsilatHtml;
+
+            // Gider Listesi
+            let giderHtml = '';
+            for (let g of data.giderler) {
+                let icon = g.kategori === 'Elektrik' ? '⚡' : (g.kategori === 'Su' ? '💧' : (g.kategori === 'Kira' ? '🏠' : (g.kategori === 'Personel' ? '👥' : (g.kategori === 'Bakım' ? '🔧' : (g.kategori === 'Vergi' ? '📄' : '📌')))));
+                giderHtml += `<tr><td class="p-2">${g.tarih}</td><td class="p-2">${icon} ${g.kategori}</td><td class="p-2">${g.aciklama || '-'}</td><td class="p-2 text-red-600">${formatMoney(g.miktar)}</td></tr>`;
+            }
+            if (!data.giderler.length) giderHtml = '<tr><td colspan="4" class="text-center text-gray-500">Gider yok</td></tr>';
+            document.getElementById('giderListesi').innerHTML = giderHtml;
+
+            // Gün Sonu Ödemeleri
+            if (data.gunSonu) {
+                document.getElementById('gunSonuNakit').innerHTML = formatMoney(data.gunSonu.nakit);
+                document.getElementById('gunSonuHavale').innerHTML = formatMoney(data.gunSonu.havale);
+                document.getElementById('gunSonuPos').innerHTML = formatMoney(data.gunSonu.pos);
+                document.getElementById('gunSonuBorc').innerHTML = formatMoney(data.gunSonu.borc);
+            } else {
+                document.getElementById('gunSonuNakit').innerHTML = formatMoney(0);
+                document.getElementById('gunSonuHavale').innerHTML = formatMoney(0);
+                document.getElementById('gunSonuPos').innerHTML = formatMoney(0);
+                document.getElementById('gunSonuBorc').innerHTML = formatMoney(0);
+            }
+        }
+
+        // Excel Export
+        async function exportToExcel() {
+            let tarih = document.getElementById('tarih').value || new Date().toISOString().slice(0, 10);
+            const res = await fetch(`/api/rapor/tum?tarih=${tarih}`);
+            const data = await res.json();
+
+            let csv = `"${tarih} TARİHLİ RAPOR"\n\n`;
+
+            csv += `"SATIŞ LİSTESİ"\n`;
+            csv += `"Tarih","Ürün","Litre","Birim Fiyat","Toplam"\n`;
+            for (let s of data.satislar) csv += `"${s.tarih}","${s.urun_adi}",${s.litre},${s.birim_fiyat},${s.toplam_tutar}\n`;
+            csv += `\n"ALIŞ LİSTESİ"\n`;
+            csv += `"Tarih","Ürün","Litre","Birim Fiyat","Tedarikçi","Toplam"\n`;
+            for (let a of data.alislar) csv += `"${a.tarih}","${a.urun_adi}",${a.litre},${a.birim_fiyat},"${a.tedarikci || '-'}",${a.toplam_tutar}\n`;
+            csv += `\n"BORÇ LİSTESİ"\n`;
+            csv += `"Tarih","Müşteri","Ürün","Borç Tutarı","Kalan","Açıklama"\n`;
+            for (let b of data.borclar) csv += `"${b.tarih}","${b.musteri_adi}","${b.urun_adi}",${b.miktar_tl},${b.kalan_tl},"${b.aciklama || '-'}"\n`;
+            csv += `\n"TAHSİLAT LİSTESİ"\n`;
+            csv += `"Tarih","Müşteri","Tahsilat","Ödeme Türü"\n`;
+            for (let t of data.tahsilatlar) csv += `"${t.tarih}","${t.musteri_adi}",${t.miktar},"${t.odeme_yontemi || '-'}"\n`;
+            csv += `\n"GİDER LİSTESİ"\n`;
+            csv += `"Tarih","Kategori","Açıklama","Miktar"\n`;
+            for (let g of data.giderler) csv += `"${g.tarih}","${g.kategori}","${g.aciklama || '-'}",${g.miktar}\n`;
+            csv += `\n"ÖZET"\n`;
+            csv += `"Toplam Satış",${data.toplamSatis}\n"Toplam Alış",${data.toplamAlis}\n"Toplam Borç",${data.toplamBorc}\n"Toplam Tahsilat",${data.toplamTahsilat}\n"Toplam Gider",${data.toplamGider}\n"Kar/Zarar",${data.kar}\n`;
+
+            const blob = new Blob(["\uFEFF" + csv], {
+                type: 'text/csv;charset=utf-8;'
+            });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `rapor_${tarih}.csv`;
+            link.click();
+            alert('Excel dosyası indiriliyor');
+        }
+
+        document.getElementById('cikisBtn').onclick = async() => {
+            await fetch('/api/logout', {
+                method: 'POST'
+            });
+            window.location.href = '/';
+        };
+        document.getElementById('raporGetirBtn').onclick = () => loadRapor();
+        document.getElementById('excelExportBtn').onclick = () => exportToExcel();
+        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
+
+        loadRapor();
+    </script>
+</body>
+
+</html>

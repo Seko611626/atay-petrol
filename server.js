@@ -148,6 +148,11 @@ app.get('/api/alis', auth, (req, res) => {
     res.json(db.prepare(`SELECT alis.*, urunler.ad as urun_adi FROM alis JOIN urunler ON alis.urun_id = urunler.id ORDER BY tarih DESC`).all());
 });
 
+app.get('/api/alis/tarih', auth, (req, res) => {
+    const { tarih } = req.query;
+    res.json(db.prepare(`SELECT alis.*, urunler.ad as urun_adi FROM alis JOIN urunler ON alis.urun_id = urunler.id WHERE alis.tarih = ? ORDER BY id DESC`).all(tarih));
+});
+
 app.delete('/api/alis/:id', auth, adminOnly, (req, res) => {
     db.prepare(`DELETE FROM alis WHERE id = ?`).run(req.params.id);
     res.json({ mesaj: 'Alış silindi' });
@@ -203,6 +208,11 @@ app.post('/api/tahsilat', auth, adminOnly, (req, res) => {
 
 app.get('/api/tahsilat', auth, (req, res) => {
     res.json(db.prepare(`SELECT tahsilat.*, borc.musteri_adi FROM tahsilat JOIN borc ON tahsilat.borc_id = borc.id ORDER BY tarih DESC`).all());
+});
+
+app.get('/api/tahsilat/tarih', auth, (req, res) => {
+    const { tarih } = req.query;
+    res.json(db.prepare(`SELECT tahsilat.*, borc.musteri_adi FROM tahsilat JOIN borc ON tahsilat.borc_id = borc.id WHERE tahsilat.tarih = ? ORDER BY id DESC`).all(tarih));
 });
 
 app.post('/api/gider', auth, adminOnly, (req, res) => {
@@ -269,8 +279,47 @@ app.get('/api/istatistik', auth, (req, res) => {
 });
 
 app.get('/api/odeme-rapor', auth, (req, res) => {
-    const rows = db.prepare(`SELECT SUM(nakit) as nakit, SUM(havale) as havale, SUM(pos) as pos, SUM(borc) as borc FROM gun_sonu`).get();
-    res.json(rows ? [rows] : [{ nakit: 0, havale: 0, pos: 0, borc: 0 }]);
+    const { tarih } = req.query;
+    let row;
+    if (tarih) {
+        row = db.prepare(`SELECT nakit, havale, pos, borc FROM gun_sonu WHERE tarih = ?`).get(tarih);
+    } else {
+        row = db.prepare(`SELECT SUM(nakit) as nakit, SUM(havale) as havale, SUM(pos) as pos, SUM(borc) as borc FROM gun_sonu`).get();
+    }
+    res.json(row ? [row] : [{ nakit: 0, havale: 0, pos: 0, borc: 0 }]);
+});
+
+app.get('/api/rapor/tum', auth, (req, res) => {
+    const { tarih } = req.query;
+    const satislar = db.prepare(`SELECT s.*, u.ad as urun_adi FROM satis s JOIN urunler u ON s.urun_id = u.id WHERE s.tarih = ? ORDER BY id DESC`).all(tarih);
+    const alislar = db.prepare(`SELECT a.*, u.ad as urun_adi FROM alis a JOIN urunler u ON a.urun_id = u.id WHERE a.tarih = ? ORDER BY id DESC`).all(tarih);
+    const borclar = db.prepare(`SELECT b.*, u.ad as urun_adi FROM borc b JOIN urunler u ON b.urun_id = u.id WHERE b.tarih = ? ORDER BY id DESC`).all(tarih);
+    const tahsilatlar = db.prepare(`SELECT t.*, b.musteri_adi FROM tahsilat t JOIN borc b ON t.borc_id = b.id WHERE t.tarih = ? ORDER BY t.id DESC`).all(tarih);
+    const giderler = db.prepare(`SELECT * FROM giderler WHERE tarih = ? ORDER BY id DESC`).all(tarih);
+    const gunSonu = db.prepare(`SELECT * FROM gun_sonu WHERE tarih = ?`).get(tarih);
+
+    const toplamSatis = satislar.reduce((s, x) => s + x.toplam_tutar, 0);
+    const toplamAlis = alislar.reduce((s, x) => s + x.toplam_tutar, 0);
+    const toplamBorc = borclar.reduce((s, x) => s + x.miktar_tl, 0);
+    const toplamTahsilat = tahsilatlar.reduce((s, x) => s + x.miktar, 0);
+    const toplamGider = giderler.reduce((s, x) => s + x.miktar, 0);
+    const kar = toplamSatis - toplamAlis - toplamGider;
+
+    res.json({
+        tarih,
+        satislar,
+        alislar,
+        borclar,
+        tahsilatlar,
+        giderler,
+        gunSonu,
+        toplamSatis,
+        toplamAlis,
+        toplamBorc,
+        toplamTahsilat,
+        toplamGider,
+        kar
+    });
 });
 
 app.get('/api/loglar', auth, adminOnly, (req, res) => {
