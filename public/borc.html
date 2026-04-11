@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borçlar | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: system-ui;
+        }
+        
+        body {
+            background: #e8f4f8;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar a,
+        .navbar button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .navbar a:hover,
+        .navbar button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn {
+            background: #dc2626 !important;
+        }
+        
+        .logout-btn:hover {
+            background: #b91c1c !important;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-title {
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0A2F6C;
+            font-size: 18px;
+            border-left: 3px solid #0A2F6C;
+            padding-left: 12px;
+        }
+        
+        input,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00B4D8;
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+        }
+        
+        .btn-primary {
+            background: #0A2F6C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #1E4D8C;
+        }
+        
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            background: #dc2626;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #0A2F6C;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⛽</span>
+            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="dashboard.html">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
+            <a href="kullanici.html">👥 Kullanıcılar</a>
+            <a href="loglar.html">📜 Loglar</a>
+            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <!-- Borç Ekleme -->
+        <div class="card">
+            <div class="form-title">➕ Yeni Borç Ekle</div>
+            <div class="form-grid">
+                <input type="date" id="tarih" value="">
+                <input type="text" id="musteri" placeholder="Müşteri Adı">
+                <select id="urun_id"><option value="">Ürün Seç</option></select>
+                <input type="number" id="miktar" placeholder="Borç Tutarı (TL)" step="any">
+                <input type="text" id="aciklama" placeholder="Açıklama">
+                <button id="borcEkleBtn" class="btn-primary">Borç Ekle</button>
+            </div>
+        </div>
+
+        <!-- Borç Listesi -->
+        <div class="table-container">
+            <div class="form-title">📋 Borç Listesi</div>
+            <div style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Müşteri</th>
+                            <th>Ürün</th>
+                            <th>Borç</th>
+                            <th>Kalan</th>
+                            <th>Açıklama</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="borcListesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatMoney(amount) {
+            return (amount || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' ₺';
+        }
+
+        async function loadUrunler() {
+            const res = await fetch('/api/urunler');
+            const urunler = await res.json();
+            document.getElementById('urun_id').innerHTML = '<option value="">Ürün Seç</option>' + urunler.map(u => `<option value="${u.id}">${u.ad}</option>`).join('');
+        }
+
+        async function loadBorclar() {
+            const res = await fetch('/api/borc');
+            const borclar = await res.json();
+            let html = '';
+            for (let b of borclar) {
+                let durum = b.kalan_tl <= 0 ? '✅ Ödendi' : '⚠️ Bekliyor';
+                let durumClass = b.kalan_tl <= 0 ? 'text-green-600' : 'text-red-600';
+                html += `<tr>
+                    <td class="p-2">${b.tarih}</td>
+                    <td class="p-2 font-semibold">${b.musteri_adi}</td>
+                    <td class="p-2">${b.urun_adi}</td>
+                    <td class="p-2">${formatMoney(b.miktar_tl)}</td>
+                    <td class="p-2 text-red-600 font-bold">${formatMoney(b.kalan_tl)}</td>
+                    <td class="p-2">${b.aciklama || '-'}</td>
+                    <td class="p-2 ${durumClass}">${durum}</td>
+                    <td class="p-2">
+                        <button onclick="deleteBorc(${b.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;">Sil</button>
+                    </td>
+                </tr>`;
+            }
+            if (!borclar.length) html = '<tr><td colspan="8" class="text-center text-gray-500">Borç bulunamadı</td></tr>';
+            document.getElementById('borcListesi').innerHTML = html;
+        }
+
+        window.deleteBorc = async(id) => {
+            if (confirm('Bu borcu silmek istediğinize emin misiniz?')) {
+                await fetch(`/api/borc/${id}`, {
+                    method: 'DELETE'
+                });
+                loadBorclar();
+                alert('Borç silindi');
+            }
+        };
+
+        document.getElementById('borcEkleBtn').onclick = async() => {
+            const data = {
+                tarih: document.getElementById('tarih').value,
+                musteri_adi: document.getElementById('musteri').value,
+                urun_id: parseInt(document.getElementById('urun_id').value),
+                miktar_tl: parseFloat(document.getElementById('miktar').value),
+                aciklama: document.getElementById('aciklama').value
+            };
+            if (!data.tarih || !data.musteri_adi || !data.urun_id || !data.miktar_tl) {
+                alert('Tüm alanları doldurun');
+                return;
+            }
+            const res = await fetch('/api/borc', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert('Borç eklendi');
+                loadBorclar();
+                document.getElementById('musteri').value = '';
+                document.getElementById('miktar').value = '';
+                document.getElementById('aciklama').value = '';
+            } else alert('Hata');
+        };
+
+        document.getElementById('cikisBtn').onclick = async() => {
+            await fetch('/api/logout', {
+                method: 'POST'
+            });
+            window.location.href = '/';
+        };
+        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
+
+        loadUrunler();
+        loadBorclar();
+    </script>
+</body>
+
+</html>

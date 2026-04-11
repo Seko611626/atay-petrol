@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tahsilat | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: system-ui;
+        }
+        
+        body {
+            background: #e8f4f8;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar a,
+        .navbar button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .navbar a:hover,
+        .navbar button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn {
+            background: #dc2626 !important;
+        }
+        
+        .logout-btn:hover {
+            background: #b91c1c !important;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-title {
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0A2F6C;
+            font-size: 18px;
+            border-left: 3px solid #0A2F6C;
+            padding-left: 12px;
+        }
+        
+        input,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00B4D8;
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+        }
+        
+        .btn-primary {
+            background: #0A2F6C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #1E4D8C;
+        }
+        
+        .btn-success {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            background: #059669;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #0A2F6C;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⛽</span>
+            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="dashboard.html">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
+            <a href="kullanici.html">👥 Kullanıcılar</a>
+            <a href="loglar.html">📜 Loglar</a>
+            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <!-- Tahsilat Ekleme -->
+        <div class="card">
+            <div class="form-title">➕ Tahsilat Ekle</div>
+            <div class="form-grid">
+                <input type="date" id="tarih" value="">
+                <select id="borc_id"><option value="">Borç Seçin</option></select>
+                <input type="number" id="miktar" placeholder="Tahsilat Tutarı (TL)" step="any">
+                <select id="odeme_yontemi">
+                    <option value="Nakit">💵 Nakit</option>
+                    <option value="Havale">🏦 Havale</option>
+                    <option value="POS">💳 POS</option>
+                </select>
+                <button id="tahsilatEkleBtn" class="btn-success">Tahsilat Yap</button>
+            </div>
+        </div>
+
+        <!-- Tahsilat Listesi -->
+        <div class="table-container">
+            <div class="form-title">📋 Tahsilat Geçmişi</div>
+            <div style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Müşteri</th>
+                            <th>Tahsilat</th>
+                            <th>Ödeme Türü</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tahsilatListesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatMoney(amount) {
+            return (amount || 0).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2
+            }) + ' ₺';
+        }
+
+        async function loadBorclarSelect() {
+            const res = await fetch('/api/borc');
+            const borclar = await res.json();
+            let html = '<option value="">Borç Seçin</option>';
+            for (let b of borclar) {
+                if (b.kalan_tl > 0) html += `<option value="${b.id}">${b.musteri_adi} - Kalan: ${formatMoney(b.kalan_tl)}</option>`;
+            }
+            document.getElementById('borc_id').innerHTML = html;
+        }
+
+        async function loadTahsilat() {
+            const res = await fetch('/api/tahsilat');
+            const tahsilatlar = await res.json();
+            let html = '';
+            for (let t of tahsilatlar) {
+                let icon = t.odeme_yontemi === 'Nakit' ? '💵' : (t.odeme_yontemi === 'Havale' ? '🏦' : '💳');
+                html += `<tr>
+                    <td class="p-2">${t.tarih}</td>
+                    <td class="p-2 font-semibold">${t.musteri_adi}</td>
+                    <td class="p-2 text-green-600 font-bold">${formatMoney(t.miktar)}</td>
+                    <td class="p-2">${icon} ${t.odeme_yontemi || '-'}</td>
+                </tr>`;
+            }
+            if (!tahsilatlar.length) html = '<tr><td colspan="4" class="text-center text-gray-500">Tahsilat bulunamadı</td></tr>';
+            document.getElementById('tahsilatListesi').innerHTML = html;
+        }
+
+        document.getElementById('tahsilatEkleBtn').onclick = async() => {
+            const data = {
+                tarih: document.getElementById('tarih').value,
+                borc_id: parseInt(document.getElementById('borc_id').value),
+                miktar: parseFloat(document.getElementById('miktar').value),
+                odeme_yontemi: document.getElementById('odeme_yontemi').value
+            };
+            if (!data.tarih || !data.borc_id || !data.miktar) {
+                alert('Tüm alanları doldurun');
+                return;
+            }
+            const res = await fetch('/api/tahsilat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert('Tahsilat eklendi');
+                loadTahsilat();
+                loadBorclarSelect();
+                document.getElementById('miktar').value = '';
+            } else alert('Hata');
+        };
+
+        document.getElementById('cikisBtn').onclick = async() => {
+            await fetch('/api/logout', {
+                method: 'POST'
+            });
+            window.location.href = '/';
+        };
+        document.getElementById('tarih').value = new Date().toISOString().slice(0, 10);
+
+        loadBorclarSelect();
+        loadTahsilat();
+    </script>
+</body>
+
+</html>

@@ -60,7 +60,7 @@
 </head>
 
 <body class="flex items-center justify-center min-h-screen p-4">
-    <div class="login-card animate-fadeIn">
+    <div class="login-card">
         <div class="text-center mb-8">
             <h1 class="text-5xl font-bold text-white">⛽ ATAY</h1>
             <p class="text-2xl font-semibold text-cyan-300">Petrol Satış Takip</p>
@@ -91,7 +91,7 @@
             });
             const data = await res.json();
             if (res.ok) {
-                if (data.yetki === 'admin') window.location.href = '/admin.html';
+                if (data.yetki === 'admin') window.location.href = '/dashboard.html';
                 else window.location.href = '/viewer.html';
             } else {
                 document.getElementById('hata').innerText = data.hata || 'Giriş başarısız';

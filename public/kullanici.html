@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Yönetimi | Atay Petrol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: system-ui;
+        }
+        
+        body {
+            background: #e8f4f8;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #0A2F6C, #1E4D8C);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar a,
+        .navbar button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .navbar a:hover,
+        .navbar button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn {
+            background: #dc2626 !important;
+        }
+        
+        .logout-btn:hover {
+            background: #b91c1c !important;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-title {
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0A2F6C;
+            font-size: 18px;
+            border-left: 3px solid #0A2F6C;
+            padding-left: 12px;
+        }
+        
+        input,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #00B4D8;
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+        }
+        
+        .btn-primary {
+            background: #0A2F6C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #1E4D8C;
+        }
+        
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            background: #dc2626;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #0A2F6C;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⛽</span>
+            <span style="font-weight: 800; font-size: 20px;">ATAY PETROL</span>
+            <span style="background: #10B98120; padding: 2px 10px; border-radius: 40px; font-size: 11px;">Admin</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="dashboard.html">📊 Ana Sayfa</a>
+            <a href="borc.html">📝 Borçlar</a>
+            <a href="tahsilat.html">💵 Tahsilat</a>
+            <a href="gider.html">📉 Giderler</a>
+            <a href="kullanici.html">👥 Kullanıcılar</a>
+            <a href="loglar.html">📜 Loglar</a>
+            <button id="cikisBtn" class="logout-btn">🚪 Çıkış</button>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <!-- Kullanıcı Ekleme -->
+        <div class="card">
+            <div class="form-title">➕ Yeni Kullanıcı Ekle</div>
+            <div class="form-grid">
+                <input type="email" id="email" placeholder="E-posta">
+                <input type="password" id="sifre" placeholder="Şifre">
+                <input type="text" id="adsoyad" placeholder="Ad Soyad">
+                <select id="yetki">
+                    <option value="user">👁️ İzleyici (Sadece Görüntüleme)</option>
+                    <option value="admin">👑 Admin (Tam Yetki)</option>
+                </select>
+                <button id="kullaniciEkleBtn" class="btn-primary">Kullanıcı Ekle</button>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Listesi -->
+        <div class="table-container">
+            <div class="form-title">📋 Mevcut Kullanıcılar</div>
+            <div style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>E-posta</th>
+                            <th>Ad Soyad</th>
+                            <th>Yetki</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kullaniciListesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadKullanicilar() {
+            const res = await fetch('/api/kullanicilar');
+            const kullanicilar = await res.json();
+            let html = '';
+            for (let k of kullanicilar) {
+                let yetkiText = k.yetki === 'admin' ? '👑 Admin' : '👁️ İzleyici';
+                let yetkiClass = k.yetki === 'admin' ? 'text-purple-600' : 'text-green-600';
+                let durumText = k.aktif == 1 ? '✅ Aktif' : '❌ Pasif';
+                let durumClass = k.aktif == 1 ? 'text-green-600' : 'text-red-600';
+                html += `<tr>
+                    <td class="p-2">${k.id}</td>
+                    <td class="p-2">${k.email}</td>
+                    <td class="p-2 font-semibold">${k.adsoyad}</td>
+                    <td class="p-2 ${yetkiClass}">${yetkiText}</td>
+                    <td class="p-2 ${durumClass}">${durumText}</td>
+                    <td class="p-2">
+                        <button onclick="editKullanici(${k.id}, '${k.adsoyad}', '${k.yetki}', ${k.aktif})" style="background:#eab308;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-right:5px;">Düzenle</button>
+                        <button onclick="deleteKullanici(${k.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;">Sil</button>
+                    </td>
+                </tr>`;
+            }
+            if (!kullanicilar.length) html = '<tr><td colspan="6" class="text-center text-gray-500">Kullanıcı bulunamadı</td></tr>';
+            document.getElementById('kullaniciListesi').innerHTML = html;
+        }
+
+        window.editKullanici = async(id, adsoyad, yetki, aktif) => {
+            let yeniAd = prompt('Yeni ad soyad:', adsoyad);
+            if (!yeniAd) return;
+            let yeniYetki = prompt('Yeni yetki (admin/user):', yetki);
+            if (!yeniYetki || (yeniYetki !== 'admin' && yeniYetki !== 'user')) {
+                alert('Yetki sadece admin veya user olabilir');
+                return;
+            }
+            let yeniDurum = prompt('Durum (1=aktif, 0=pasif):', aktif);
+            if (yeniDurum !== '0' && yeniDurum !== '1') {
+                alert('Durum 1 veya 0 olmalıdır');
+                return;
+            }
+
+            await fetch(`/api/kullanici/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    adsoyad: yeniAd,
+                    yetki: yeniYetki,
+                    aktif: parseInt(yeniDurum)
+                })
+            });
+            loadKullanicilar();
+            alert('Kullanıcı güncellendi');
+        };
+
+        window.deleteKullanici = async(id) => {
+            if (confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) {
+                await fetch(`/api/kullanici/${id}`, {
+                    method: 'DELETE'
+                });
+                loadKullanicilar();
+                alert('Kullanıcı silindi');
+            }
+        };
+
+        document.getElementById('kullaniciEkleBtn').onclick = async() => {
+            const data = {
+                email: document.getElementById('email').value,
+                sifre: document.getElementById('sifre').value,
+                adsoyad: document.getElementById('adsoyad').value,
+                yetki: document.getElementById('yetki').value
+            };
+            if (!data.email || !data.sifre || !data.adsoyad) {
+                alert('Tüm alanları doldurun');
+                return;
+            }
+            const res = await fetch('/api/kullanici', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert('Kullanıcı eklendi');
+                document.getElementById('email').value = '';
+                document.getElementById('sifre').value = '';
+                document.getElementById('adsoyad').value = '';
+                loadKullanicilar();
+            } else {
+                const err = await res.json();
+                alert(err.hata || 'Hata oluştu');
+            }
+        };
+
+        document.getElementById('cikisBtn').onclick = async() => {
+            await fetch('/api/logout', {
+                method: 'POST'
+            });
+            window.location.href = '/';
+        };
+
+        loadKullanicilar();
+    </script>
+</body>
+
+</html>
